@@ -1,0 +1,32 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    },
+    "ConnectionStrings": {
+
+      "LocalDB": "Data Source=.;Initial Catalog=PDS;Integrated Security=True",
+      "AWSDB": "Server=tcp:azureepassdev.eastus.cloudapp.azure.com,1433;Initial Catalog=@ClientDB;Persist Security Info=False;User ID=epassuser;Password=User_epass12;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=60;"
+
+    },
+    "SQLQuery": {
+
+      "GetUserTypes": "select UserTypeId , [User] from dbo.users",
+      "CampaignQuery": "select CampaignID,CampaignName,StartDate FROM  [SmartCareClient_IBC].[PA].[Campaign]",
+      "ModelversionQuery": "select mv_ModelVersionID,mv_ModelVersionName FROM  [SmartCareCentralDB].[dbo].[ModelVersions] where mod_serviceyear = @year",
+      "TransferQuery": "select MRRTransferID  from MRR.TransferLog where clientid = @clientID and campaignid = @campaignid and producttypeid = 2",
+      "FlightPlanQuery": "select Name,sc.ClientID,fp.FlightPlanCreationStatID,fp.StatusComments,fp.StatusID,fp.TransferID,fp.AnalysisID,fp.SqlCommond from [PA].[FlightPlanCreationStat] fp join [SC].[Client] sc on sc.ClientID=fp.ClientID"
+
+    },
+    "SQLProcs": {
+
+      "StoredProc": "[dbo].[usp_InsertEmployee]"
+
+    }
+  },
+  
+
+  "AllowedHosts": "*"
+}
