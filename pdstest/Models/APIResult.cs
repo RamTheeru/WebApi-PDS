@@ -9,7 +9,8 @@ namespace pdstest.Models
     {
         public List<RegisterEmployee> employees { get; set; }
 
-        public List<UserType> usersTypes { get; set; }
+        public List<UserType> Usertypes { get; set; }
+        public List<Designation> Designations { get; set; } 
         public string EmployeeName { get; set; }
         public string CommandType { get; set; }
         public RegisterEmployee employee { get; set; }

@@ -12,30 +12,83 @@ namespace pdstest.BLL
     {
         // DBOperations ops = new DBOperations();
         MySQLDBOperations ops = new MySQLDBOperations();
-        public APIResult GetuserTypes()
+        public APIResult GetConstants()
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
-                dbr = ops.GetUserTypes();
-                List<UserType> usertypes = new List<UserType>();
+                result.Designations = new List<Designation>();
+                result.Usertypes = new List<UserType>();
+                dbr = ops.GetConstants();
+                List<DropDown> dds = new List<DropDown>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)
                 {
-
+ 
                     for (int i = 0; i < count; i++)
                     {
-                        UserType ut = new UserType();
-                        ut.UserTypeId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["UserTypeId"]);
-                        ut.User = dbr.ds.Tables[0].Rows[i]["Username"].ToString();
-                        usertypes.Add(ut);
+                        DropDown dd = new DropDown();
+                         dd.Category = dbr.ds.Tables[0].Rows[i]["Category"].ToString();
+                         dd.ConstantId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["ConstantId"]);
+                         dd.ConstantName = dbr.ds.Tables[0].Rows[i]["ConstantName"].ToString();
+                        dds.Add(dd);
+
                     }
-                    result.Message = dbr.Message;
-                    result.Status = dbr.Status;
-                    result.CommandType = dbr.CommandType;
-                    result.usersTypes = usertypes;
+                    if (dds.Count > 0)
+                    {
+                        int designationCount = dds.Where(x => x.Category.ToLower() == "designation").Count();
+                        int userTypeCount = dds.Where(x => x.Category.ToLower() == "logintype").Count();
+                        if (designationCount > 0)
+                        {
+                            result.Designations = dds.Where(x => x.Category.ToLower() == "designation").Select(
+                                a => new Designation { DesignationId = a.ConstantId, DesginationName = a.ConstantName }
+                                ).ToList();
+                        }
+                        if (userTypeCount > 0)
+                        {
+                            result.Usertypes = dds.Where(x => x.Category.ToLower() == "logintype").Select(
+                            a => new UserType { UserTypeId = a.ConstantId, User = a.ConstantName }
+                            ).ToList();
+
+
+                        }
+                        if (designationCount > 0 && userTypeCount > 0)
+                        {
+                            result.Message = "For both UserTypes and Designations : " + dbr.Message;
+
+                        }
+                        else if (designationCount > 0 && userTypeCount == 0)
+                        {
+                            result.Message = "For Designations : " + dbr.Message;
+                        }
+                        else if (designationCount == 0 && userTypeCount > 0)
+                        {
+                            result.Message = "For UserTypes : " + dbr.Message;
+                        }
+                        //string category = item.Category;
+                        //if (category.ToLower() == "logintype")
+                        //{
+
+                        //    UserType ut = new UserType();
+                        //    ut.UserTypeId = item.ConstantId;
+                        //    ut.User
+                        //}
+                        result.Status = dbr.Status;
+                        result.CommandType = dbr.CommandType;
+
+                    }
+                    else 
+                    {
+                        result.Message = dbr.Message;
+                        result.Status = dbr.Status;
+                        result.CommandType = dbr.CommandType;
+
+                    }
+                    
+
+                    
 
                 }
                 else if(count == 0)
@@ -43,7 +96,6 @@ namespace pdstest.BLL
                     result.Message = dbr.Message;
                     result.Status = dbr.Status;
                     result.CommandType = dbr.CommandType;
-                    result.usersTypes = usertypes;
 
                 }
 

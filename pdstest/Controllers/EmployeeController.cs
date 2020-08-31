@@ -21,15 +21,15 @@ namespace pdstest.Controllers
         //}
         BLLogic logic = new BLLogic();
 
-        [HttpGet("UserTypes")]
+        [HttpGet("Constants")]
 
-        public IActionResult GetUserTypes()        
+        public IActionResult GetConstants()        
         {
             APIResult result = new APIResult();
             try 
             {
                 
-                result = logic.GetuserTypes();
+                result = logic.GetConstants();
 
             }
             catch (Exception e)

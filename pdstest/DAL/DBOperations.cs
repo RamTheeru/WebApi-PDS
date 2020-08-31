@@ -284,7 +284,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Select";
-                getUserTypes = DBConnection.GetUserTypes();
+                getUserTypes = DBConnection.GetConstants();
                 
                 if (string.IsNullOrEmpty(getUserTypes) || string.IsNullOrEmpty(connectionString))
                 {

@@ -211,7 +211,7 @@ namespace pdstest.DAL
                         cmd.Parameters.Add(param);
 
                         MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@EmpId";
+                        output.ParameterName = "@RegisterId";
                         output.MySqlDbType = MySqlDbType.Int32;
                         output.Direction = ParameterDirection.Output;
                         cmd.Parameters.Add(output);
@@ -226,18 +226,25 @@ namespace pdstest.DAL
                         conn.Open();
                         cmd.ExecuteNonQuery();
 
-                        string empId = output.Value.ToString();
+                        string registerId = output.Value.ToString();
 
                         string empName = output2.Value.ToString();
                         conn.Close();
-                        dbr.Id = string.IsNullOrEmpty(empId) ? 0 : Convert.ToInt32(empId);
+                        dbr.Id = string.IsNullOrEmpty(registerId) ? 0 : Convert.ToInt32(registerId);
+                        if (dbr.Id > 0)
+                        {
+                            dbr.EmployeeName = empName;
+                            dbr.Status = true;
+                            dbr.Message = "Employee Registered Successfully!!!";
+                        }
+                        else 
+                        {
+                            dbr.Id = 0;
+                            dbr.EmployeeName = "";
+                            dbr.Status = false;
+                            dbr.Message = "Process went well but Something wrong with database Connection!! " ;
 
-                        dbr.EmployeeName = empName;
-                        dbr.Status = true;
-                        dbr.Message = "Employee Registered Successfully!!!";
-
-
-
+                        }
 
                     }
 
@@ -274,7 +281,7 @@ namespace pdstest.DAL
         }
 
 
-        public DataBaseResult GetUserTypes()
+        public DataBaseResult GetConstants()
         {
             string getUserTypes = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -283,7 +290,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Select";
-                getUserTypes = DBConnection.GetUserTypes();
+                getUserTypes = DBConnection.GetConstants();
 
                 if (string.IsNullOrEmpty(getUserTypes) || string.IsNullOrEmpty(connectionString))
                 {
