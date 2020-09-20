@@ -114,7 +114,7 @@ namespace pdstest.BLL
         
         }
 
-        public APIResult CreateEmployee(RegisterEmployee input)
+        public APIResult CreateEmployee(Employee input)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -127,6 +127,34 @@ namespace pdstest.BLL
                 result.EmployeeName = dbr.EmployeeName;
                 result.CommandType = dbr.CommandType;
             
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                throw e;
+
+
+            }
+            return result;
+
+        }
+        public APIResult RegisterEmployee(RegisterEmployee input)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.RegisterEmployee(input);
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+                result.Id = dbr.Id;
+                result.EmployeeName = dbr.EmployeeName;
+                result.CommandType = dbr.CommandType;
+
             }
             catch (Exception e)
             {

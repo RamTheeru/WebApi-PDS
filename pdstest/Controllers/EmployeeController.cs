@@ -44,14 +44,52 @@ namespace pdstest.Controllers
         }
 
         [HttpPost]
-        [Route("CreateEmployee")]
-        public IActionResult CreateEmployee(RegisterEmployee obj)
+        [Route("RegisterEmployee")]
+        public IActionResult RegisterEmployee(RegisterEmployee obj)
         {
             APIResult result = new APIResult();
             try
             {
                 if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.UserType)))
                 {
+                    obj.IsRegister = true;
+                    result = logic.RegisterEmployee(obj);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "INSERT";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+
+            }
+            return new CustomResult(result);
+
+        }
+
+        [HttpPost]
+        [Route("CreateEmployee")]
+        public IActionResult CreateEmployee(Employee obj)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.UserType)))
+                {
+                    obj.IsRegister = false;
                     result = logic.CreateEmployee(obj);
 
                 }

@@ -25,7 +25,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Insert";
-                insertQuery = DBConnection.GetInsertQuery();
+                insertQuery = DBConnection.GetInsertQuery(false);
                
                 if (string.IsNullOrEmpty(insertQuery) || string.IsNullOrEmpty(connectionString))
                 {

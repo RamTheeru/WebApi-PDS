@@ -9,7 +9,7 @@ namespace pdstest.Models
     {
         public int EmployeeId { get; set; }
         public string EmpID { get; set; }
-
+        public bool IsRegister { get; set; }
         public string FirstName { get; set; }
 
         public string LastName { get;set; }

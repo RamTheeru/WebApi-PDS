@@ -20,6 +20,7 @@ namespace pdstest.DAL
             sqllib["AWSDB"] = "";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
+            sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             return sqllib;
         }
 
@@ -75,7 +76,7 @@ namespace pdstest.DAL
         
         }
 
-        public static string GetInsertQuery()
+        public static string GetInsertQuery(bool isRegistered)
         {
             string text = "";
             //string path = "";
@@ -84,7 +85,8 @@ namespace pdstest.DAL
                 //path = Directory.GetCurrentDirectory();
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                 //text = builder.Build().GetSection("SQLProcs").GetSection("StoredProc").Value;
-                text = _dbQueries["InsertEmpStoredProc"];
+                if (isRegistered) { text = _dbQueries["RegisterEmpStoredProc"]; }
+                else { text = _dbQueries["InsertEmpStoredProc"]; }
                 
 
             }
