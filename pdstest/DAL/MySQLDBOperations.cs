@@ -48,6 +48,12 @@ namespace pdstest.DAL
                         param.Size = 50;
                         cmd.Parameters.Add(param);
 
+                        param = new MySqlParameter("@MiddleName", input.MiddleName);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
                         param = new MySqlParameter("@LastName", input.LastName);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
@@ -211,7 +217,7 @@ namespace pdstest.DAL
                         cmd.Parameters.Add(param);
 
                         MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@RegisterId";
+                        output.ParameterName = "@OutRegisterId";
                         output.MySqlDbType = MySqlDbType.Int32;
                         output.Direction = ParameterDirection.Output;
                         cmd.Parameters.Add(output);
@@ -309,6 +315,12 @@ namespace pdstest.DAL
                         cmd.Connection = conn;
 
                         param = new MySqlParameter("@FirstName", input.FirstName);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@MiddleName", input.MiddleName);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 50;
@@ -516,7 +528,7 @@ namespace pdstest.DAL
                         cmd.Parameters.Add(param); 
 
                          MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@EmployeeId";
+                        output.ParameterName = "@EmpId";
                         output.MySqlDbType = MySqlDbType.Int32;
                         output.Direction = ParameterDirection.Output;
                         cmd.Parameters.Add(output);
