@@ -684,5 +684,91 @@ namespace pdstest.DAL
 
         }
 
+        public DataBaseResult GetRegisteredUSers(string stationCode = "")
+        {
+            string getRegisteredUsers = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                getRegisteredUsers = DBConnection.GetRegisteredUsers(stationCode);
+
+                if (string.IsNullOrEmpty(getRegisteredUsers) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        DataSet ds = new DataSet();
+                        dbr.ds = new DataSet();
+                        DataTable dt = new DataTable();
+                        sda = new MySqlDataAdapter(getRegisteredUsers, conn);
+                        sda.SelectCommand.CommandType = CommandType.Text;
+                        sda.Fill(ds);
+                        int count = 0;
+                        count = ds.Tables[0].Rows.Count;
+                        if (ds != null || ds.Tables.Count > 0 || count > 0)
+                        {
+                            //foreach (DataRow dr in dt.Rows)
+                            //{
+                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                            //}
+                            dbr.ds = ds;
+                            dbr.Message = "Records retreived Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else if (count == 0)
+                        {
+                            dbr.ds = ds;
+                            dbr.Message = "No Records Found for this table!!";
+                            dbr.Status = true;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
+
     }
 }

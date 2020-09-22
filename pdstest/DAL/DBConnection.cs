@@ -44,6 +44,28 @@ namespace pdstest.DAL
             return text;
         }
 
+        public static string GetRegisteredUsers(string stationCode="")
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                if (!string.IsNullOrEmpty(stationCode))
+                    text = string.Format("select * from register where IsActive = 0 and StateCode = {0}",stationCode);
+                else
+                    text = "select * from register where IsActive = 0";
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+
         public static string GetDBConnection(bool isCloud)
         {
             string path = "";

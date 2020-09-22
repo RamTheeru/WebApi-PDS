@@ -43,6 +43,28 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpGet("RegisteredUsers")]
+
+        public IActionResult GetRegisteredUsers(string stationCode="")
+        {
+            APIResult result = new APIResult();
+            try
+            {
+
+                result = logic.GetRegisteredUsers(stationCode);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+
+            }
+            return new CustomResult(result);
+
+        }
+
         [HttpPost]
         [Route("RegisterEmployee")]
         public IActionResult RegisterEmployee(RegisterEmployee obj)

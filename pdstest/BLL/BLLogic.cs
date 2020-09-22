@@ -114,6 +114,58 @@ namespace pdstest.BLL
         
         }
 
+        public APIResult GetRegisteredUsers(string stationCode = "")
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try 
+            {
+                result.registerEmployees = new List<RegisterEmployee>();
+                dbr = ops.GetRegisteredUSers(stationCode);
+                List<RegisterEmployee> regs = new List<RegisterEmployee>();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        RegisterEmployee reg = new RegisterEmployee();
+                        reg.RegisterId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["RegisterId"]);
+                        reg.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        reg.Phone =  dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                        reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                        reg.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                        reg.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                        reg.LocationName= dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                        regs.Add(reg);
+
+                    }
+                    result.registerEmployees = regs;
+                }
+                else 
+                {
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
+
         public APIResult CreateEmployee(Employee input)
         {
             APIResult result = new APIResult();
