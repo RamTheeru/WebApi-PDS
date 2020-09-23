@@ -121,7 +121,7 @@ namespace pdstest.BLL
             try 
             {
                 result.registerEmployees = new List<RegisterEmployee>();
-                dbr = ops.GetRegisteredUSers(stationCode);
+                dbr = ops.GetRegisteredUsers(stationCode);
                 List<RegisterEmployee> regs = new List<RegisterEmployee>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -143,6 +143,58 @@ namespace pdstest.BLL
                     result.registerEmployees = regs;
                 }
                 else 
+                {
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
+
+        public APIResult GetEmployees(string stationCode = "")
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                result.employees = new List<Employee>();
+                dbr = ops.GetRegisteredUsers(stationCode);
+                List<Employee> emps = new List<Employee>();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        Employee emp = new Employee();
+                        emp.RegisterId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["RegisterId"]);
+                        emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                        emp.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                        emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                        emp.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                        emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                        emps.Add(emp);
+
+                    }
+                    result.employees = emps;
+                }
+                else
                 {
                     result.Message = dbr.Message;
                     result.Status = dbr.Status;

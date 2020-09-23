@@ -65,6 +65,27 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetEmployees(string stationCode = "")
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                if (!string.IsNullOrEmpty(stationCode))
+                    text = string.Format("select * from employees where IsActive = 1 and StateCode = {0}", stationCode);
+                else
+                    text = "select * from employees where IsActive = 1";
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
 
         public static string GetDBConnection(bool isCloud)
         {

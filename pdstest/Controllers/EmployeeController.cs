@@ -50,8 +50,32 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-
+                if (stationCode != null)
+                    stationCode = stationCode.Replace(@"\", "");
                 result = logic.GetRegisteredUsers(stationCode);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+
+            }
+            return new CustomResult(result);
+
+        }
+
+        [HttpGet("Employees")]
+
+        public IActionResult GetEmployees(string stationCode = "")
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if(stationCode != null)
+                    stationCode = stationCode.Replace(@"\", "");
+                result = logic.GetEmployees(stationCode);
 
             }
             catch (Exception e)

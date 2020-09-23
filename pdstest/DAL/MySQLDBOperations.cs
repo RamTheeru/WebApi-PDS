@@ -243,12 +243,12 @@ namespace pdstest.DAL
                             dbr.Status = true;
                             dbr.Message = "Employee Registered Successfully!!!";
                         }
-                        else 
+                        else
                         {
                             dbr.Id = 0;
                             dbr.EmployeeName = "";
                             dbr.Status = false;
-                            dbr.Message = "Process went well but Something wrong with database Connection!! " ;
+                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
 
                         }
 
@@ -519,15 +519,15 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 30;
-                        cmd.Parameters.Add(param); 
+                        cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@IFSCCode", input.IFSCCode);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 30;
-                        cmd.Parameters.Add(param); 
+                        cmd.Parameters.Add(param);
 
-                         MySqlParameter output = new MySqlParameter();
+                        MySqlParameter output = new MySqlParameter();
                         output.ParameterName = "@EmpId";
                         output.MySqlDbType = MySqlDbType.Int32;
                         output.Direction = ParameterDirection.Output;
@@ -630,7 +630,7 @@ namespace pdstest.DAL
                         sda.Fill(ds);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
-                        if (ds != null || ds.Tables.Count > 0 || count > 0)
+                        if (ds.Tables.Count > 0 && count > 0)
                         {
                             //foreach (DataRow dr in dt.Rows)
                             //{
@@ -644,7 +644,7 @@ namespace pdstest.DAL
                         else if (count == 0)
                         {
                             dbr.ds = ds;
-                            dbr.Message = "No Records Found for this table!!";
+                            dbr.Message = "No Records Found for this request!!";
                             dbr.Status = true;
 
 
@@ -684,7 +684,7 @@ namespace pdstest.DAL
 
         }
 
-        public DataBaseResult GetRegisteredUSers(string stationCode = "")
+        public DataBaseResult GetRegisteredUsers(string stationCode = "")
         {
             string getRegisteredUsers = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -716,7 +716,7 @@ namespace pdstest.DAL
                         sda.Fill(ds);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
-                        if (ds != null || ds.Tables.Count > 0 || count > 0)
+                        if (ds.Tables.Count > 0 && count > 0)
                         {
                             //foreach (DataRow dr in dt.Rows)
                             //{
@@ -730,7 +730,7 @@ namespace pdstest.DAL
                         else if (count == 0)
                         {
                             dbr.ds = ds;
-                            dbr.Message = "No Records Found for this table!!";
+                            dbr.Message = "No Records Found for this request!!";
                             dbr.Status = true;
 
 
@@ -770,5 +770,89 @@ namespace pdstest.DAL
 
         }
 
-    }
-}
+        public DataBaseResult GetEmployees(string stationCode = "")
+        {
+            string getEmployees = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                getEmployees = DBConnection.GetEmployees(stationCode);
+
+                if (string.IsNullOrEmpty(getEmployees) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        DataSet ds = new DataSet();
+                        dbr.ds = new DataSet();
+                        DataTable dt = new DataTable();
+                        sda = new MySqlDataAdapter(getEmployees, conn);
+                        sda.SelectCommand.CommandType = CommandType.Text;
+                        sda.Fill(ds);
+                        int count = 0;
+                        count = ds.Tables[0].Rows.Count;
+                        if (ds.Tables.Count > 0 && count > 0)
+                        {
+                            //foreach (DataRow dr in dt.Rows)
+                            //{
+                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                            //}
+                            dbr.ds = ds;
+                            dbr.Message = "Records retreived Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else if (count == 0)
+                        {
+                            dbr.ds = ds;
+                            dbr.Message = "No Records Found for this request!!";
+                            dbr.Status = true;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+         }
+     }
+ }
