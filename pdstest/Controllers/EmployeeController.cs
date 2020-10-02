@@ -37,7 +37,7 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
-
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return new CustomResult(result);
 
@@ -60,9 +60,11 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
 
             }
-            return new CustomResult(result);
+            return Ok(result);
+            //return new CustomResult(result);
 
         }
 
@@ -83,9 +85,10 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
-
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            return new CustomResult(result);
+            return Ok(result);
+            //return new CustomResult(result);
 
         }
 
@@ -109,7 +112,7 @@ namespace pdstest.Controllers
                     result.CommandType = "INSERT";
                     result.Id = 0;
                     result.EmployeeName = "";
-
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
 
                 }
             }
@@ -120,9 +123,10 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
-
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            return new CustomResult(result);
+            return Ok(result);
+            //return new CustomResult(result);
 
         }
 
@@ -146,7 +150,7 @@ namespace pdstest.Controllers
                     result.CommandType = "INSERT";
                     result.Id = 0;
                     result.EmployeeName = "";
-
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
 
                 }
             }
@@ -157,9 +161,11 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
+                return  StatusCode(StatusCodes.Status500InternalServerError,result);
 
             }
-            return new CustomResult(result);
+            return Ok(result);
+           // return new CustomResult(result);
 
         }
 
