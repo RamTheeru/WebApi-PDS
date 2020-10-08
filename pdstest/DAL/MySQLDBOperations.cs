@@ -771,6 +771,84 @@ namespace pdstest.DAL
 
         }
 
+        public DataBaseResult ApproveUser(int registerId)
+        {
+            string getApproveUser = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.Id = registerId;
+                dbr.CommandType = "UPDATE";
+                getApproveUser = DBConnection.ApproveUser(registerId);
+
+                if (string.IsNullOrEmpty(getApproveUser) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        cmd.CommandText = getApproveUser;
+                        cmd.CommandType = CommandType.Text;
+                        int res = cmd.ExecuteNonQuery();
+                        if (res > 0)
+                        {
+                            
+                            dbr.Message = "User Approved Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else
+                        {
+                            
+                            dbr.Message = "User not approved for this request!!";
+                            dbr.Status = false;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
+
         public DataBaseResult GetEmployees(string stationCode = "")
         {
             string getEmployees = "";

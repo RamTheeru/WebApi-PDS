@@ -65,6 +65,25 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string ApproveUser(int registerId)
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                
+                text = string.Format("UPDATE register SET IsActive = 1 WHERE RegisterId = {0}", registerId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetEmployees(string stationCode = "")
         {
             string text = "";

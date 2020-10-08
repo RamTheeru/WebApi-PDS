@@ -174,6 +174,30 @@ namespace pdstest.BLL
 
             return result;
         }
+        public APIResult ApproveUser(int registerId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.ApproveUser(registerId);
+                result.Status = dbr.Status;
+                result.Message = dbr.Message;
+                result.Id = dbr.Id;
+                result.CommandType = dbr.CommandType;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "UPDATE";
+                result.Id = registerId;
+                throw e;
+
+            }
+
+            return result;
+        }
 
         public APIResult GetEmployees(string stationCode = "")
         {
