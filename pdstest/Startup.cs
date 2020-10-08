@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using pdstest.services;
+using pdstest.DAL;
 
 namespace pdstest
 {
@@ -27,7 +29,9 @@ namespace pdstest
         {
             services.AddCors();
             services.AddControllers();
-           // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            ////services.AddTransient<IConnection, MySqlOps>();
+            services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
+            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

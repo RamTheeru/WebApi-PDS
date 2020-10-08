@@ -1,5 +1,6 @@
 ﻿using pdstest.DAL;
 using pdstest.Models;
+using pdstest.services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,13 @@ namespace pdstest.BLL
 {
     public class BLLogic
     {
-        // DBOperations ops = new DBOperations();
-        MySQLDBOperations ops = new MySQLDBOperations();
+         //DBOperations ops = new DBOperations();
+        private  IConnection ops;
+        public BLLogic(IConnection conn)
+        {
+            ops = conn;
+        }
+
         public APIResult GetConstants()
         {
             APIResult result = new APIResult();

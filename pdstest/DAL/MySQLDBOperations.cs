@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using pdstest.Models;
 using MySql.Data.MySqlClient;
 using System.Data;
+using pdstest.services;
 
 namespace pdstest.DAL
 {
-    public class MySQLDBOperations
+    public class MySQLDBOperations 
     {
 
         public static string connectionString = DBConnection.GetDBConnection(false);

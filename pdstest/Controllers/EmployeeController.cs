@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using pdstest.Models;
 using pdstest.BLL;
 using Microsoft.Extensions.Configuration;
+using pdstest.services;
 
 namespace pdstest.Controllers
 {
@@ -17,9 +18,17 @@ namespace pdstest.Controllers
         //private readonly IConfiguration configuration;
         //public EmployeeController(IConfiguration config) {
         //    this.configuration = config;
-        
+
         //}
-        BLLogic logic = new BLLogic();
+        private static IConnection conn;
+        private BLLogic logic;
+        public EmployeeController(IConnection con)
+        {
+
+            conn = con;
+            logic = new BLLogic(conn);
+        }
+       
 
         [HttpGet("Constants")]
 
@@ -39,7 +48,8 @@ namespace pdstest.Controllers
                 result.CommandType = "Select";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            return new CustomResult(result);
+            //return new CustomResult(result);
+            return Ok(result);
 
         }
 
