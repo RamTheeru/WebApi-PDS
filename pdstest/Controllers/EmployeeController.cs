@@ -8,6 +8,11 @@ using pdstest.Models;
 using pdstest.BLL;
 using Microsoft.Extensions.Configuration;
 using pdstest.services;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace pdstest.Controllers
 {
@@ -15,20 +20,52 @@ namespace pdstest.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        //private readonly IConfiguration configuration;
+        private readonly IConfiguration configuration;
         //public EmployeeController(IConfiguration config) {
         //    this.configuration = config;
 
         //}
         private static IConnection conn;
         private BLLogic logic;
-        public EmployeeController(IConnection con)
+        public EmployeeController(IConnection con,IConfiguration config)
         {
 
             conn = con;
+            configuration = config;
             logic = new BLLogic(conn);
         }
-       
+        [HttpGet("Login")]
+        public IActionResult Login()
+        {
+            var user = new { username = "ram@ok.com",password = "123"};
+            var token = GenerateJSONWebToken(user);
+            HttpContext.Items["userallow"] = token;
+            return Ok(new { token = token});
+        
+        }
+
+        private string GenerateJSONWebToken(dynamic user)
+        {
+            var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
+            var securityKey = new SymmetricSecurityKey(key);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub,"demo"),
+                new Claim(JwtRegisteredClaimNames.Email,user.username),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+             };
+            var token = new JwtSecurityToken(
+                issuer: configuration["Jwt:Issuer"],
+                audience: configuration["Jwt:Issuer"],
+                claims,
+                expires: DateTime.Now.AddMinutes(5),
+                signingCredentials: credentials);
+
+            var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
+            return encodeToken;
+        }
+
 
         [HttpGet("Constants")]
 
@@ -53,16 +90,28 @@ namespace pdstest.Controllers
 
         }
 
+      
         [HttpGet("RegisteredUsers")]
-
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [CustomAuthorization]
         public IActionResult GetRegisteredUsers(string stationCode="")
         {
             APIResult result = new APIResult();
+
             try
             {
-                if (stationCode != null)
-                    stationCode = stationCode.Replace(@"\", "");
-                result = logic.GetRegisteredUsers(stationCode);
+                var valid = HttpContext.User.Identity as ClaimsIdentity;
+                IList<Claim> claim = valid.Claims.ToList();
+                var user = claim[0].Value;
+                if (!string.IsNullOrEmpty(user))
+                {
+                    if (stationCode != null)
+                        stationCode = stationCode.Replace(@"\", "");
+                    result = logic.GetRegisteredUsers(stationCode);
+                }
+                else {
+                    return Unauthorized(new { status = false, Message = "Un authorized Request" });
+                }
 
             }
             catch (Exception e)
