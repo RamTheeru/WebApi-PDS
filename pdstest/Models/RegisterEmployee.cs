@@ -38,7 +38,7 @@ namespace pdstest.Models
         public string PANNumber { get; set; }
 
         public bool IsPermanent { get; set; }
-        public bool EmployeeType { get; set; }
+        public string EmployeeType { get; set; }
         public string Gaurd_firstname { get; set; }
 
         public string Gaurd_lastname { get; set; }

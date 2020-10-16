@@ -52,9 +52,26 @@ namespace pdstest.DAL
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                 if (!string.IsNullOrEmpty(stationCode))
-                    text = string.Format("select * from register where IsActive = 0 and StateCode = {0}",stationCode);
+                    text = string.Format("select * from register where IsActive = 0 and StateCode = '{0}'",stationCode);
                 else
                     text = "select * from register where IsActive = 0";
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetLoginUserInfo(string username,string password)
+        {
+            string text = "";
+
+            try
+            {
+                    text = string.Format("SELECT UserTypeId,LoginType,FirstName FROM employees where FirstName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
 
             }
             catch (Exception e)
@@ -92,7 +109,7 @@ namespace pdstest.DAL
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                 if (!string.IsNullOrEmpty(stationCode))
-                    text = string.Format("select * from employees where IsActive = 1 and StateCode = {0}", stationCode);
+                    text = string.Format("select * from employees where IsActive = 1 and UserTypeId <> 1 and StateCode = '{0}'", stationCode);
                 else
                     text = "select * from employees where IsActive = 1";
 

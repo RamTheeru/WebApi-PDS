@@ -9,7 +9,7 @@ namespace pdstest.Models
     {
         public List<RegisterEmployee> registerEmployees { get; set; }
         public List<Employee> employees { get; set; }
-
+        public UserType userInfo { get; set; }
         public List<UserType> Usertypes { get; set; }
         public List<Designation> Designations { get; set; } 
         public string EmployeeName { get; set; }
@@ -19,5 +19,6 @@ namespace pdstest.Models
         public bool Status { get; set; }
         public string Message { get; set; }
         public int Id { get; set; }
+        public string Token { get; set; }
     }
 }

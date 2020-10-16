@@ -14,7 +14,7 @@ namespace pdstest.services
         DataBaseResult GetConstants();
         DataBaseResult GetRegisteredUsers(string stationCode = "");
         DataBaseResult GetEmployees(string stationCode = "");
-
+        DataBaseResult GetLoginUserInfo(string username, string password);
         DataBaseResult ApproveUser(int registerId);
     }
 }

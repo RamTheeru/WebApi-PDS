@@ -143,7 +143,7 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Bit;
                         cmd.Parameters.Add(param);
-
+                        input.EmployeeType = (input.IsPermanent == true) ? "Permanent" : "Contract";
                         param = new MySqlParameter("@EmployeeType", input.EmployeeType);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
@@ -212,7 +212,7 @@ namespace pdstest.DAL
                         param.MySqlDbType = MySqlDbType.Bit;
                         cmd.Parameters.Add(param);
 
-                        param = new MySqlParameter("@UserTypeId", input.UserTypeId);
+                        param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
@@ -415,33 +415,35 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Bit;
                         cmd.Parameters.Add(param);
-
+                        input.EmployeeType = (input.IsPermanent == true) ? "Permanent" : "Contract";
                         param = new MySqlParameter("@EmployeeType", input.EmployeeType);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 50;
                         cmd.Parameters.Add(param);
 
-
-                        param = new MySqlParameter("@Gaurd_firstname", input.Gaurd_firstname);
+                        string lastname = input.Gaurd_lastname == null ? "" : input.Gaurd_lastname;
+                        string midname = input.Gaurd_middlename == null ? "" : input.Gaurd_middlename;
+                        string fullname = input.Gaurd_firstname + ' ' + midname + ' ' + lastname;
+                        param = new MySqlParameter("@Gaurd_fullname",fullname);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 50;
                         cmd.Parameters.Add(param);
 
 
-                        param = new MySqlParameter("@Gaurd_lastname", input.Gaurd_lastname);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
+                        //param = new MySqlParameter("@Gaurd_lastname", input.Gaurd_lastname);
+                        //param.Direction = ParameterDirection.Input;
+                        //param.MySqlDbType = MySqlDbType.VarChar;
+                        //param.Size = 50;
+                        //cmd.Parameters.Add(param);
 
 
-                        param = new MySqlParameter("@Gaurd_middlename", input.Gaurd_middlename);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
+                        //param = new MySqlParameter("@Gaurd_middlename", input.Gaurd_middlename);
+                        //param.Direction = ParameterDirection.Input;
+                        //param.MySqlDbType = MySqlDbType.VarChar;
+                        //param.Size = 50;
+                        //cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@Gaurd_Phone", input.Gaurd_PhoneNumber);
                         param.Direction = ParameterDirection.Input;
@@ -482,6 +484,11 @@ namespace pdstest.DAL
                         param = new MySqlParameter("@IsActive", false);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Bit;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@DLLRStatus", input.DLLRStatus);
@@ -639,6 +646,97 @@ namespace pdstest.DAL
                             //}
                             dbr.ds = ds;
                             dbr.Message = "Records retreived Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else if (count == 0)
+                        {
+                            dbr.ds = ds;
+                            dbr.Message = "No Records Found for this request!!";
+                            dbr.Status = true;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
+        public DataBaseResult GetLoginUserInfo(string username,string password)
+        {
+            string getUserInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                getUserInfo = DBConnection.GetLoginUserInfo(username,password);
+
+                if (string.IsNullOrEmpty(getUserInfo) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        DataSet ds = new DataSet();
+                        dbr.ds = new DataSet();
+                        DataTable dt = new DataTable();
+                        // sda = new MySqlDataAdapter(getUserInfo, conn);
+                        //sda.SelectCommand.CommandType = CommandType.Text;
+                        //sda.Fill(ds);
+                        cmd = new MySqlCommand(getUserInfo, conn);
+                        DataTable temp = new DataTable();
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        adapter.Fill(temp);
+
+                        ds.Tables.Add(temp);
+                        int count = 0;
+                        count = ds.Tables[0].Rows.Count;
+                        if (ds.Tables.Count > 0 && count > 0)
+                        {
+                            //foreach (DataRow dr in dt.Rows)
+                            //{
+                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                            //}
+                            dbr.ds = ds;
+                            dbr.Message = "Record(s) retreived Successfully!!!";
                             dbr.Status = true;
 
                         }

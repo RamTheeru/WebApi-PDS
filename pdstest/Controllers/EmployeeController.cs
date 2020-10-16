@@ -35,35 +35,105 @@ namespace pdstest.Controllers
             logic = new BLLogic(conn);
         }
         [HttpGet("Login")]
-        public IActionResult Login()
+        public IActionResult Login(string username,string password)
         {
-            var user = new { username = "ram@ok.com",password = "123"};
-            var token = GenerateJSONWebToken(user);
-            HttpContext.Items["userallow"] = token;
-            return Ok(new { token = token});
+            APIResult result = new APIResult();
+            string token = "";
+            result.userInfo = new UserType();
+            try
+            {
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                if (username != null)
+                    username = username.Trim('"'); ;
+                if (password != null)
+                    password = password.Trim('"'); ;
+                result = logic.GetLoginUserInfo(username, password);
+                if (!string.IsNullOrEmpty(result.userInfo.User))
+                {
+                    if (result.userInfo.Valid)
+                    {
+                        token = GenerateJSONWebToken(result.userInfo);
+                    }
+                    else
+                    {
+                        result.Message = "User Authentication failed!!!";
+                        result.Status = false;
+                        result.CommandType = "SELECT";
+                        result.EmployeeName = username;
+
+                    }
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        result.Message = "Something Went Wrong : Session cant be generated for this user";
+                        result.Status = false;
+                        result.CommandType = "SELECT";
+                        result.EmployeeName = username;
+
+                    }
+                    result.Token = token;
+                    result.Status = true;
+                    result.CommandType = "SELECT";
+                    result.EmployeeName = username;
+                    result.Message = "User Authenticated Sucessfully with Session!!!!";
+                }
+                else 
+                {
+                    result.Message = "No User Found : User Authentication failed!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    result.EmployeeName = username;
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
         
         }
 
-        private string GenerateJSONWebToken(dynamic user)
+        private string GenerateJSONWebToken(UserType user)
         {
-            var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
-            var securityKey = new SymmetricSecurityKey(key);
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
+            string tkn = "";
+            try
             {
-                new Claim(JwtRegisteredClaimNames.Sub,"demo"),
-                new Claim(JwtRegisteredClaimNames.Email,user.username),
+                var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
+                var securityKey = new SymmetricSecurityKey(key);
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                var claims = new[]
+                {
+                new Claim(JwtRegisteredClaimNames.Sub,user.User),
+                new Claim(JwtRegisteredClaimNames.Email,user.User),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
              };
-            var token = new JwtSecurityToken(
-                issuer: configuration["Jwt:Issuer"],
-                audience: configuration["Jwt:Issuer"],
-                claims,
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: credentials);
+                var token = new JwtSecurityToken(
+                    issuer: configuration["Jwt:Issuer"],
+                    audience: configuration["Jwt:Issuer"],
+                    claims,
+                    expires: DateTime.Now.AddMinutes(5),
+                    signingCredentials: credentials);
 
-            var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return encodeToken;
+                var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
+                tkn = encodeToken;
+            }
+            catch (Exception e)
+            {
+                tkn = "";
+            }
+            return tkn;
         }
 
 
@@ -100,18 +170,11 @@ namespace pdstest.Controllers
 
             try
             {
-                var valid = HttpContext.User.Identity as ClaimsIdentity;
-                IList<Claim> claim = valid.Claims.ToList();
-                var user = claim[0].Value;
-                if (!string.IsNullOrEmpty(user))
-                {
+   
                     if (stationCode != null)
                         stationCode = stationCode.Replace(@"\", "");
                     result = logic.GetRegisteredUsers(stationCode);
-                }
-                else {
-                    return Unauthorized(new { status = false, Message = "Un authorized Request" });
-                }
+                
 
             }
             catch (Exception e)

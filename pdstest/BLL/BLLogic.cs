@@ -174,6 +174,60 @@ namespace pdstest.BLL
 
             return result;
         }
+
+        public APIResult GetLoginUserInfo(string username,string password)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                result.userInfo = new UserType();
+                dbr = ops.GetLoginUserInfo(username,password);
+                UserType user = new UserType();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int userTypeid = 0;
+                        string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();
+                        bool  success = int.TryParse(usertype, out userTypeid);
+                        userTypeid = (success==true)? userTypeid : 0;
+                        user.UserTypeId = userTypeid;
+                        user.Role = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                        user.User = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        user.Valid = true;
+
+                    }
+                    result.userInfo = user;
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+                }
+                else
+                {
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
         public APIResult ApproveUser(int registerId)
         {
             APIResult result = new APIResult();

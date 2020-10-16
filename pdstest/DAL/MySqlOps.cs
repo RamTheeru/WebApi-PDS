@@ -44,5 +44,9 @@ namespace pdstest.DAL
         {
             return _ops.ApproveUser(registerId);
         }
-    }
+        public DataBaseResult GetLoginUserInfo(string username, string password)
+        {
+            return _ops.GetLoginUserInfo(username,password);
+        }
+}
 }
