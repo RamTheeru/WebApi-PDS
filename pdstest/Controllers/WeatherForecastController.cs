@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,17 +25,52 @@ namespace pdstest.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("excelfile")]
+        public IActionResult Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            string fileName = "authors.xlsx";
+            List<WeatherForecast> list =  Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
-            .ToArray();
+            .ToList();
+            // var workbook = new XLWorkbook();
+            try
+            {
+                using (var workbook = new XLWorkbook())
+                {
+                    IXLWorksheet worksheet =
+                    workbook.Worksheets.Add("tests");
+                    worksheet.Cell(1, 1).Value = "Date";
+                    worksheet.Cell(1, 2).Value = "TemperatureC";
+                    worksheet.Cell(1, 3).Value = "Summary";
+                    for (int index = 1; index <= list.Count; index++)
+                    {
+                        worksheet.Cell(index + 1, 1).Value =
+                        list[index - 1].Date;
+                        worksheet.Cell(index + 1, 2).Value =
+                        list[index - 1].TemperatureC;
+                        worksheet.Cell(index + 1, 3).Value =
+                        list[index - 1].Summary;
+                    }
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return File(content, contentType, fileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok(); 
         }
     }
 }
