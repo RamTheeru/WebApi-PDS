@@ -48,5 +48,18 @@ namespace pdstest.DAL
         {
             return _ops.GetLoginUserInfo(username,password);
         }
-}
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "")
+        {
+            return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status);
+        }
+
+        public DataBaseResult InsertVoucher(Voucher input)
+        {
+            return _ops.InsertVoucher(input);
+        }
+        public DataBaseResult InsertLedger(Ledger input)
+        {
+            return _ops.InsertLedger(input);
+        }
+    }
 }

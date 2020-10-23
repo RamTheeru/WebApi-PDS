@@ -21,6 +21,8 @@ namespace pdstest.DAL
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
+            sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
+            sqllib["LedgerInsertProc"] = "usp_InsertLedger";
             return sqllib;
         }
 
@@ -55,6 +57,47 @@ namespace pdstest.DAL
                     text = string.Format("select * from register where IsActive = 0 and StateCode = '{0}'",stationCode);
                 else
                     text = "select * from register where IsActive = 0";
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public  static string GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int page=1, int pagesize=5, string status="")
+        {
+            /*SELECT* FROM Constants
+                        LIMIT 10/*range , 5/*pagesize ;
+            event_date BETWEEN '2018-01-01 12:00:00' AND '2018-01-01 23:30:00';*/
+            string text = "";
+            int range = 0;
+            try
+            {
+                range = (pagesize * page) - pagesize;
+                if(!string.IsNullOrEmpty(table))
+                {
+                    if (table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate) && !string.IsNullOrEmpty(status))
+                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                            "BETWEEN '{1}' AND '{2}') AND VoucherStatus = '{3}' LIMIT {4},{5};", stationId, vstartDate, vEndDate,status ,range, pagesize);
+                    else if (table.ToLower() == "voucher" && string.IsNullOrEmpty(vEndDate) && !string.IsNullOrEmpty(status))
+                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                              "<= '{1}')  AND VoucherStatus = '{2}' LIMIT {3},{4};", stationId, vstartDate, status,range, pagesize);
+                    else if(table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate))
+                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                            "BETWEEN '{1}' AND '{2}') LIMIT {3},{4};", stationId, vstartDate,vEndDate,range,pagesize);
+                    else if (table.ToLower() == "voucher" && string.IsNullOrEmpty(vEndDate))
+                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                              "<= '{1}')  LIMIT {2},{3};", stationId, vstartDate, range, pagesize);
+                    else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vEndDate))
+                        text = string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
+                              "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, pagesize);
+
+
+                }
+           
 
             }
             catch (Exception e)
@@ -178,7 +221,45 @@ namespace pdstest.DAL
             return text;
         }
 
-    
+        public static string GetVoucherInsertQuery()
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+
+                text = _dbQueries["VoucherInsertProc"]; 
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+
+        public static string GetLedgerInsertQuery()
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+
+                text = _dbQueries["LedgerInsertProc"];
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+
+
 
 
     }

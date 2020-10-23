@@ -12,7 +12,13 @@ namespace pdstest.Models
         public UserType userInfo { get; set; }
         public List<UserType> Usertypes { get; set; }
         public List<Designation> Designations { get; set; } 
+        public List<Voucher> vouchers { get; set; }
+        public List<Ledger> ledgers { get; set; }
+        public Voucher voucher { get; set; }
+        public Ledger ledger { get; set; }
         public string EmployeeName { get; set; }
+
+        public string VoucerNumber { get; set; }
         public string CommandType { get; set; }
         public Employee employee { get; set; }
         public RegisterEmployee registerEmployee { get; set; }

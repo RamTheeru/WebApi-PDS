@@ -16,5 +16,8 @@ namespace pdstest.services
         DataBaseResult GetEmployees(string stationCode = "");
         DataBaseResult GetLoginUserInfo(string username, string password);
         DataBaseResult ApproveUser(int registerId);
+        DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "");
+        DataBaseResult InsertVoucher(Voucher input);
+        DataBaseResult InsertLedger(Ledger input);
     }
 }

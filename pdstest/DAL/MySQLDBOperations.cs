@@ -605,6 +605,255 @@ namespace pdstest.DAL
             return dbr;
         }
 
+        public DataBaseResult InsertVoucher(Voucher input)
+        {
+            string insertQuery = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlParameter param;
+
+            try
+            {
+                dbr.CommandType = "Insert";
+                insertQuery = DBConnection.GetVoucherInsertQuery();
+
+                if (string.IsNullOrEmpty(insertQuery) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        cmd.CommandText = insertQuery;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Connection = conn;
+
+                        param = new MySqlParameter("@VoucherNumber", input.VoucherNumber);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@VoucherDate", input.VoucherDate);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.DateTime;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@PurposeOfPayment", input.PurposeOfPayment);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@PartyName", input.PartyName);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 30;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@NetAmount", input.NetAmount);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@TotalAmount", input.TotalAmount);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@TaxAmount", input.TaxAmount);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@StationId", input.StationId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+
+                        MySqlParameter output = new MySqlParameter();
+                        output.ParameterName = "@VId";
+                        output.MySqlDbType = MySqlDbType.Int32;
+                        output.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(output);
+
+                        MySqlParameter output2 = new MySqlParameter();
+                        output2.ParameterName = "@VoucherNum";
+                        output2.MySqlDbType = MySqlDbType.VarChar;
+                        output2.Size = 50;
+                        output2.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(output2);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+
+                        string vId = output.Value.ToString();
+
+                        string vNum = output2.Value.ToString();
+                        conn.Close();
+                        dbr.Id = string.IsNullOrEmpty(vId) ? 0 : Convert.ToInt32(vId);
+                        if (dbr.Id > 0)
+                        {
+                            dbr.VoucherNumber = vNum;
+                            dbr.Status = true;
+                            dbr.Message = "Voucher Added Successfully!!!";
+                        }
+                        else
+                        {
+                            dbr.Id = 0;
+                            dbr.EmployeeName = "";
+                            dbr.Status = false;
+                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
+
+                        }
+
+                    }
+
+                }
+
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Id = 0;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Id = 0;
+                dbr.Message = e.Message;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                throw e;
+
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+        }
+
+        public DataBaseResult InsertLedger(Ledger input)
+        {
+            string insertQuery = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlParameter param;
+
+            try
+            {
+                dbr.CommandType = "Insert";
+                insertQuery = DBConnection.GetLedgerInsertQuery();
+
+                if (string.IsNullOrEmpty(insertQuery) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        cmd.CommandText = insertQuery;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Connection = conn;
+
+                        param = new MySqlParameter("@CreditDate", input.CreditDate);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.DateTime;
+                        cmd.Parameters.Add(param);
+
+
+                        param = new MySqlParameter("@Credit", input.Credit);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+
+                        param = new MySqlParameter("@StationId", input.StationId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+
+                        MySqlParameter output = new MySqlParameter();
+                        output.ParameterName = "@CreditId";
+                        output.MySqlDbType = MySqlDbType.Int32;
+                        output.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(output);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+
+                        string lId = output.Value.ToString();
+
+                        conn.Close();
+                        dbr.Id = string.IsNullOrEmpty(lId) ? 0 : Convert.ToInt32(lId);
+                        if (dbr.Id > 0)
+                        {
+                            dbr.Status = true;
+                            dbr.Message = "Credit Added Successfully!!!";
+                        }
+                        else
+                        {
+                            dbr.Id = 0;
+                            dbr.EmployeeName = "";
+                            dbr.Status = false;
+                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
+
+                        }
+
+                    }
+
+                }
+
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Id = 0;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Id = 0;
+                dbr.Message = e.Message;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                throw e;
+
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+        }
+
 
         public DataBaseResult GetConstants()
         {
@@ -691,6 +940,96 @@ namespace pdstest.DAL
 
 
         }
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "")
+        {
+            string getSelectQuery = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                getSelectQuery = DBConnection.GetRecordsforPagination(stationId, table,vstartDate,vEndDate,page,pagesize,status);
+
+                if (string.IsNullOrEmpty(getSelectQuery) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        DataSet ds = new DataSet();
+                        dbr.ds = new DataSet();
+                        // sda = new MySqlDataAdapter(getUserInfo, conn);
+                        //sda.SelectCommand.CommandType = CommandType.Text;
+                        //sda.Fill(ds);
+                        cmd = new MySqlCommand(getSelectQuery, conn);
+                        DataTable temp = new DataTable();
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        adapter.Fill(temp);
+
+                        ds.Tables.Add(temp);
+                        int count = 0;
+                        count = ds.Tables[0].Rows.Count;
+                        if (ds.Tables.Count > 0 && count > 0)
+                        {
+                            //foreach (DataRow dr in dt.Rows)
+                            //{
+                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                            //}
+                            dbr.ds = ds;
+                            dbr.Message = "Record(s) retreived Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else if (count == 0)
+                        {
+                            dbr.ds = ds;
+                            dbr.Message = "No Records Found for this request!!";
+                            dbr.Status = true;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
         public DataBaseResult GetLoginUserInfo(string username,string password)
         {
             string getUserInfo = "";
@@ -717,7 +1056,6 @@ namespace pdstest.DAL
                     {
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        DataTable dt = new DataTable();
                         // sda = new MySqlDataAdapter(getUserInfo, conn);
                         //sda.SelectCommand.CommandType = CommandType.Text;
                         //sda.Fill(ds);
