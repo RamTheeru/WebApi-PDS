@@ -215,6 +215,11 @@ namespace pdstest.DAL
                         param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param); 
+
+                        param = new MySqlParameter("@StationId", input.StationId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
 
                         MySqlParameter output = new MySqlParameter();
@@ -287,7 +292,7 @@ namespace pdstest.DAL
             return dbr;
         }
 
-        public DataBaseResult CreateEmployee(Employee input)
+        public DataBaseResult CreateEmployee(Employee input,bool isemployee=false)
         {
             string insertQuery = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -486,6 +491,11 @@ namespace pdstest.DAL
                         param.MySqlDbType = MySqlDbType.Bit;
                         cmd.Parameters.Add(param);
 
+                        param = new MySqlParameter("@IsEmployee", isemployee);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Bit;
+                        cmd.Parameters.Add(param);
+                        
                         param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Int32;
@@ -533,6 +543,11 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 30;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@StationId", input.StationId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
 
                         MySqlParameter output = new MySqlParameter();
@@ -940,18 +955,18 @@ namespace pdstest.DAL
 
 
         }
-        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "")
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "", bool isEmployee = false)
         {
-            string getSelectQuery = "";
+            Dictionary<string, string> getSelectQuery = new Dictionary<string, string>();
             DataBaseResult dbr = new DataBaseResult();
             MySqlCommand cmd = new MySqlCommand();
             MySqlDataAdapter sda;
             try
             {
                 dbr.CommandType = "Select";
-                getSelectQuery = DBConnection.GetRecordsforPagination(stationId, table,vstartDate,vEndDate,page,pagesize,status);
+                getSelectQuery = DBConnection.GetRecordsforPagination(stationId, table,vstartDate,vEndDate,page,pagesize,status,isEmployee);
 
-                if (string.IsNullOrEmpty(getSelectQuery) || string.IsNullOrEmpty(connectionString))
+                if (string.IsNullOrEmpty(getSelectQuery["main"]) || string.IsNullOrEmpty(connectionString))
                 {
                     dbr.Id = 0;
                     dbr.Message = "Something Wrong with getting DB Commands!!";
@@ -969,20 +984,22 @@ namespace pdstest.DAL
                         // sda = new MySqlDataAdapter(getUserInfo, conn);
                         //sda.SelectCommand.CommandType = CommandType.Text;
                         //sda.Fill(ds);
-                        cmd = new MySqlCommand(getSelectQuery, conn);
+                        cmd = new MySqlCommand(getSelectQuery["main"], conn);
                         DataTable temp = new DataTable();
                         MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                         adapter.Fill(temp);
 
                         ds.Tables.Add(temp);
-                        int count = 0;
-                        count = ds.Tables[0].Rows.Count;
+                        cmd = new MySqlCommand(getSelectQuery["count"], conn);
+                        int count =  0;
+                        count = int.Parse(cmd.ExecuteScalar().ToString());
                         if (ds.Tables.Count > 0 && count > 0)
                         {
                             //foreach (DataRow dr in dt.Rows)
                             //{
                             //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
                             //}
+                            dbr.QueryTotalCount = count;
                             dbr.ds = ds;
                             dbr.Message = "Record(s) retreived Successfully!!!";
                             dbr.Status = true;
@@ -1285,7 +1302,7 @@ namespace pdstest.DAL
 
         }
 
-        public DataBaseResult GetEmployees(string stationCode = "")
+        public DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false)
         {
             string getEmployees = "";
             DataBaseResult dbr = new DataBaseResult();

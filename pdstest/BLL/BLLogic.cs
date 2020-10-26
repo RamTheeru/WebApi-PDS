@@ -183,7 +183,7 @@ namespace pdstest.BLL
             {
                 
                 result.userInfo = new UserType();
-                dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate, input.page, input.pagesize, input.status);
+                dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate="", input.page=1, input.pagesize=5, input.status);
                 
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -221,8 +221,8 @@ namespace pdstest.BLL
 
                         }
                         result.vouchers = vouchs;
-
-
+                        result.QueryTotalCount = dbr.QueryTotalCount;
+ 
                     }
                     else if (input.table.ToLower() == "ledger")
                     {
@@ -260,11 +260,17 @@ namespace pdstest.BLL
 
                         }
                         result.ledgers = ledgs;
-
+                        result.QueryTotalCount = dbr.QueryTotalCount;
                     }
 
+                    if (result.QueryTotalCount > 0)
+                    {
+                        double pages = Convert.ToDouble((result.QueryTotalCount / input.pagesize));
+                        result.QueryPages = (int)Math.Round(pages, MidpointRounding.AwayFromZero);
+                    }
+                    
 
-                        result.Message = dbr.Message;
+                    result.Message = dbr.Message;
                     result.Status = dbr.Status;
                     result.CommandType = dbr.CommandType;
                 }
@@ -370,14 +376,14 @@ namespace pdstest.BLL
             return result;
         }
 
-        public APIResult GetEmployees(string stationCode = "")
+        public APIResult GetEmployees(APIInput input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 result.employees = new List<Employee>();
-                dbr = ops.GetEmployees(stationCode);
+                dbr = ops.GetPaginationRecords(input.stationId,"employees",string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
                 List<Employee> emps = new List<Employee>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -481,13 +487,13 @@ namespace pdstest.BLL
 
         }
 
-        public APIResult CreateEmployee(Employee input)
+        public APIResult CreateEmployee(Employee input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
-                dbr = ops.CreateEmployee(input);
+                dbr = ops.CreateEmployee(input,isEmployee);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
                 result.Id = dbr.Id;

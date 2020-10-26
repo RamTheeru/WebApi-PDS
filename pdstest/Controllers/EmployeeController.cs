@@ -228,14 +228,39 @@ namespace pdstest.Controllers
 
         [HttpGet("Employees")]
 
-        public IActionResult GetEmployees(string stationCode = "")
+        public IActionResult GetEmployees(APIInput input)
         {
             APIResult result = new APIResult();
             try
             {
-                if(stationCode != null)
-                    stationCode = stationCode.Replace(@"\", "");
-                result = logic.GetEmployees(stationCode);
+                //if(stationCode != null)
+                //    stationCode = stationCode.Replace(@"\", "");
+                result = result = logic.GetEmployees(input, true);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+
+
+        [HttpGet("DAEmployees")]
+
+        public IActionResult GetDAEmployees(APIInput input)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                //if (stationCode != null)
+                //    stationCode = stationCode.Replace(@"\", "");
+                result = logic.GetEmployees(input,false);
 
             }
             catch (Exception e)
@@ -295,10 +320,10 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.UserType)))
+                if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0)
                 {
                     obj.IsRegister = false;
-                    result = logic.CreateEmployee(obj);
+                    result = logic.CreateEmployee(obj,true);
 
                 }
                 else
@@ -324,6 +349,45 @@ namespace pdstest.Controllers
             }
             return Ok(result);
            // return new CustomResult(result);
+
+        }
+
+        [HttpPost]
+        [Route("CreateDAEmployee")]
+        public IActionResult CreateDAEmployee(Employee obj)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0)
+                {
+                    obj.IsRegister = false;
+                    result = logic.CreateEmployee(obj,false);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "INSERT";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
 
         }
 

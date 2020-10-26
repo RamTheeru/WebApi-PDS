@@ -15,9 +15,9 @@ namespace pdstest.DAL
         //{
         //    _ops = ops;
         //}
-        public DataBaseResult CreateEmployee(Employee input)
+        public DataBaseResult CreateEmployee(Employee input,bool isEmployee=false)
         {
-           return _ops.CreateEmployee(input);
+           return _ops.CreateEmployee(input,isEmployee);
         }
 
         public DataBaseResult GetConstants()
@@ -25,9 +25,9 @@ namespace pdstest.DAL
             return _ops.GetConstants();
         }
 
-        public DataBaseResult GetEmployees(string stationCode = "")
+        public DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false)
         {
-            return _ops.GetEmployees(stationCode);
+            return _ops.GetEmployees(stationCode,isEmployee);
         }
 
         public DataBaseResult GetRegisteredUsers(string stationCode = "")
@@ -48,9 +48,9 @@ namespace pdstest.DAL
         {
             return _ops.GetLoginUserInfo(username,password);
         }
-        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "")
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "", bool isEmployee = false)
         {
-            return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status);
+            return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status,isEmployee);
         }
 
         public DataBaseResult InsertVoucher(Voucher input)

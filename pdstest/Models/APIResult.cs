@@ -17,7 +17,8 @@ namespace pdstest.Models
         public Voucher voucher { get; set; }
         public Ledger ledger { get; set; }
         public string EmployeeName { get; set; }
-
+        public int QueryTotalCount { get; set; }
+        public int QueryPages { get; set; }
         public string VoucerNumber { get; set; }
         public string CommandType { get; set; }
         public Employee employee { get; set; }

@@ -17,6 +17,7 @@ namespace pdstest.DAL
 
         public DataTable dt { get; set; }
         public string VoucherNumber { get; set; }
+        public int QueryTotalCount { get; set; }
 
         public string CommandType { get; set; }
     }

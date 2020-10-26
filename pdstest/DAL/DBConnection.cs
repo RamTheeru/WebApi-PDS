@@ -67,33 +67,61 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public  static string GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int page=1, int pagesize=5, string status="")
+        public  static Dictionary<string, string> GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int page=1, int pagesize=5, string status="",bool isEmployee=false)
         {
             /*SELECT* FROM Constants
                         LIMIT 10/*range , 5/*pagesize ;
             event_date BETWEEN '2018-01-01 12:00:00' AND '2018-01-01 23:30:00';*/
-            string text = "";
+            Dictionary<string, string> text = new Dictionary<string, string>();
             int range = 0;
             try
             {
+
                 range = (pagesize * page) - pagesize;
                 if(!string.IsNullOrEmpty(table))
                 {
                     if (table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate) && !string.IsNullOrEmpty(status))
-                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
-                            "BETWEEN '{1}' AND '{2}') AND VoucherStatus = '{3}' LIMIT {4},{5};", stationId, vstartDate, vEndDate,status ,range, pagesize);
+                    {
+                        text.Add("main", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                            "BETWEEN '{1}' AND '{2}') AND VoucherStatus = '{3}' LIMIT {4},{5};", stationId, vstartDate, vEndDate, status, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                            "BETWEEN '{1}' AND '{2}') AND VoucherStatus = '{3}';", stationId, vstartDate, vEndDate, status));
+                    }
                     else if (table.ToLower() == "voucher" && string.IsNullOrEmpty(vEndDate) && !string.IsNullOrEmpty(status))
-                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
-                              "<= '{1}')  AND VoucherStatus = '{2}' LIMIT {3},{4};", stationId, vstartDate, status,range, pagesize);
-                    else if(table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate))
-                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
-                            "BETWEEN '{1}' AND '{2}') LIMIT {3},{4};", stationId, vstartDate,vEndDate,range,pagesize);
+                    {
+                        text.Add("main", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                          "<= '{1}')  AND VoucherStatus = '{2}' LIMIT {3},{4};", stationId, vstartDate, status, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                         "<= '{1}')  AND VoucherStatus = '{2}';", stationId, vstartDate, status));
+                    }
+                    else if (table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate))
+                    {
+                        text.Add("main", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                        "BETWEEN '{1}' AND '{2}') LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                        "BETWEEN '{1}' AND '{2}');", stationId, vstartDate, vEndDate));
+                    }
                     else if (table.ToLower() == "voucher" && string.IsNullOrEmpty(vEndDate))
-                        text = string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
-                              "<= '{1}')  LIMIT {2},{3};", stationId, vstartDate, range, pagesize);
+                    {
+                        text.Add("main", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                         "<= '{1}')  LIMIT {2},{3};", stationId, vstartDate, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM Voucher where StationId = {0} AND (VoucherDate " +
+                        "<= '{1}');", stationId, vstartDate));
+
+                    }
                     else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vEndDate))
-                        text = string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
-                              "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, pagesize);
+                    {
+                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
+                              "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
+                          "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
+                    }
+                    else if (table.ToLower() == "employees")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, isEmployee, range, pagesize));
+                        text.Add("count", string.Format("SELECT * FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 ;", stationId, isEmployee));
+
+                    }
 
 
                 }
@@ -103,7 +131,7 @@ namespace pdstest.DAL
             catch (Exception e)
             {
                 string msg = e.Message;
-                text = "";
+                text = new Dictionary<string, string>();
 
             }
             return text;
