@@ -58,7 +58,7 @@ namespace pdstest.Controllers
                 result = logic.GetLoginUserInfo(username, password);
                 if (!string.IsNullOrEmpty(result.userInfo.User))
                 {
-                    if (result.userInfo.Valid)
+                    if (result.userInfo.Valid && result.userInfo.UserTypeId>0)
                     {
                         token = GenerateJSONWebToken(result.userInfo);
                     }
@@ -117,6 +117,7 @@ namespace pdstest.Controllers
                 {
                 new Claim(JwtRegisteredClaimNames.Sub,user.User),
                 new Claim(JwtRegisteredClaimNames.Email,user.User),
+                 new Claim(JwtRegisteredClaimNames.Typ,user.UserTypeId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
              };
                 var token = new JwtSecurityToken(
