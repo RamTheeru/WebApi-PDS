@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using pdstest.Models;
+using DocumentFormat.OpenXml.EMMA;
+using Microsoft.OpenApi.Models;
 
 namespace pdstest
 {
@@ -33,6 +35,7 @@ namespace pdstest
         {
             services.AddCors();
             services.AddControllers();
+
             ////services.AddTransient<IConnection, MySqlOps>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -52,6 +55,7 @@ namespace pdstest
                 }
                 );
             services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
+            services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
             // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -75,9 +79,12 @@ namespace pdstest
             {
                 endpoints.MapControllers();
             });
+
             // custom jwt auth middleware
-           
+
             //app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
         }
     }
