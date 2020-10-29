@@ -19,14 +19,25 @@ namespace pdstest.Models
         APIResult result = new APIResult();
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var check = context.HttpContext.Items["userallow"];
+           var userRole =  context.HttpContext.Items["userrole"] ;
+           var user =  context.HttpContext.Items["user"] ;
+           var userType =  context.HttpContext.Items["usertype"];
             var msg = context.HttpContext.Items["msg"];
-            if (check == null)
+            if (userRole != null && user != null && userType != null && msg == null)
             {
-                result.Message = msg != null ?"Error occured : "+msg : "Not Authorized to process this request!!";
+                result.Message = "You are not Authorized to process this request. Please try login again!!!";
                 result.Status = false;
                 // not logged in
                 context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status401Unauthorized };
+            }
+            else 
+            {
+                result.Message = "Something went wrong while authorizing your request!! " + Environment.NewLine + " Reason :" + msg;
+                result.Status = false;
+                // not logged in
+                context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status500InternalServerError };
+
+
             }
         }
     }

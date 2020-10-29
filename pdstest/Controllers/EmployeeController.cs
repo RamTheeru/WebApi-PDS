@@ -115,7 +115,7 @@ namespace pdstest.Controllers
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
                 var claims = new[]
                 {
-                new Claim(JwtRegisteredClaimNames.Sub,user.User),
+                new Claim(JwtRegisteredClaimNames.Sub,user.Role),
                 new Claim(JwtRegisteredClaimNames.Email,user.User),
                  new Claim(JwtRegisteredClaimNames.Typ,user.UserTypeId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
