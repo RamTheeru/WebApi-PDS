@@ -441,7 +441,7 @@ namespace pdstest.BLL
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
                 result.Id = dbr.Id;
-                result.VoucerNumber = dbr.VoucherNumber;
+                result.VoucherNumber = dbr.VoucherNumber;
                 result.CommandType = dbr.CommandType;
 
             }
@@ -451,7 +451,7 @@ namespace pdstest.BLL
                 result.Status = false;
                 result.CommandType = "INSERT";
                 result.Id = 0;
-                result.VoucerNumber = "";
+                result.VoucherNumber = "";
                 throw e;
 
 

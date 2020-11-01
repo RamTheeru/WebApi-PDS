@@ -19,7 +19,7 @@ namespace pdstest.Models
         public string EmployeeName { get; set; }
         public int QueryTotalCount { get; set; }
         public int QueryPages { get; set; }
-        public string VoucerNumber { get; set; }
+        public string VoucherNumber { get; set; }
         public string CommandType { get; set; }
         public Employee employee { get; set; }
         public RegisterEmployee registerEmployee { get; set; }
