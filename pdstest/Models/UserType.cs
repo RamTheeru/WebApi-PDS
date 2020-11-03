@@ -9,8 +9,14 @@ namespace pdstest.Models
     {
         public int UserTypeId { get; set; }
         public string User { get; set; }
+        public int EmployeeId { get; set; }
         public string Role { get; set; }
-
+        public string Token { get; set; }
         public bool Valid { get; set; }
+        public DateTime StartDate { get; set; }
+        public string SessionStartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string SessionEndDate { get; set; }
+        public bool IsAlreadySession { get; set; }
     }
 }

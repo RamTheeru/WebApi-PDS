@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration.Json;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using pdstest.Models;
 
 namespace pdstest.DAL
 {
@@ -16,13 +17,14 @@ namespace pdstest.DAL
         public static Dictionary<string, string> StoreQuiries()
         {
             Dictionary<string, string> sqllib = new Dictionary<string, string>();
-            sqllib["LocalDB"] = @"server=localhost;userid=sa;password=12345;database=PDS";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
+            sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=1234;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
             sqllib["AWSDB"] = "";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
             sqllib["LedgerInsertProc"] = "usp_InsertLedger";
+            sqllib["CreateSessionProc"] = "usp_CreateSession";
             return sqllib;
         }
 
@@ -136,13 +138,34 @@ namespace pdstest.DAL
             }
             return text;
         }
+
+        public static string GetLoginSessionInfo(UserType info)
+        {
+            string text = "";
+
+            try
+            {
+                string currentDate = DateTime.Now.DateTimetoString();
+                DateTime nw = currentDate.StringtoDateTime();
+                text = string.Format("SELECT EmployeeId,UserTypeId,UserName,Token FROM UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
+                    " AND EmployeeId = {2}  AND StartDate >= '{3}' AND  EndDate <= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,nw);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetLoginUserInfo(string username,string password)
         {
             string text = "";
 
             try
             {
-                    text = string.Format("SELECT UserTypeId,LoginType,FirstName FROM employees where FirstName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
+                    text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName FROM employees where FirstName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
 
             }
             catch (Exception e)
@@ -257,6 +280,24 @@ namespace pdstest.DAL
             {
 
                 text = _dbQueries["VoucherInsertProc"]; 
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetCreateSessionQuery()
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+
+                text = _dbQueries["CreateSessionProc"];
 
             }
             catch (Exception e)

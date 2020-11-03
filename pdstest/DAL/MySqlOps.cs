@@ -61,5 +61,11 @@ namespace pdstest.DAL
         {
             return _ops.InsertLedger(input);
         }
+
+        public DataBaseResult CreateSession(UserType input)
+        {
+            return _ops.CreateSession(input);
+        }
+
     }
 }

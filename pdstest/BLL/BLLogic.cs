@@ -24,6 +24,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
+                dbr.ds = new System.Data.DataSet();
                 result.Designations = new List<Designation>();
                 result.Usertypes = new List<UserType>();
                 dbr = ops.GetConstants();
@@ -126,6 +127,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
+                dbr.ds = new System.Data.DataSet();
                 result.registerEmployees = new List<RegisterEmployee>();
                 dbr = ops.GetRegisteredUsers(stationCode);
                 List<RegisterEmployee> regs = new List<RegisterEmployee>();
@@ -181,7 +183,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
-                
+                dbr.ds = new System.Data.DataSet();
                 result.userInfo = new UserType();
                 dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate="", input.page=1, input.pagesize=5, input.status);
                 
@@ -297,15 +299,16 @@ namespace pdstest.BLL
 
             return result;
         }
-
-        public APIResult GetLoginUserInfo(string username,string password)
+        
+        public APIResult CreateSession(UserType usr)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 result.userInfo = new UserType();
-                dbr = ops.GetLoginUserInfo(username,password);
+                dbr = ops.CreateSession(usr);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -314,9 +317,72 @@ namespace pdstest.BLL
                     for (int i = 0; i < count; i++)
                     {
                         int userTypeid = 0;
+                        int employeeid = 0;
+                        string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool succ = int.TryParse(empId, out employeeid);
+                        string usertype = dbr.ds.Tables[0].Rows[i]["UserType"].ToString();
+                        bool success = int.TryParse(usertype, out userTypeid);
+                        userTypeid = (success == true) ? userTypeid : 0;
+                        employeeid = (succ == true) ? employeeid : 0;
+                        user.EmployeeId = employeeid;
+                        user.UserTypeId = userTypeid; 
+                        user.Token = dbr.ds.Tables[0].Rows[i]["UserToken"].ToString();
+                        user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
+                        user.IsAlreadySession = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsAlreadySession"].ToString());
+                        user.Valid = true;
+                        user.Role = usr.Role;
+
+                    }
+                    result.userInfo = user;
+
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+                }
+                if (user.IsAlreadySession)
+                    result.Message = "Session exists already!!! Cannot Create a new session!!!";
+                else
+                    result.Message = dbr.Message;
+
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Session Insert";
+                throw e;
+
+            }
+
+            return result;
+        }
+        public APIResult GetLoginUserInfo(string username, string password)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                result.userInfo = new UserType();
+                dbr = ops.GetLoginUserInfo(username, password);
+                UserType user = new UserType();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int userTypeid = 0;
+                        int employeeid = 0;
+                        string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool succ = int.TryParse(empId, out employeeid);
                         string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();
-                        bool  success = int.TryParse(usertype, out userTypeid);
-                        userTypeid = (success==true)? userTypeid : 0;
+                        bool success = int.TryParse(usertype, out userTypeid);
+                        userTypeid = (success == true) ? userTypeid : 0;
+                        employeeid = (succ == true) ? employeeid : 0;
+                        user.EmployeeId = employeeid;
                         user.UserTypeId = userTypeid;
                         user.Role = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
                         user.User = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
@@ -351,12 +417,14 @@ namespace pdstest.BLL
 
             return result;
         }
+       
         public APIResult ApproveUser(int registerId)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.ApproveUser(registerId);
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
@@ -382,6 +450,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 result.employees = new List<Employee>();
                 dbr = ops.GetPaginationRecords(input.stationId,"employees",string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
                 List<Employee> emps = new List<Employee>();
@@ -437,6 +506,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.InsertVoucher(input);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
@@ -466,6 +536,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.InsertLedger(input);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
@@ -493,6 +564,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.CreateEmployee(input,isEmployee);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
@@ -521,6 +593,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.RegisterEmployee(input);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;

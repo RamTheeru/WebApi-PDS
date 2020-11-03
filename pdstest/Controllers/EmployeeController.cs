@@ -52,15 +52,29 @@ namespace pdstest.Controllers
 
                 }
                 if (username != null)
-                    username = username.Trim('"'); ;
+                    username = username.CleanString(); 
                 if (password != null)
-                    password = password.Trim('"'); ;
+                    password = password.CleanString(); 
                 result = logic.GetLoginUserInfo(username, password);
                 if (!string.IsNullOrEmpty(result.userInfo.User))
                 {
                     if (result.userInfo.Valid && result.userInfo.UserTypeId>0)
                     {
                         token = GenerateJSONWebToken(result.userInfo);
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            result.userInfo.Token = token;
+                            result = logic.CreateSession(result.userInfo);
+
+                        }
+                        else {
+                            result.Message = "Something Went Wrong : Session cant be generated for this user";
+                            result.Status = false;
+                            result.CommandType = "SELECT";
+                            result.EmployeeName = username;
+
+                        }
+
                     }
                     else
                     {
@@ -70,25 +84,18 @@ namespace pdstest.Controllers
                         result.EmployeeName = username;
 
                     }
-                    if (string.IsNullOrEmpty(token))
-                    {
-                        result.Message = "Something Went Wrong : Session cant be generated for this user";
-                        result.Status = false;
-                        result.CommandType = "SELECT";
-                        result.EmployeeName = username;
 
-                    }
-                    result.Token = token;
+                   
                     result.Status = true;
-                    result.CommandType = "SELECT";
+                    result.CommandType = result.CommandType;
                     result.EmployeeName = username;
-                    result.Message = "User Authenticated Sucessfully with Session!!!!";
+                    result.Message = result.Message;
                 }
                 else 
                 {
                     result.Message = "No User Found : User Authentication failed!!!";
                     result.Status = false;
-                    result.CommandType = "SELECT";
+                    result.CommandType = "Session Insert";
                     result.EmployeeName = username;
 
                 }
@@ -117,6 +124,7 @@ namespace pdstest.Controllers
                 {
                 new Claim(JwtRegisteredClaimNames.Sub,user.Role),
                 new Claim(JwtRegisteredClaimNames.Email,user.User),
+                   new Claim(JwtRegisteredClaimNames.NameId,user.EmployeeId.ToString()),
                  new Claim(JwtRegisteredClaimNames.Typ,user.UserTypeId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
              };
@@ -171,10 +179,10 @@ namespace pdstest.Controllers
 
             try
             {
-   
-                    if (stationCode != null)
-                        stationCode = stationCode.Replace(@"\", "");
-                    result = logic.GetRegisteredUsers(stationCode);
+
+                if (stationCode != null)
+                    stationCode = stationCode.CleanString();
+                 result = logic.GetRegisteredUsers(stationCode);
                 
 
             }

@@ -19,5 +19,6 @@ namespace pdstest.services
         DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "", bool isEmployee = false);
         DataBaseResult InsertVoucher(Voucher input);
         DataBaseResult InsertLedger(Ledger input);
+        DataBaseResult CreateSession(UserType input);
     }
 }
