@@ -1450,8 +1450,8 @@ namespace pdstest.DAL
 
                     }
                     result.userInfo = user;
-                    dbr.Message = "Session Details retrieved Successfully!!!";
-                    dbr.Status = true;
+                    result.Message = "Session Details retrieved Successfully!!!";
+                    result.Status = true;
                 }
                 else 
                 {
@@ -1473,13 +1473,13 @@ namespace pdstest.DAL
                                int i = cmd2.ExecuteNonQuery();
                                 if (i > 0)
                                 {
-                                    dbr.Message = "Existing Session Expired,  Try login again!!!";
-                                    dbr.Status = true;
+                                    result.Message = "Existing Session Expired,  Try login again!!!";
+                                    result.Status = true;
                                     result.userInfo.Valid = false;
                                 }
                                 else {
-                                    dbr.Message = "Something Went Wrong!!! Unable to remove Existing Expired Session!!!";
-                                    dbr.Status = false;
+                                    result.Message = "Unable to remove Existing Expired Session!!! Please Logout and Login again!!!";
+                                    result.Status = false;
                                     result.userInfo.Valid = false;
                                 }
 
@@ -1500,7 +1500,7 @@ namespace pdstest.DAL
             {
                 result.userInfo.Valid = false;
                 result.Status = false;
-                dbr.Message = e.Message;
+                result.Message = e.Message;
                 throw e;
 
             }
