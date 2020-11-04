@@ -146,9 +146,26 @@ namespace pdstest.DAL
             try
             {
                 string currentDate = DateTime.Now.DateTimetoString();
-                DateTime nw = currentDate.StringtoDateTime();
+                ///DateTime nw = currentDate.StringtoDateTime();
                 text = string.Format("SELECT EmployeeId,UserTypeId,UserName,Token FROM UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
-                    " AND EmployeeId = {2}  AND StartDate >= '{3}' AND  EndDate <= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,nw);
+                    " AND EmployeeId = {2}  AND StartDate >= '{3}' AND  EndDate <= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,currentDate);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetLoginSessionInfoByToken(string token)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select * from UserSessions where Token = '{0}';", token);
 
             }
             catch (Exception e)

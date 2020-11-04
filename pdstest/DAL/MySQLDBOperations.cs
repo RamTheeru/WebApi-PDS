@@ -1152,7 +1152,7 @@ namespace pdstest.DAL
             Dictionary<string, string> getSelectQuery = new Dictionary<string, string>();
             DataBaseResult dbr = new DataBaseResult();
             MySqlCommand cmd = new MySqlCommand();
-            MySqlDataAdapter sda;
+           // MySqlDataAdapter sda;
             try
             {
                 dbr.CommandType = "Select";
@@ -1418,7 +1418,153 @@ namespace pdstest.DAL
 
 
         }
+        public DataBaseResult GetLoginUserInfoByToken(string userToken)
+        {
+            string getUserInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "Select";
+                getUserInfo = DBConnection.GetLoginSessionInfoByToken(userToken);
 
+                if (string.IsNullOrEmpty(getUserInfo) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    {
+                        DataSet ds = new DataSet();
+                        dbr.ds = new DataSet();
+                        // sda = new MySqlDataAdapter(getUserInfo, conn);
+                        //sda.SelectCommand.CommandType = CommandType.Text;
+                        //sda.Fill(ds);
+                        cmd = new MySqlCommand(getUserInfo, conn);
+                        DataTable temp = new DataTable();
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        adapter.Fill(temp);
+
+                        ds.Tables.Add(temp);
+                        int count = 0;
+                        count = ds.Tables[0].Rows.Count;
+                        if (ds.Tables.Count > 0 && count > 0)
+                        {
+                            //foreach (DataRow dr in dt.Rows)
+                            //{
+                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                            //}
+                            dbr.ds = ds;
+                            dbr.Message = "Record(s) retreived Successfully!!!";
+                            dbr.Status = true;
+
+                        }
+                        else if (count == 0)
+                        {
+                            dbr.ds = ds;
+                            dbr.Message = "No Records Found for this request!!";
+                            dbr.Status = true;
+
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
+        public APIResult GetLoginUserSessionInfoByToken(string userToken)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+
+                result.userInfo = new UserType();
+                dbr = new MySQLDBOperations().GetLoginUserInfoByToken(userToken);
+                UserType user = new UserType();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int userTypeid = 0;
+                        int employeeid = 0;
+                        string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool succ = int.TryParse(empId, out employeeid);
+                        string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();
+                        bool success = int.TryParse(usertype, out userTypeid);
+                        userTypeid = (success == true) ? userTypeid : 0;
+                        employeeid = (succ == true) ? employeeid : 0;
+                        user.EmployeeId = employeeid;
+                        user.UserTypeId = userTypeid;
+                        user.Token = dbr.ds.Tables[0].Rows[i]["Token"].ToString();
+                        user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
+                        user.Valid = true;
+
+                    }
+                    result.userInfo = user;
+                    result.Message = "Session Details retrieved Successfully!!!";
+                    result.Status = true;
+                }
+                else {
+              
+                    result.Message = "Invalid user with token, try Login again!!!";
+                    result.Status = false;
+
+                }
+                result.userInfo.Valid = false;
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.userInfo.Valid = false;
+                result.Status = false;
+                result.Message = e.Message;
+                throw e;
+
+            }
+
+            return result;
+
+        }
         public APIResult GetLoginUserSessionInfo(UserType usr)
         {
             APIResult result = new APIResult();
@@ -1462,6 +1608,7 @@ namespace pdstest.DAL
                         MySqlCommand cmd = new MySqlCommand();
                         cmd.CommandText = txt;
                         cmd.CommandType = CommandType.Text;
+                        conn.Open();
                         int res = (int)cmd.ExecuteScalar();
                         if (res > 0)
                         {
@@ -1482,12 +1629,13 @@ namespace pdstest.DAL
                                     result.Status = false;
                                     result.userInfo.Valid = false;
                                 }
-
+                                cmd2.Dispose();
                             }
                                 
 
                         }
-
+                        cmd.Dispose();
+                        conn.Close();
                     }
 
 

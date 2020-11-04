@@ -65,12 +65,12 @@ namespace pdstest.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
 
-            return Ok(); 
+            //return Ok(); 
         }
     }
 }

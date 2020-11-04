@@ -50,6 +50,7 @@ namespace pdstest.Models
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
+                context.Items["userToken"] = jwtToken;
                 var userRole = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "sub");
                 var user = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "email");
                 var userType = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "typ");
@@ -68,6 +69,7 @@ namespace pdstest.Models
                 context.Items["user"] = null;
                 context.Items["usertype"] = null;
                 context.Items["empId"] = null;
+                context.Items["userToken"] = null;
                 // do nothing if jwt validation fails
                 // user is not attached to context so request won't have access to secure routes
             }

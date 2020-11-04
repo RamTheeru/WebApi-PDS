@@ -19,7 +19,7 @@ namespace pdstest.Models
         }
         public static string DateTimetoString(this DateTime d)
         {
-            return d.ToString("MM/dd/yyyy HH:mm");
+            return d.ToString("yyyy-MM-dd HH:mm:ss");
         }
         public static string CleanString(this string s)
         {

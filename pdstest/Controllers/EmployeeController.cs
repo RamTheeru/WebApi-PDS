@@ -141,6 +141,7 @@ namespace pdstest.Controllers
             catch (Exception e)
             {
                 tkn = "";
+                throw e;
             }
             return tkn;
         }
