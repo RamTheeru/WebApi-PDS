@@ -148,7 +148,7 @@ namespace pdstest.DAL
                 string currentDate = DateTime.Now.DateTimetoString();
                 ///DateTime nw = currentDate.StringtoDateTime();
                 text = string.Format("SELECT EmployeeId,UserTypeId,UserName,Token FROM UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
-                    " AND EmployeeId = {2}  AND StartDate >= '{3}' AND  EndDate <= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,currentDate);
+                    " AND EmployeeId = {2}  AND StartDate <= '{3}' AND  EndDate >= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,currentDate);
 
             }
             catch (Exception e)

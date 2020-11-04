@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using pdstest.BLL;
 using pdstest.services;
 using pdstest.DAL;
+using System.Text;
 //using WebApi.Entities;
 
 namespace pdstest.Models
@@ -41,21 +42,42 @@ namespace pdstest.Models
                 usr.UserTypeId = userType != null ? (int)userType : 0;
                 usr.Role = userRole != null ? (string)userRole : "";
                 usr.EmployeeId = empId != null ? (int)empId : 0;
-                if (string.IsNullOrEmpty(tk) || !string.IsNullOrEmpty(errmsg))
+                if (string.IsNullOrEmpty(tk))
                 {
-                    string m = !string.IsNullOrEmpty(errmsg) ? "; Reason : "+errmsg : string.Empty;
-                    result.Message = "Invalid Token for this request " + string.Empty + m;
+                   
+                    result.Message = "Unauthorized request !!!!" ;
                     result.Status = false;
                     // not logged in
                     context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
                 }
-               else if (usr.EmployeeId == 0 || usr.UserTypeId == 0 || string.IsNullOrEmpty(usr.User))
+                else if (!string.IsNullOrEmpty(errmsg))
+                {
+                    StringBuilder st = new StringBuilder();
+                    string m = !string.IsNullOrEmpty(errmsg) ? "; Reason : " + errmsg : string.Empty;
+                    string msgage = "Invalid Token for this request ";
+                    if (m.Contains("expired"))
+                        msgage = msgage + "" + "Token Expired!!!,Please try Login again!!";
+                    else
+                        msgage = msgage + string.Empty + m;
+                    st.Append(msgage);
+                    result = new APIResult();
+                    result = new MySQLDBOperations().DeleteSession(usr, tk, true);
+                    st.Append(" Action : ");
+                    st.Append(result.Message);
+                    result.Message = st.ToString();
+                    result.Status = false;
+
+                    // not logged in
+                    context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
+
+                }
+                else if (usr.EmployeeId == 0 || usr.UserTypeId == 0 || string.IsNullOrEmpty(usr.User))
                 {
                     result = new MySQLDBOperations().GetLoginUserSessionInfoByToken(tk);
                     if (result.userInfo != null)
                     {
                         usr = result.userInfo;
-                        result = new MySQLDBOperations().GetLoginUserSessionInfo(usr);
+                        result = new MySQLDBOperations().ValidateLoginUserSession(usr);
                         if (!result.userInfo.Valid)
                         {
                             result.Message = result.Message;
@@ -84,7 +106,7 @@ namespace pdstest.Models
             }
             catch (Exception e)
             {
-                result.userInfo.Valid = false;
+                //result.userInfo.Valid = false;
                 result.Status = false;
                 result.Message = e.Message;
                 context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status500InternalServerError };

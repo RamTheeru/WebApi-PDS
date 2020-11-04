@@ -1514,13 +1514,14 @@ namespace pdstest.DAL
             try
             {
 
-                result.userInfo = new UserType();
+                
                 dbr = new MySQLDBOperations().GetLoginUserInfoByToken(userToken);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)
                 {
+                    result.userInfo = new UserType();
                     for (int i = 0; i < count; i++)
                     {
                         int userTypeid = 0;
@@ -1544,18 +1545,18 @@ namespace pdstest.DAL
                 }
                 else {
               
-                    result.Message = "Invalid user with token, try Login again!!!";
+                    result.Message = "Invalid token, try Login again!!!";
                     result.Status = false;
 
                 }
-                result.userInfo.Valid = false;
+                //result.userInfo.Valid = false;
 
 
 
             }
             catch (Exception e)
             {
-                result.userInfo.Valid = false;
+               // result.userInfo.Valid = false;
                 result.Status = false;
                 result.Message = e.Message;
                 throw e;
@@ -1565,7 +1566,98 @@ namespace pdstest.DAL
             return result;
 
         }
-        public APIResult GetLoginUserSessionInfo(UserType usr)
+        public APIResult DeleteSession(UserType info, string userToken = "", bool isToken = false)
+        {
+            APIResult result = new APIResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    if (!string.IsNullOrEmpty(userToken) && isToken)
+                        cmd.CommandText = string.Format("Delete From UserSessions WHERE Token = '{0}';", userToken);
+                    else
+                        cmd.CommandText = string.Format("Delete From UserSessions  where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
+                    " AND EmployeeId = {2};", info.User, info.UserTypeId, info.EmployeeId);
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = conn;
+                    int res = cmd.ExecuteNonQuery();
+                    if (res > 0 && isToken)
+                    {
+
+                        result.Message = "User Session Terminated along with token, Please try login again!!!!!";
+                        result.Status = false;
+
+                    }
+                    else if (res > 0 && !isToken)
+                    {
+                        result.Message = "Current Session terminated for this user, Please try login again!!!!!";
+                        result.Status = false;
+
+                    }
+                    else if (isToken)
+                    {
+                        using (MySqlConnection conn2 = new MySqlConnection(connectionString))
+                        {
+                            conn2.Open();
+                            cmd = new MySqlCommand();
+                            cmd.CommandText = string.Format("select COUNT(*) From UserSessions WHERE Token = '{0}';", userToken);
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Connection = conn2;
+                            MySqlDataReader reader = cmd.ExecuteReader();
+                            int res1 = 0;
+                            if (reader.HasRows)
+                                res1 = 1;
+                            if (res1 > 0)
+                            {
+                                result.Message = "Unable to terminate Session with invalid token or Session already terminated, Contact Support Team or try login again!!";
+                                result.Status = false;
+                            }
+                            conn2.Close();
+                        }
+                    }
+                    else if (!isToken)
+                    {
+                        using (MySqlConnection conn3 = new MySqlConnection(connectionString))
+                        {
+                                conn3.Open();
+                                cmd = new MySqlCommand();
+                            cmd.CommandText = string.Format("select COUNT(*) From UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
+                        " AND EmployeeId = {2};", info.User, info.UserTypeId, info.EmployeeId);
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Connection = conn3;
+                            MySqlDataReader reader = cmd.ExecuteReader();
+                            int res2 = 0;
+                            if (reader.HasRows)
+                                res2 = 1;
+                            if (res2 > 0)
+                            {
+                                result.Message = "Unable to terminate Session for this user , Contact Support Team!!";
+                                result.Status = false;
+                            }
+                            conn3.Close();
+                        }
+                    }
+                    conn.Close();
+                }
+
+
+            }
+            catch (Exception e)
+            {
+               // result.userInfo.Valid = false;
+                result.Status = false;
+                result.Message = e.Message;
+                throw e;
+
+            }
+            finally { cmd.Dispose(); }
+
+            return result;
+
+        }
+        public APIResult ValidateLoginUserSession(UserType usr)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -1603,33 +1695,44 @@ namespace pdstest.DAL
                 {
                     using (MySqlConnection conn = new MySqlConnection(connectionString))
                     {
-                        string txt = string.Format("SELECT EXISTS(SELECT COUNT(*) from UserSessions WHERE UserName='{0}'" +
-                            " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1);",user.User,user.UserTypeId,user.EmployeeId);
+                        string txt = string.Format("SELECT COUNT(*) from UserSessions WHERE UserName='{0}'" +
+                            " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1;",usr.User,usr.UserTypeId,usr.EmployeeId);
                         MySqlCommand cmd = new MySqlCommand();
                         cmd.CommandText = txt;
                         cmd.CommandType = CommandType.Text;
+
                         conn.Open();
-                        int res = (int)cmd.ExecuteScalar();
+                        cmd.Connection = conn;
+                        MySqlDataReader reader = cmd.ExecuteReader();
+                        int res =0;
+                        if (reader.HasRows)
+                        {
+                            res = 1;
+                        }
                         if (res > 0)
                         {
-                            using (MySqlCommand cmd2 = new MySqlCommand())
-                            { 
+                            using (MySqlConnection conn2 = new MySqlConnection(connectionString))
+                            {
+                                MySqlCommand cmd2 = new MySqlCommand();
+                                conn2.Open();
                                 cmd2.CommandText = string.Format("DELETE from UserSessions WHERE UserName='{0}'" +
-                            " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1);", user.User, user.UserTypeId, user.EmployeeId);
+                            " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1;", usr.User, usr.UserTypeId, usr.EmployeeId);
                                 cmd2.CommandType = CommandType.Text;
-                               int i = cmd2.ExecuteNonQuery();
+                                cmd2.Connection = conn2;
+                                int i = cmd2.ExecuteNonQuery();
                                 if (i > 0)
                                 {
                                     result.Message = "Existing Session Expired,  Try login again!!!";
-                                    result.Status = true;
-                                    result.userInfo.Valid = false;
+                                    result.Status = false;
+                                    //result.userInfo.Valid = false;
                                 }
                                 else {
-                                    result.Message = "Unable to remove Existing Expired Session!!! Please Logout and Login again!!!";
+                                    result.Message = "Unable to terminate Session for this user , Contact Support Team!!";
                                     result.Status = false;
-                                    result.userInfo.Valid = false;
+                                    //result.userInfo.Valid = false;
                                 }
                                 cmd2.Dispose();
+                                conn2.Close();
                             }
                                 
 
@@ -1646,7 +1749,7 @@ namespace pdstest.DAL
             }
             catch (Exception e)
             {
-                result.userInfo.Valid = false;
+                //result.userInfo.Valid = false;
                 result.Status = false;
                 result.Message = e.Message;
                 throw e;
