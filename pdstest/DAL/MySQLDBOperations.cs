@@ -1607,11 +1607,15 @@ namespace pdstest.DAL
                             cmd.Connection = conn2;
                             MySqlDataReader reader = cmd.ExecuteReader();
                             int res1 = 0;
-                            if (reader.HasRows)
-                                res1 = 1;
+                            while(reader.Read())
+                                res1 = reader.GetInt32(0);
                             if (res1 > 0)
                             {
                                 result.Message = "Unable to terminate Session with invalid token or Session already terminated, Contact Support Team or try login again!!";
+                                result.Status = false;
+                            }
+                            else {
+                                result.Message = "No token avalilable for this session, try login again!!";
                                 result.Status = false;
                             }
                             conn2.Close();
@@ -1629,11 +1633,16 @@ namespace pdstest.DAL
                             cmd.Connection = conn3;
                             MySqlDataReader reader = cmd.ExecuteReader();
                             int res2 = 0;
-                            if (reader.HasRows)
-                                res2 = 1;
+                            while (reader.Read())
+                                res2 = reader.GetInt32(0);
                             if (res2 > 0)
                             {
                                 result.Message = "Unable to terminate Session for this user , Contact Support Team!!";
+                                result.Status = false;
+                            }
+                            else
+                            {
+                                result.Message = "No session avalilable for this user, try login again!!";
                                 result.Status = false;
                             }
                             conn3.Close();
@@ -1705,10 +1714,8 @@ namespace pdstest.DAL
                         cmd.Connection = conn;
                         MySqlDataReader reader = cmd.ExecuteReader();
                         int res =0;
-                        if (reader.HasRows)
-                        {
-                            res = 1;
-                        }
+                        while (reader.Read())
+                            res = reader.GetInt32(0);
                         if (res > 0)
                         {
                             using (MySqlConnection conn2 = new MySqlConnection(connectionString))
