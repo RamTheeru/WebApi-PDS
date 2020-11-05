@@ -10,6 +10,7 @@ using pdstest.BLL;
 using pdstest.services;
 using pdstest.DAL;
 using System.Text;
+using System.Security.Claims;
 //using WebApi.Entities;
 
 namespace pdstest.Models
@@ -34,18 +35,18 @@ namespace pdstest.Models
                 var msg = context.HttpContext.Items["msg"];
                 var empId = context.HttpContext.Items["empId"];
                 var token = context.HttpContext.Items["userToken"];
-                string tk = token != null ? (string)token : "";
-                string errmsg = msg != null ? (string)msg : "";
+                string tk = token != null ? token.ToString() : "";
+                string errmsg = msg != null ? msg.ToString() : "";
                 result.userInfo = new UserType();
                 UserType usr = new UserType();
-                usr.User = user != null ? (string)user : "";
-                usr.UserTypeId = userType != null ? (int)userType : 0;
-                usr.Role = userRole != null ? (string)userRole : "";
-                usr.EmployeeId = empId != null ? (int)empId : 0;
+                usr.User = user != null ? user.ToString() : "";
+                usr.UserTypeId = userType != null ? Convert.ToInt32(userType) : 0;
+                usr.Role = userRole != null ? userRole.ToString() : "";
+                usr.EmployeeId = empId != null ? Convert.ToInt32(empId) : 0;
                 if (string.IsNullOrEmpty(tk))
                 {
-                   
-                    result.Message = "Unauthorized request !!!!" ;
+
+                    result.Message = "Unauthorized request !!!!";
                     result.Status = false;
                     // not logged in
                     context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
@@ -77,6 +78,17 @@ namespace pdstest.Models
                     if (result.userInfo != null)
                     {
                         usr = result.userInfo;
+                    }
+                    else
+                    {
+                        result.Message = result.Message;
+                        result.Status = result.Status;
+                        // not logged in
+                        context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
+                    }
+                }
+                else if(usr.EmployeeId != 0 && usr.UserTypeId != 0 && !string.IsNullOrEmpty(usr.User))
+                { 
                         result = new MySQLDBOperations().ValidateLoginUserSession(usr);
                         if (!result.userInfo.Valid)
                         {
@@ -85,14 +97,7 @@ namespace pdstest.Models
                             // not logged in
                             context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status401Unauthorized };
                         }
-                    }
-                    else 
-                    {
-                        result.Message = result.Message;
-                        result.Status = result.Status;
-                        // not logged in
-                        context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
-                    }
+                
                 }
                 else
                 {

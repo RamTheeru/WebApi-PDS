@@ -1024,7 +1024,7 @@ namespace pdstest.DAL
                             dbr.Id = 0;
                             dbr.EmployeeName = "";
                             dbr.Status = false;
-                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
+                            dbr.Message = "Unable to Create the Session for this user, Please contact support team!! ";
 
                         }
 
@@ -1653,6 +1653,14 @@ namespace pdstest.DAL
 
 
             }
+            catch (MySqlException e)
+            {
+
+                result.Status = false;
+                result.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
             catch (Exception e)
             {
                // result.userInfo.Valid = false;
@@ -1752,6 +1760,14 @@ namespace pdstest.DAL
                 }
                
 
+
+            }
+            catch (MySqlException e)
+            {
+
+                result.Status = false;
+                result.Message = "Something wrong with database : " + e.Message;
+                throw e;
 
             }
             catch (Exception e)

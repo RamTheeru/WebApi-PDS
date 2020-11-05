@@ -51,10 +51,10 @@ namespace pdstest.Models
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 
-                var userRole = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "sub");
-                var user = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "email");
-                var userType = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "typ");
-                var empId = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "nameid");
+                var userRole = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "sub")?.Value;
+                var user = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "email")?.Value;
+                var userType = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "typ")?.Value;
+                var empId = jwtToken.Claims.FirstOrDefault(x => x.Type.ToLower() == "nameid")?.Value;
                 // attach user to context on successful jwt validation
                 context.Items["userrole"] = userRole;
                 context.Items["user"] = user;
