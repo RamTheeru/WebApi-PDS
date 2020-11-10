@@ -1084,14 +1084,16 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        DataTable dt = new DataTable();
-                        sda = new MySqlDataAdapter(getUserTypes, conn);
-                        sda.SelectCommand.CommandType = CommandType.Text;
-                        sda.Fill(ds);
+                        //DataTable dt = new DataTable();
+                        //sda = new MySqlDataAdapter(getUserTypes, conn);
+                        //sda.SelectCommand.CommandType = CommandType.Text;
+                        //sda.Fill(ds);
+
+                        ds = new BasicDBOps().GetMultipleRecords(connectionString, getUserTypes);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1114,7 +1116,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                   // }
 
 
 
@@ -1260,19 +1262,20 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        // sda = new MySqlDataAdapter(getUserInfo, conn);
-                        //sda.SelectCommand.CommandType = CommandType.Text;
-                        //sda.Fill(ds);
-                        cmd = new MySqlCommand(getUserInfo, conn);
-                        DataTable temp = new DataTable();
-                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                        adapter.Fill(temp);
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
 
-                        ds.Tables.Add(temp);
+                    //ds.Tables.Add(temp);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString,getUserInfo);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1295,7 +1298,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                    //}
 
 
 
@@ -1350,19 +1353,19 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        // sda = new MySqlDataAdapter(getUserInfo, conn);
-                        //sda.SelectCommand.CommandType = CommandType.Text;
-                        //sda.Fill(ds);
-                        cmd = new MySqlCommand(getUserSessionInfo, conn);
-                        DataTable temp = new DataTable();
-                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                        adapter.Fill(temp);
-
-                        ds.Tables.Add(temp);
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserSessionInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(temp);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, getUserSessionInfo);
+                        //ds.Tables.Add(temp);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1385,7 +1388,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                   // }
 
 
 
@@ -1439,19 +1442,20 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
                         // sda = new MySqlDataAdapter(getUserInfo, conn);
                         //sda.SelectCommand.CommandType = CommandType.Text;
                         //sda.Fill(ds);
-                        cmd = new MySqlCommand(getUserInfo, conn);
-                        DataTable temp = new DataTable();
-                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                        adapter.Fill(temp);
+                        //cmd = new MySqlCommand(getUserInfo, conn);
+                        //DataTable temp = new DataTable();
+                        //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        //adapter.Fill(temp);
 
-                        ds.Tables.Add(temp);
+                        //ds.Tables.Add(temp);
+                        ds = new BasicDBOps().GetMultipleRecords(connectionString, getUserInfo);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1474,7 +1478,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                  //  }
 
 
 
@@ -1507,6 +1511,8 @@ namespace pdstest.DAL
 
 
         }
+
+        #region BLL
         public APIResult GetLoginUserSessionInfoByToken(string userToken)
         {
             APIResult result = new APIResult();
@@ -1569,20 +1575,22 @@ namespace pdstest.DAL
         public APIResult DeleteSession(UserType info, string userToken = "", bool isToken = false)
         {
             APIResult result = new APIResult();
-            MySqlCommand cmd = new MySqlCommand();
+            // MySqlCommand cmd = new MySqlCommand();
+            string cmd = "";
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
-                {
-                    conn.Open();
+                //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                //{
+                   // conn.Open();
                     if (!string.IsNullOrEmpty(userToken) && isToken)
-                        cmd.CommandText = string.Format("Delete From UserSessions WHERE Token = '{0}';", userToken);
+                        cmd = string.Format("Delete From UserSessions WHERE Token = '{0}';", userToken);
                     else
-                        cmd.CommandText = string.Format("Delete From UserSessions  where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
+                        cmd = string.Format("Delete From UserSessions  where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
                     " AND EmployeeId = {2};", info.User, info.UserTypeId, info.EmployeeId);
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = conn;
-                    int res = cmd.ExecuteNonQuery();
+                //cmd.CommandType = CommandType.Text;
+                //cmd.Connection = conn;
+                int res = new BasicDBOps().ExceuteCommand(connectionString, cmd);
+                   // int res = cmd.ExecuteNonQuery();
                     if (res > 0 && isToken)
                     {
 
@@ -1598,18 +1606,19 @@ namespace pdstest.DAL
                     }
                     else if (isToken)
                     {
-                        using (MySqlConnection conn2 = new MySqlConnection(connectionString))
-                        {
-                            conn2.Open();
-                            cmd = new MySqlCommand();
-                            cmd.CommandText = string.Format("select COUNT(*) From UserSessions WHERE Token = '{0}';", userToken);
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Connection = conn2;
-                            MySqlDataReader reader = cmd.ExecuteReader();
-                            int res1 = 0;
-                            while(reader.Read())
-                                res1 = reader.GetInt32(0);
-                            if (res1 > 0)
+                        //using (MySqlConnection conn2 = new MySqlConnection(connectionString))
+                        //{
+                           // conn2.Open();
+                            //cmd = new MySqlCommand();
+                            cmd = string.Format("select COUNT(*) From UserSessions WHERE Token = '{0}';", userToken);
+                    //cmd.CommandType = CommandType.Text;
+                    //cmd.Connection = conn2;
+                    // MySqlDataReader reader = cmd.ExecuteReader();
+                    //int res1 = 0;
+                    //while(reader.Read())
+                    //    res1 = reader.GetInt32(0);
+                    bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
+                            if (isExists)
                             {
                                 result.Message = "Unable to terminate Session with invalid token or Session already terminated, Contact Support Team or try login again!!";
                                 result.Status = false;
@@ -1618,24 +1627,25 @@ namespace pdstest.DAL
                                 result.Message = "No token avalilable for this session, try login again!!";
                                 result.Status = false;
                             }
-                            conn2.Close();
-                        }
+                            //conn2.Close();
+                       // }
                     }
                     else if (!isToken)
                     {
-                        using (MySqlConnection conn3 = new MySqlConnection(connectionString))
-                        {
-                                conn3.Open();
-                                cmd = new MySqlCommand();
-                            cmd.CommandText = string.Format("select COUNT(*) From UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
+                        //using (MySqlConnection conn3 = new MySqlConnection(connectionString))
+                        //{
+                               // conn3.Open();
+                               // cmd = new MySqlCommand();
+                            cmd = string.Format("select COUNT(*) From UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
                         " AND EmployeeId = {2};", info.User, info.UserTypeId, info.EmployeeId);
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Connection = conn3;
-                            MySqlDataReader reader = cmd.ExecuteReader();
-                            int res2 = 0;
-                            while (reader.Read())
-                                res2 = reader.GetInt32(0);
-                            if (res2 > 0)
+                            //cmd.CommandType = CommandType.Text;
+                            //cmd.Connection = conn3;
+                            //MySqlDataReader reader = cmd.ExecuteReader();
+                           // int res2 = 0;
+                            //while (reader.Read())
+                            //    res2 = reader.GetInt32(0);
+                            bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
+                            if (isExists)
                             {
                                 result.Message = "Unable to terminate Session for this user , Contact Support Team!!";
                                 result.Status = false;
@@ -1645,11 +1655,11 @@ namespace pdstest.DAL
                                 result.Message = "No session avalilable for this user, try login again!!";
                                 result.Status = false;
                             }
-                            conn3.Close();
-                        }
+                          //  conn3.Close();
+                      //  }
                     }
-                    conn.Close();
-                }
+                  //  conn.Close();
+              //  }
 
 
             }
@@ -1669,7 +1679,7 @@ namespace pdstest.DAL
                 throw e;
 
             }
-            finally { cmd.Dispose(); }
+            //finally { cmd.Dispose(); }
 
             return result;
 
@@ -1710,31 +1720,33 @@ namespace pdstest.DAL
                 }
                 else 
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         string txt = string.Format("SELECT COUNT(*) from UserSessions WHERE UserName='{0}'" +
                             " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1;",usr.User,usr.UserTypeId,usr.EmployeeId);
-                        MySqlCommand cmd = new MySqlCommand();
-                        cmd.CommandText = txt;
-                        cmd.CommandType = CommandType.Text;
+                        //MySqlCommand cmd = new MySqlCommand();
+                        //cmd.CommandText = txt;
+                        //cmd.CommandType = CommandType.Text;
 
-                        conn.Open();
-                        cmd.Connection = conn;
-                        MySqlDataReader reader = cmd.ExecuteReader();
-                        int res =0;
-                        while (reader.Read())
-                            res = reader.GetInt32(0);
-                        if (res > 0)
+                        //conn.Open();
+                        //cmd.Connection = conn;
+                        //MySqlDataReader reader = cmd.ExecuteReader();
+                        //int res =0;
+                        //while (reader.Read())
+                        //    res = reader.GetInt32(0);
+                        bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, txt);
+                        if (isExists)
                         {
-                            using (MySqlConnection conn2 = new MySqlConnection(connectionString))
-                            {
-                                MySqlCommand cmd2 = new MySqlCommand();
-                                conn2.Open();
-                                cmd2.CommandText = string.Format("DELETE from UserSessions WHERE UserName='{0}'" +
+                            //using (MySqlConnection conn2 = new MySqlConnection(connectionString))
+                            //{
+                                //MySqlCommand cmd2 = new MySqlCommand();
+                                //conn2.Open();
+                               string cmdText = string.Format("DELETE from UserSessions WHERE UserName='{0}'" +
                             " AND UserTypeId={1} AND EmployeeId = {2} AND IsActive=1;", usr.User, usr.UserTypeId, usr.EmployeeId);
-                                cmd2.CommandType = CommandType.Text;
-                                cmd2.Connection = conn2;
-                                int i = cmd2.ExecuteNonQuery();
+                            //cmd2.CommandType = CommandType.Text;
+                            //cmd2.Connection = conn2;
+                            //int i = cmd2.ExecuteNonQuery();
+                            int i = new BasicDBOps().ExceuteCommand(connectionString,cmdText);
                                 if (i > 0)
                                 {
                                     result.Message = "Existing Session Expired,  Try login again!!!";
@@ -1746,15 +1758,15 @@ namespace pdstest.DAL
                                     result.Status = false;
                                     //result.userInfo.Valid = false;
                                 }
-                                cmd2.Dispose();
-                                conn2.Close();
-                            }
+                             //   cmd2.Dispose();
+                               // conn2.Close();
+                           // }
                                 
 
                         }
-                        cmd.Dispose();
-                        conn.Close();
-                    }
+                        //cmd.Dispose();
+                        //conn.Close();
+                  //  }
 
 
                 }
@@ -1782,6 +1794,8 @@ namespace pdstest.DAL
             return result;
         }
 
+        #endregion
+
         public DataBaseResult GetRegisteredUsers(string stationCode = "")
         {
             string getRegisteredUsers = "";
@@ -1804,14 +1818,15 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        DataTable dt = new DataTable();
-                        sda = new MySqlDataAdapter(getRegisteredUsers, conn);
-                        sda.SelectCommand.CommandType = CommandType.Text;
-                        sda.Fill(ds);
+                    //DataTable dt = new DataTable();
+                    //sda = new MySqlDataAdapter(getRegisteredUsers, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, getRegisteredUsers);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1834,7 +1849,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                  //  }
 
 
 
@@ -1872,7 +1887,7 @@ namespace pdstest.DAL
         {
             string getApproveUser = "";
             DataBaseResult dbr = new DataBaseResult();
-            MySqlCommand cmd = new MySqlCommand();
+           // MySqlCommand cmd = new MySqlCommand();
             try
             {
                 dbr.Id = registerId;
@@ -1890,11 +1905,12 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
-                        cmd.CommandText = getApproveUser;
-                        cmd.CommandType = CommandType.Text;
-                        int res = cmd.ExecuteNonQuery();
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    //cmd.CommandText = getApproveUser;
+                    //cmd.CommandType = CommandType.Text;
+                    //int res = cmd.ExecuteNonQuery();
+                    int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
                         if (res > 0)
                         {
                             
@@ -1911,7 +1927,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                   // }
 
 
 
@@ -1937,7 +1953,7 @@ namespace pdstest.DAL
             finally
             {
                 
-                cmd.Dispose();
+              //  cmd.Dispose();
 
 
             }
@@ -1950,8 +1966,8 @@ namespace pdstest.DAL
         {
             string getEmployees = "";
             DataBaseResult dbr = new DataBaseResult();
-            MySqlCommand cmd = new MySqlCommand();
-            MySqlDataAdapter sda;
+            //MySqlCommand cmd = new MySqlCommand();
+            //MySqlDataAdapter sda;
             try
             {
                 dbr.CommandType = "Select";
@@ -1968,14 +1984,15 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
                         DataSet ds = new DataSet();
                         dbr.ds = new DataSet();
-                        DataTable dt = new DataTable();
-                        sda = new MySqlDataAdapter(getEmployees, conn);
-                        sda.SelectCommand.CommandType = CommandType.Text;
-                        sda.Fill(ds);
+                    //DataTable dt = new DataTable();
+                    //sda = new MySqlDataAdapter(getEmployees, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, getEmployees);
                         int count = 0;
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
@@ -1998,7 +2015,7 @@ namespace pdstest.DAL
 
                         }
 
-                    }
+                  //  }
 
 
 
@@ -2022,7 +2039,7 @@ namespace pdstest.DAL
             }
             finally
             {
-                cmd.Dispose();
+               // cmd.Dispose();
 
 
             }
