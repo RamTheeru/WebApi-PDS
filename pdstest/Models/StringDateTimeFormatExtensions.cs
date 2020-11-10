@@ -43,5 +43,20 @@ namespace pdstest.Models
             }
             return outputTime;
         }
+       public static string getMonthAbbreviatedName(this DateTime dt)
+        {
+            DateTime date = new DateTime(dt.Year, dt.Month, dt.Day);
+
+            return date.ToString("MMM");
+        }
+
+        // function to get the full month name 
+       public static string getMonthFullName(this DateTime dt)
+        {
+            DateTime date = new DateTime(dt.Year, dt.Month, dt.Day);
+
+            return date.ToString("MMMM");
+        }
+
     }
 }

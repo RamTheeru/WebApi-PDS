@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace pdstest.Controllers
 {
@@ -400,6 +401,95 @@ namespace pdstest.Controllers
             // return new CustomResult(result);
 
         }
+        #region FILEUPLOAD
+        [HttpPost("upload", Name = "upload")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                result.CommandType = "file upload";
+                if (CheckIfExcelFile(file))
+                {
+                    Tuple<bool,string> t = await WriteFile(file);
+                    bool isSuccess = t.Item1;
+
+                    if (isSuccess)
+                    {
+                        result.Status = true;
+                      
+                    }
+                    else 
+                    {
+                        result.Status = false;
+                         
+                    }
+                    result.Message = t.Item2;
+                    return Ok(result);
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "Invalid file extension";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.Id = 0;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+        }
+        private bool CheckIfExcelFile(IFormFile file)
+        {
+            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+            return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
+        }
+
+        private async Task<Tuple<bool,string>> WriteFile(IFormFile file)
+        {
+            Tuple<bool, string> t;
+            bool isSaveSuccess = false;
+            string fileName;
+            try
+            {
+                var month = DateTime.Now.getMonthAbbreviatedName();
+                var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+                fileName = month+"-"+ DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons.
+
+                var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+
+                if (!Directory.Exists(pathBuilt))
+                {
+                    Directory.CreateDirectory(pathBuilt);
+                }
+
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files",
+                   fileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                isSaveSuccess = true;
+                t = Tuple.Create(isSaveSuccess, "file uploaded successfully");
+            }
+            catch(Exception e)
+            {
+                isSaveSuccess = false;
+                t = Tuple.Create(isSaveSuccess, e.Message);
+
+            }
+
+            return t;
+        }
+        #endregion
 
     }
 }
