@@ -17,7 +17,7 @@ namespace pdstest.DAL
         public static Dictionary<string, string> StoreQuiries()
         {
             Dictionary<string, string> sqllib = new Dictionary<string, string>();
-            sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=1234;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
+            sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=12345;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
             sqllib["AWSDB"] = "";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
@@ -74,13 +74,25 @@ namespace pdstest.DAL
             /*SELECT* FROM Constants
                         LIMIT 10/*range , 5/*pagesize ;
             event_date BETWEEN '2018-01-01 12:00:00' AND '2018-01-01 23:30:00';*/
+            DateTime dt = DateTime.Now;
+            DateTime dt2 = DateTime.Now;
             Dictionary<string, string> text = new Dictionary<string, string>();
             int range = 0;
             try
             {
 
                 range = (pagesize * page) - pagesize;
-                if(!string.IsNullOrEmpty(table))
+                if (!string.IsNullOrEmpty(vstartDate))
+                {
+                    dt = vstartDate.StringtoDateTime();
+                    vstartDate = dt.DateTimetoString();
+                }
+                if (!string.IsNullOrEmpty(vEndDate))
+                {
+                    dt2 = vstartDate.StringtoDateTime();
+                    vEndDate = dt2.DateTimetoString();
+                }
+                if (!string.IsNullOrEmpty(table))
                 {
                     if (table.ToLower() == "voucher" && !string.IsNullOrEmpty(vEndDate) && !string.IsNullOrEmpty(status))
                     {

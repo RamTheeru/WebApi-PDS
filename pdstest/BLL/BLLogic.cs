@@ -506,6 +506,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                input.VoucherDate = input.V_Date.StringtoDateTime();
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.InsertVoucher(input);
                 result.Message = dbr.Message;

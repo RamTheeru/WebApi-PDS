@@ -117,8 +117,9 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
+                input.table = "voucher";
                 if (input.status != null)
-                    input.status = input.status.Replace(@"\", "");
+                    input.status = input.status.CleanString();
                 if (input.stationId == 0 || input.vstartDate == null)
                 {
                     result.Message = "Invalid Input!!!";
@@ -149,8 +150,9 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
+                input.table = "ledger";
                 if (input.status != null)
-                    input.status = input.status.Replace(@"\", "");
+                    input.status = input.status.CleanString();
                 if (input.stationId == 0 || input.vstartDate == null)
                 {
                     result.Message = "Invalid Input!!!";
