@@ -13,8 +13,8 @@ namespace pdstest.Models
         public string table { get; set; }
         public string vstartDate { get; set; }
         public string vEndDate { get; set; }
-        public int page { get; set; }
-        public int pagesize { get; set; }
+        public int? page { get; set; }
+        public int? pagesize { get; set; }
         public string status { get; set; }
     }
 }

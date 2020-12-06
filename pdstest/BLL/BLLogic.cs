@@ -185,7 +185,13 @@ namespace pdstest.BLL
             {
                 dbr.ds = new System.Data.DataSet();
                 result.userInfo = new UserType();
-                dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate="", input.page=1, input.pagesize=5, input.status);
+                int ps = input.pagesize == null || input.pagesize == 0 ? 5 : Convert.ToInt32(input.pagesize);
+                int p = input.page == null || input.page == 0 ? 1 : Convert.ToInt32(input.page);
+                //if (input.page == 0)
+                //    input.page = 1;
+                //if (input.pagesize == 0)
+                //    input.pagesize = 5;
+                dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate, input.page, input.pagesize, input.status);
                 
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -217,6 +223,7 @@ namespace pdstest.BLL
                             string vDate = dbr.ds.Tables[0].Rows[i]["VoucherDate"].ToString();
                             success = DateTime.TryParse(vDate, out vouch_Date);
                             vouch.VoucherDate = (success == true) ? vouch_Date : new DateTime();
+                            vouch.V_Date = vouch.VoucherDate.DateTimetoString();
                             vouch.PartyName = dbr.ds.Tables[0].Rows[i]["PartyName"].ToString();
                             vouch.PurposeOfPayment = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
                             vouchs.Add(vouch);
@@ -267,8 +274,15 @@ namespace pdstest.BLL
 
                     if (result.QueryTotalCount > 0)
                     {
-                        double pages = Convert.ToDouble((result.QueryTotalCount / input.pagesize));
-                        result.QueryPages = (int)Math.Round(pages, MidpointRounding.AwayFromZero);
+                        if (p > 1)
+                        {
+                            double pages = Convert.ToDouble((result.QueryTotalCount / ps));
+                            result.QueryPages = (int)Math.Round(pages, MidpointRounding.AwayFromZero);
+                        }
+                        else 
+                        {
+                            result.QueryPages = 1;
+                        }
                     }
                     
 

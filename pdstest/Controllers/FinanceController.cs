@@ -120,7 +120,18 @@ namespace pdstest.Controllers
                 input.table = "voucher";
                 if (input.status != null)
                     input.status = input.status.CleanString();
-                if (input.stationId == 0 || input.vstartDate == null)
+                if (input.vEndDate == "string")
+                    input.vEndDate = null;
+                if (input.stationId == 0 || string.IsNullOrEmpty(input.vstartDate) || string.IsNullOrEmpty(input.status))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                else if (input.status == "string" || input.vstartDate == "string")
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;

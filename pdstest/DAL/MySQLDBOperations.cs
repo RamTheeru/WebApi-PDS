@@ -1164,7 +1164,7 @@ namespace pdstest.DAL
 
 
         }
-        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int page = 1, int pagesize = 5, string status = "", bool isEmployee = false)
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false)
         {
             Dictionary<string, string> getSelectQuery = new Dictionary<string, string>();
             DataBaseResult dbr = new DataBaseResult();
@@ -1193,15 +1193,15 @@ namespace pdstest.DAL
                         // sda = new MySqlDataAdapter(getUserInfo, conn);
                         //sda.SelectCommand.CommandType = CommandType.Text;
                         //sda.Fill(ds);
-                        cmd = new MySqlCommand(getSelectQuery["main"], conn);
-                        DataTable temp = new DataTable();
-                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                        adapter.Fill(temp);
-
-                        ds.Tables.Add(temp);
-                        cmd = new MySqlCommand(getSelectQuery["count"], conn);
+                        //cmd = new MySqlCommand(getSelectQuery["main"], conn);
+                        //DataTable temp = new DataTable();
+                        //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        //adapter.Fill(temp);
+                        ds= new BasicDBOps().GetMultipleRecords(connectionString, getSelectQuery["main"]);
+                        dbr.ds = ds;
+                       // cmd = new MySqlCommand(getSelectQuery["count"], conn);
                         int count =  0;
-                        count = int.Parse(cmd.ExecuteScalar().ToString());
+                        count = new BasicDBOps().GetTotalCountOfQuery(connectionString, getSelectQuery["count"]);
                         if (ds.Tables.Count > 0 && count > 0)
                         {
                             //foreach (DataRow dr in dt.Rows)

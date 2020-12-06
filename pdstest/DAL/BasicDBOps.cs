@@ -48,6 +48,45 @@ namespace pdstest.DAL
             return ds;
         
         }
+        public int GetTotalCountOfQuery(string connectionString, string cmdText)
+        {
+            int result = 0;
+            MySqlCommand cmd = new MySqlCommand();
+            MySqlConnection conn = new MySqlConnection(connectionString);
+            try 
+            {
+                using (conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (cmd = new MySqlCommand(cmdText, conn))
+                    {
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        result= count;
+                    }
+                }
+            }
+            catch (MySqlException e)
+            {
+                result = 0;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                result = 0;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+
+
+            }
+            return result;
+
+        }
         public bool CheckRecordCountExistsOrNot(string connectionString, string cmdText) 
         {
             bool isExists = false;
