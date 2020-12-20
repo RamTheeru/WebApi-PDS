@@ -609,6 +609,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                input.Password = input.Phone.Substring(0, 4)+input.DOB.Substring((input.DOB.Length - 4), 4); ;
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.RegisterEmployee(input);
                 result.Message = dbr.Message;

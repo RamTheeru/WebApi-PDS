@@ -62,6 +62,18 @@ namespace pdstest.DAL
                         param.Size = 50;
                         cmd.Parameters.Add(param);
 
+                        param = new MySqlParameter("@Usr", input.UserName);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@Passwrd", input.Password);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
                         param = new MySqlParameter("@DOB", input.DOB);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
