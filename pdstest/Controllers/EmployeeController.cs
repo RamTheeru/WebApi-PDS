@@ -296,6 +296,7 @@ namespace pdstest.Controllers
                 if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.UserType)))
                 {
                     obj.IsRegister = true;
+                    obj.Age = string.IsNullOrEmpty(obj.EmpAge) ? 0 : Convert.ToInt32(obj.EmpAge);
                     result = logic.RegisterEmployee(obj);
 
                 }

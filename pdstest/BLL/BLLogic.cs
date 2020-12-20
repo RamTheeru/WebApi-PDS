@@ -4,6 +4,7 @@ using pdstest.services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -27,9 +28,11 @@ namespace pdstest.BLL
                 dbr.ds = new System.Data.DataSet();
                 result.Designations = new List<Designation>();
                 result.Usertypes = new List<UserType>();
+                result.stations = new List<Station>();
                 dbr = ops.GetConstants();
                 List<DropDown> dds = new List<DropDown>();
                 int count = 0;
+                StringBuilder build = new StringBuilder();
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)
                 {
@@ -40,6 +43,7 @@ namespace pdstest.BLL
                          dd.Category = dbr.ds.Tables[0].Rows[i]["Category"].ToString();
                          dd.ConstantId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["ConstantId"]);
                          dd.ConstantName = dbr.ds.Tables[0].Rows[i]["ConstantName"].ToString();
+                        dd.ConstantValue = dbr.ds.Tables[0].Rows[i]["ConstantValue"].ToString();
                         dds.Add(dd);
 
                     }
@@ -47,33 +51,30 @@ namespace pdstest.BLL
                     {
                         int designationCount = dds.Where(x => x.Category.ToLower() == "designation").Count();
                         int userTypeCount = dds.Where(x => x.Category.ToLower() == "logintype").Count();
+                        int stationCount = dds.Where(x => x.Category.ToLower() == "station").Count();
                         if (designationCount > 0)
                         {
                             result.Designations = dds.Where(x => x.Category.ToLower() == "designation").Select(
                                 a => new Designation { DesignationId = a.ConstantId, DesginationName = a.ConstantName }
                                 ).ToList();
+                            build.Append("Designations,");
                         }
                         if (userTypeCount > 0)
                         {
                             result.Usertypes = dds.Where(x => x.Category.ToLower() == "logintype").Select(
-                            a => new UserType { UserTypeId = a.ConstantId, User = a.ConstantName }
+                            a => new UserType { UserTypeId = a.ConstantId, User = a.ConstantName,Role = a.ConstantValue }
                             ).ToList();
-
-
-                        }
-                        if (designationCount > 0 && userTypeCount > 0)
-                        {
-                            result.Message = "For both UserTypes and Designations : " + dbr.Message;
+                            build.Append("UserTypes,");
 
                         }
-                        else if (designationCount > 0 && userTypeCount == 0)
+                        if(stationCount>0)
                         {
-                            result.Message = "For Designations : " + dbr.Message;
+                            result.stations = dds.Where(x => x.Category.ToLower() == "station").Select(
+                                     a => new Station { StationId = a.ConstantId, StationName = a.ConstantName,StationCode = a.ConstantValue }
+                                     ).ToList();
+                            build.Append("Stations");
                         }
-                        else if (designationCount == 0 && userTypeCount > 0)
-                        {
-                            result.Message = "For UserTypes : " + dbr.Message;
-                        }
+                        result.Message = build.ToString() + " : "+ dbr.Message;
                         //string category = item.Category;
                         //if (category.ToLower() == "logintype")
                         //{

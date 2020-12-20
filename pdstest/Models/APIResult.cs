@@ -14,6 +14,7 @@ namespace pdstest.Models
         public List<Designation> Designations { get; set; } 
         public List<Voucher> vouchers { get; set; }
         public List<Ledger> ledgers { get; set; }
+        public List<Station> stations { get; set; }
         public Voucher voucher { get; set; }
         public Ledger ledger { get; set; }
         public string EmployeeName { get; set; }

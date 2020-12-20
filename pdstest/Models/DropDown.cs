@@ -9,7 +9,7 @@ namespace pdstest.Models
     {
         public int ConstantId { get; set; }
         public string ConstantName { get; set; }
-
+        public string ConstantValue { get; set; }
         public string Category { get; set; }
     }
 }
