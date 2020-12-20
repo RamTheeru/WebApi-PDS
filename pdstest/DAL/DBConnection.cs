@@ -190,6 +190,23 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckUserNameExists(string username)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select COUNT(*) from Register where UserName = '{0}';", username);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetLoginUserInfo(string username,string password)
         {
             string text = "";

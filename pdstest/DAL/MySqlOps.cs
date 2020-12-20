@@ -39,7 +39,10 @@ namespace pdstest.DAL
         {
             return _ops.RegisterEmployee(input);
         }
-
+        public DataBaseResult CheckUserExists(string userName)
+        {
+            return _ops.CheckUserExists(userName);
+        }
         public DataBaseResult ApproveUser(int registerId)
         {
             return _ops.ApproveUser(registerId);

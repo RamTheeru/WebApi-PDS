@@ -603,6 +603,30 @@ namespace pdstest.BLL
             return result;
 
         }
+        public APIResult CheckUserExists(string userName)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.CheckUserExists(userName);
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+                result.CommandType = dbr.CommandType;
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "SELECT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                throw e;
+            }
+            return result;
+        }
         public APIResult RegisterEmployee(RegisterEmployee input)
         {
             APIResult result = new APIResult();

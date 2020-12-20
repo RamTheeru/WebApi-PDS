@@ -9,6 +9,7 @@ namespace pdstest.DAL
     public class DataBaseResult
     {
         public bool Status { get; set; }
+        public bool IsExists { get; set; }
         public string Message { get; set; }
         public int Id { get; set; }
 

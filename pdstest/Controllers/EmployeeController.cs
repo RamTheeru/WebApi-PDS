@@ -286,6 +286,38 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpGet("CheckUserName")]
+
+        public IActionResult CheckUserName(string userName)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(userName))
+                    userName = userName.CleanString();
+                else 
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                result = logic.CheckUserExists(userName);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+
         [HttpPost]
         [Route("RegisterEmployee")]
         public IActionResult RegisterEmployee(RegisterEmployee obj)

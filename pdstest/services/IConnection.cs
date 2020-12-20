@@ -20,5 +20,6 @@ namespace pdstest.services
         DataBaseResult InsertVoucher(Voucher input);
         DataBaseResult InsertLedger(Ledger input);
         DataBaseResult CreateSession(UserType input);
+        DataBaseResult CheckUserExists(string userName);
     }
 }
