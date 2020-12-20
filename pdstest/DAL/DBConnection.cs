@@ -19,7 +19,7 @@ namespace pdstest.DAL
             Dictionary<string, string> sqllib = new Dictionary<string, string>();
             sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=12345;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
             sqllib["AWSDB"] = "";
-            sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category from constants where IsActive = 1";
+            sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
