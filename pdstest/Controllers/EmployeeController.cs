@@ -133,7 +133,7 @@ namespace pdstest.Controllers
                     issuer: configuration["Jwt:Issuer"],
                     audience: configuration["Jwt:Issuer"],
                     claims,
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: DateTime.Now.AddMinutes(10),
                     signingCredentials: credentials);
 
                 var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);

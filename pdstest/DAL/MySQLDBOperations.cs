@@ -938,7 +938,7 @@ namespace pdstest.DAL
                         cmd.Parameters.Add(param);
 
                         input.SessionStartDate = DateTime.Now.DateTimetoString();
-                        input.SessionEndDate = DateTime.Now.AddMinutes(5).DateTimetoString();
+                        input.SessionEndDate = DateTime.Now.AddMinutes(10).DateTimetoString();
 
                         input.StartDate = input.SessionStartDate.StringtoDateTime();
                         input.EndDate = input.SessionEndDate.StringtoDateTime();
