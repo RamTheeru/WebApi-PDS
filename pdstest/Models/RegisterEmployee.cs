@@ -10,6 +10,7 @@ namespace pdstest.Models
 
         public int RegisterId { get; set; }
         public int EmployeeId { get; set; }
+        public string EmpCode { get; set; }
         public int StationId { get; set; }
         public string EmpID { get; set; }
         public bool IsRegister { get; set; }
