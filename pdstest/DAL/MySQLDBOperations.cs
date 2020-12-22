@@ -2020,7 +2020,7 @@ namespace pdstest.DAL
                     }
                     else 
                     {
-                        dbr.Message = "";
+                        dbr.Message = "Given UserName Accepted!!";
                         dbr.Status = true;
                     }
                 }
