@@ -213,7 +213,7 @@ namespace pdstest.DAL
 
             try
             {
-                    text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName FROM employees where FirstName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
+                    text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName,UserName FROM employees where UserName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
 
             }
             catch (Exception e)

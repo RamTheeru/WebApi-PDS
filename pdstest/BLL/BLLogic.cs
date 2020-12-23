@@ -400,7 +400,7 @@ namespace pdstest.BLL
                         user.EmployeeId = employeeid;
                         user.UserTypeId = userTypeid;
                         user.Role = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
-                        user.User = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
                         user.Valid = true;
 
                     }
