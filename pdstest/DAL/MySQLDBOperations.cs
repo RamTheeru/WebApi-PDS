@@ -903,160 +903,174 @@ namespace pdstest.DAL
             DataBaseResult dbr = new DataBaseResult();
             MySqlCommand cmd = new MySqlCommand();
             MySqlParameter param;
-
+            bool isSessionExists = false;
             try
             {
                 dbr.CommandType = "Insert";
-                insertQuery = DBConnection.GetCreateSessionQuery();
-                dbr.CommandType = "Session Insert";
-                if (string.IsNullOrEmpty(insertQuery) || string.IsNullOrEmpty(connectionString))
+                isSessionExists = CheckIfSessionExists(input.User, input.EmployeeId, input.UserTypeId);
+                if(isSessionExists)
                 {
-                    dbr.Id = 0;
-                    dbr.Message = "Something Wrong with getting DB Commands!!";
-                    dbr.EmployeeName = "";
-                    dbr.Status = false;
 
-                }
-                else
-                {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    insertQuery = DBConnection.GetCreateSessionQuery();
+                    dbr.CommandType = "Session Insert";
+                    if (string.IsNullOrEmpty(insertQuery) || string.IsNullOrEmpty(connectionString))
                     {
-                        cmd.CommandText = insertQuery;
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Connection = conn;
+                        dbr.Id = 0;
+                        dbr.Message = "Something Wrong with getting DB Commands!!";
+                        dbr.EmployeeName = "";
+                        dbr.Status = false;
 
-                        param = new MySqlParameter("@UserName", input.User);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 100;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@UserTypeId", input.UserTypeId);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        input.SessionStartDate = DateTime.Now.DateTimetoString();
-                        input.SessionEndDate = DateTime.Now.AddMinutes(10).DateTimetoString();
-
-                        input.StartDate = input.SessionStartDate.StringtoDateTime();
-                        input.EndDate = input.SessionEndDate.StringtoDateTime();
-
-                        param = new MySqlParameter("@StartDate", input.StartDate);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.DateTime;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@EndDate", input.EndDate);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.DateTime;
-                        cmd.Parameters.Add(param);
-
-                        
-
-                        param = new MySqlParameter("@Token", input.Token);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.LongText;
-                        param.Size = -1;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@EmployeeId", input.EmployeeId);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@SId";
-                        output.MySqlDbType = MySqlDbType.Int32;
-                        output.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output);
-
-
-                        MySqlParameter output2 = new MySqlParameter();
-                        output2.ParameterName = "@Usrtype";
-                        output2.MySqlDbType = MySqlDbType.Int32;
-                        output2.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output2);
-
-                        MySqlParameter output3 = new MySqlParameter();
-                        output3.ParameterName = "@EmpId";
-                        output3.MySqlDbType = MySqlDbType.Int32;
-                        output3.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output3);
-
-                        MySqlParameter output4 = new MySqlParameter();
-                        output4.ParameterName = "@UsrToken";
-                        output4.MySqlDbType = MySqlDbType.LongText;
-                        output4.Size = -1;
-                        output4.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output4);
-
-                        MySqlParameter output5 = new MySqlParameter();
-                        output5.ParameterName = "@Usrname";
-                        output5.MySqlDbType = MySqlDbType.VarChar;
-                        output5.Size = 100;
-                        output5.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output5);
-
-                        MySqlParameter output6 = new MySqlParameter();
-                        output6.ParameterName = "@IsAlreadySession";
-                        output6.MySqlDbType = MySqlDbType.Bit;
-                        output6.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output6);
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-
-                        dbr.ds = new DataSet();
-
-                        string sId = output.Value.ToString();
-                        string utId = output2.Value.ToString();
-                        string eId = output3.Value.ToString();
-                        string utkn = output4.Value.ToString();
-                        string usrnm = output5.Value.ToString();
-                        string isssn = output6.Value.ToString();
-
-                        conn.Close();
-                        dbr.Id = string.IsNullOrEmpty(sId) ? 0 : Convert.ToInt32(sId);
-
-                        if (dbr.Id > 0)
+                    }
+                    else
+                    {
+                        using (MySqlConnection conn = new MySqlConnection(connectionString))
                         {
-                            int usrType = string.IsNullOrEmpty(utId) ? 0 : Convert.ToInt32(utId);
-                            int empId = string.IsNullOrEmpty(eId) ? 0 : Convert.ToInt32(eId);
-                            bool isSession = string.IsNullOrEmpty(isssn) ? false : isssn == "0" ? false :true ;
-                           
-                            dbr.dt = new DataTable();
-                            dbr.dt.Clear();
-                            dbr.dt.Columns.Add("UserType");
-                            dbr.dt.Columns.Add("EmployeeId");
-                            dbr.dt.Columns.Add("UserToken");
-                            dbr.dt.Columns.Add("UserName");
-                            dbr.dt.Columns.Add("IsAlreadySession");
-                            DataRow dr = dbr.dt.NewRow();
-                            dr["UserType"] = usrType;
-                            dr["EmployeeId"] = empId;
-                            dr["UserToken"] = utkn;
-                            dr["UserName"] = usrnm;
-                            dr["IsAlreadySession"] = isSession;
-                            dbr.dt.Rows.Add(dr);
-                            dbr.ds.Tables.Add(dbr.dt);
-                            dbr.Status = true;
-                           
-                            dbr.Message = "User Authenticated Sucessfully with Session!!!!!!!";
-                        }
-                        else
-                        {
-                            dbr.Id = 0;
-                            dbr.EmployeeName = "";
-                            dbr.Status = false;
-                            dbr.Message = "Unable to Create the Session for this user, Please contact support team!! ";
+                            cmd.CommandText = insertQuery;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Connection = conn;
+
+                            param = new MySqlParameter("@UserName", input.User);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 100;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@UserTypeId", input.UserTypeId);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+                            input.SessionStartDate = DateTime.Now.DateTimetoString();
+                            input.SessionEndDate = DateTime.Now.AddMinutes(10).DateTimetoString();
+
+                            input.StartDate = input.SessionStartDate.StringtoDateTime();
+                            input.EndDate = input.SessionEndDate.StringtoDateTime();
+
+                            param = new MySqlParameter("@StartDate", input.StartDate);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.DateTime;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@EndDate", input.EndDate);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.DateTime;
+                            cmd.Parameters.Add(param);
+
+
+
+                            param = new MySqlParameter("@Token", input.Token);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.LongText;
+                            param.Size = -1;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@EmployeeId", input.EmployeeId);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+                            MySqlParameter output = new MySqlParameter();
+                            output.ParameterName = "@SId";
+                            output.MySqlDbType = MySqlDbType.Int32;
+                            output.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output);
+
+
+                            MySqlParameter output2 = new MySqlParameter();
+                            output2.ParameterName = "@Usrtype";
+                            output2.MySqlDbType = MySqlDbType.Int32;
+                            output2.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output2);
+
+                            MySqlParameter output3 = new MySqlParameter();
+                            output3.ParameterName = "@EmpId";
+                            output3.MySqlDbType = MySqlDbType.Int32;
+                            output3.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output3);
+
+                            MySqlParameter output4 = new MySqlParameter();
+                            output4.ParameterName = "@UsrToken";
+                            output4.MySqlDbType = MySqlDbType.LongText;
+                            output4.Size = -1;
+                            output4.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output4);
+
+                            MySqlParameter output5 = new MySqlParameter();
+                            output5.ParameterName = "@Usrname";
+                            output5.MySqlDbType = MySqlDbType.VarChar;
+                            output5.Size = 100;
+                            output5.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output5);
+
+                            MySqlParameter output6 = new MySqlParameter();
+                            output6.ParameterName = "@IsAlreadySession";
+                            output6.MySqlDbType = MySqlDbType.Bit;
+                            output6.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output6);
+
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+
+                            dbr.ds = new DataSet();
+
+                            string sId = output.Value.ToString();
+                            string utId = output2.Value.ToString();
+                            string eId = output3.Value.ToString();
+                            string utkn = output4.Value.ToString();
+                            string usrnm = output5.Value.ToString();
+                            string isssn = output6.Value.ToString();
+
+                            conn.Close();
+                            dbr.Id = string.IsNullOrEmpty(sId) ? 0 : Convert.ToInt32(sId);
+
+                            if (dbr.Id > 0)
+                            {
+                                int usrType = string.IsNullOrEmpty(utId) ? 0 : Convert.ToInt32(utId);
+                                int empId = string.IsNullOrEmpty(eId) ? 0 : Convert.ToInt32(eId);
+                                bool isSession = string.IsNullOrEmpty(isssn) ? false : isssn == "0" ? false : true;
+
+                                dbr.dt = new DataTable();
+                                dbr.dt.Clear();
+                                dbr.dt.Columns.Add("UserType");
+                                dbr.dt.Columns.Add("EmployeeId");
+                                dbr.dt.Columns.Add("UserToken");
+                                dbr.dt.Columns.Add("UserName");
+                                dbr.dt.Columns.Add("IsAlreadySession");
+                                DataRow dr = dbr.dt.NewRow();
+                                dr["UserType"] = usrType;
+                                dr["EmployeeId"] = empId;
+                                dr["UserToken"] = utkn;
+                                dr["UserName"] = usrnm;
+                                dr["IsAlreadySession"] = isSession;
+                                dbr.dt.Rows.Add(dr);
+                                dbr.ds.Tables.Add(dbr.dt);
+                                dbr.Status = true;
+
+                                dbr.Message = "User Authenticated Sucessfully with Session!!!!!!!";
+                            }
+                            else
+                            {
+                                dbr.Id = 0;
+                                dbr.EmployeeName = "";
+                                dbr.Status = false;
+                                dbr.Message = "Unable to Create the Session for this user, Please contact support team!! ";
+
+                            }
 
                         }
 
                     }
 
+                }
+                else
+                {
+                    dbr.Id = 0;
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.Message = "Session already exists for this user!!";
+                    dbr.IsExists = true;
                 }
 
 
@@ -1087,6 +1101,74 @@ namespace pdstest.DAL
 
             }
             return dbr;
+        }
+
+        public bool CheckIfSessionExists(string userName,int employeeId,int userTypeId)
+        {
+            string getsessionInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            bool isExists = false;
+            try
+            {
+                dbr.CommandType = "Select";
+                getsessionInfo = DBConnection.GetSessionDetails(userName, employeeId,userTypeId);
+
+                if (string.IsNullOrEmpty(getsessionInfo) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                   
+                    isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, getsessionInfo);
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+                isExists = false;
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                isExists = false;
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return isExists;
+
         }
 
         public DataBaseResult GetConstants()
@@ -1307,10 +1389,6 @@ namespace pdstest.DAL
                         count = ds.Tables[0].Rows.Count;
                         if (ds.Tables.Count > 0 && count > 0)
                         {
-                            //foreach (DataRow dr in dt.Rows)
-                            //{
-                            //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
-                            //}
                             dbr.ds = ds;
                             dbr.Message = "Record(s) retreived Successfully!!!";
                             dbr.Status = true;

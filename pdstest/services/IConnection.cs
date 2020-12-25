@@ -21,5 +21,6 @@ namespace pdstest.services
         DataBaseResult InsertLedger(Ledger input);
         DataBaseResult CreateSession(UserType input);
         DataBaseResult CheckUserExists(string userName);
+        bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
     }
 }

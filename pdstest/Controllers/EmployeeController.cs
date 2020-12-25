@@ -61,20 +61,43 @@ namespace pdstest.Controllers
                 {
                     if (result.userInfo.Valid && result.userInfo.UserTypeId>0)
                     {
-                        token = GenerateJSONWebToken(result.userInfo);
-                        if (!string.IsNullOrEmpty(token))
+                        result = logic.CheckIfSessionExists(result.userInfo);
+                        if(result.Status)
                         {
-                            result.userInfo.Token = token;
-                            result = logic.CreateSession(result.userInfo);
-
-                        }
-                        else {
-                            result.Message = "Something Went Wrong : Session cant be generated for this user";
+                            result.Message = result.Message;
                             result.Status = false;
-                            result.CommandType = "SELECT";
+                            result.CommandType = "Insert";
                             result.EmployeeName = username;
+                        }
+                        else 
+                        {
+
+                            token = GenerateJSONWebToken(result.userInfo);
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                result.userInfo.Token = token;
+                                result = logic.CreateSession(result.userInfo);
+                                if (result.Message == "Session already exists for this user!!")
+                                {
+
+                                    result.Message = result.Message;
+                                    result.Status = false;
+                                    result.CommandType = "Insert";
+                                    result.EmployeeName = username;
+                                }
+
+                            }
+                            else
+                            {
+                                result.Message = "Something Went Wrong : Session cant be generated for this user";
+                                result.Status = false;
+                                result.CommandType = "SELECT";
+                                result.EmployeeName = username;
+
+                            }
 
                         }
+
 
                     }
                     else
@@ -86,11 +109,13 @@ namespace pdstest.Controllers
 
                     }
 
-                   
-                    result.Status = true;
-                    result.CommandType = result.CommandType;
-                    result.EmployeeName = username;
-                    result.Message = result.Message;
+                    if (result.Message != "Session already exists for this user!!")
+                    {
+                        result.Status = true;
+                        result.CommandType = result.CommandType;
+                        result.EmployeeName = username;
+                        result.Message = result.Message;
+                    }
                 }
                 else 
                 {

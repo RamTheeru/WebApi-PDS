@@ -207,6 +207,23 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetSessionDetails(string userName,int employeeId, int userTypeId)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("SELECT COUNT(*) FROM UserSessions where EmployeeId = {0} AND UserTypeId = {1} AND UserName='{2}' AND IsActive=1 LIMIT 1;", employeeId, userTypeId,userName);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetLoginUserInfo(string username,string password)
         {
             string text = "";

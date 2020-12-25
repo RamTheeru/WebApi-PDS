@@ -324,41 +324,49 @@ namespace pdstest.BLL
                 dbr.ds = new System.Data.DataSet();
                 result.userInfo = new UserType();
                 dbr = ops.CreateSession(usr);
-                UserType user = new UserType();
-                int count = 0;
-                count = dbr.ds.Tables[0].Rows.Count;
-                if (count > 0)
+                if(dbr.IsExists)
                 {
-                    for (int i = 0; i < count; i++)
-                    {
-                        int userTypeid = 0;
-                        int employeeid = 0;
-                        string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
-                        bool succ = int.TryParse(empId, out employeeid);
-                        string usertype = dbr.ds.Tables[0].Rows[i]["UserType"].ToString();
-                        bool success = int.TryParse(usertype, out userTypeid);
-                        userTypeid = (success == true) ? userTypeid : 0;
-                        employeeid = (succ == true) ? employeeid : 0;
-                        user.EmployeeId = employeeid;
-                        user.UserTypeId = userTypeid; 
-                        user.Token = dbr.ds.Tables[0].Rows[i]["UserToken"].ToString();
-                        user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
-                        user.IsAlreadySession = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsAlreadySession"].ToString());
-                        user.Valid = true;
-                        user.Role = usr.Role;
-
-                    }
-                    result.userInfo = user;
-
-                    result.Status = dbr.Status;
-                    result.CommandType = dbr.CommandType;
-                }
-                if (user.IsAlreadySession)
-                    result.Message = "Session exists already!!! Cannot Create a new session!!!";
-                else
                     result.Message = dbr.Message;
+                    result.Status = false;
+                    result.CommandType = "Session Insert";
 
+                }
+                else
+                {
+                    UserType user = new UserType();
+                    int count = 0;
+                    count = dbr.ds.Tables[0].Rows.Count;
+                    if (count > 0)
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            int userTypeid = 0;
+                            int employeeid = 0;
+                            string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                            bool succ = int.TryParse(empId, out employeeid);
+                            string usertype = dbr.ds.Tables[0].Rows[i]["UserType"].ToString();
+                            bool success = int.TryParse(usertype, out userTypeid);
+                            userTypeid = (success == true) ? userTypeid : 0;
+                            employeeid = (succ == true) ? employeeid : 0;
+                            user.EmployeeId = employeeid;
+                            user.UserTypeId = userTypeid;
+                            user.Token = dbr.ds.Tables[0].Rows[i]["UserToken"].ToString();
+                            user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
+                            user.IsAlreadySession = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsAlreadySession"].ToString());
+                            user.Valid = true;
+                            user.Role = usr.Role;
 
+                        }
+                        result.userInfo = user;
+
+                        result.Status = dbr.Status;
+                        result.CommandType = dbr.CommandType;
+                    }
+                    if (user.IsAlreadySession)
+                        result.Message = "Session exists already!!! Cannot Create a new session!!!";
+                    else
+                        result.Message = dbr.Message;
+                }
 
 
             }
@@ -432,7 +440,43 @@ namespace pdstest.BLL
 
             return result;
         }
-       
+       public APIResult CheckIfSessionExists(UserType user)
+        {
+            APIResult result = new APIResult();
+            bool isExists = false;
+            try
+            {
+                isExists = ops.CheckIfSessionExists(user.User, user.EmployeeId, user.UserTypeId);
+                if(isExists)
+                {
+                    result.Message = "Session already exists for this user!!";
+                    result.Status = true;
+                    result.CommandType = "Insert";
+                    result.userInfo = user;
+                    result.EmployeeName = user.User;
+                }
+                else
+                {
+                    result.Status = false;
+                    result.userInfo = user;
+                    result.CommandType = "Insert";
+                    result.EmployeeName = user.User;
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+
+        }
         public APIResult ApproveUser(int registerId)
         {
             APIResult result = new APIResult();

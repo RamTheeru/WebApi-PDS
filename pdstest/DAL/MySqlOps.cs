@@ -55,7 +55,10 @@ namespace pdstest.DAL
         {
             return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status,isEmployee);
         }
-
+        public bool CheckIfSessionExists(string userName, int employeeId, int userTypeId)
+        {
+            return _ops.CheckIfSessionExists(userName, employeeId, userTypeId);
+        }
         public DataBaseResult InsertVoucher(Voucher input)
         {
             return _ops.InsertVoucher(input);
