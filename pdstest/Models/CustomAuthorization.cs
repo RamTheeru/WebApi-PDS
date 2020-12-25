@@ -49,7 +49,7 @@ namespace pdstest.Models
                     result.Message = "Unauthorized request !!!!";
                     result.Status = false;
                     // not logged in
-                    context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
+                    context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status401Unauthorized };
                 }
                 else if (!string.IsNullOrEmpty(errmsg))
                 {
@@ -69,7 +69,7 @@ namespace pdstest.Models
                     result.Status = false;
 
                     // not logged in
-                    context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
+                    context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status401Unauthorized };
 
                 }
                 else if (usr.EmployeeId == 0 || usr.UserTypeId == 0 || string.IsNullOrEmpty(usr.User))
@@ -84,7 +84,7 @@ namespace pdstest.Models
                         result.Message = result.Message;
                         result.Status = result.Status;
                         // not logged in
-                        context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status400BadRequest };
+                        context.Result = new JsonResult(result) { StatusCode = StatusCodes.Status401Unauthorized };
                     }
                 }
                 else if(usr.EmployeeId != 0 && usr.UserTypeId != 0 && !string.IsNullOrEmpty(usr.User))
