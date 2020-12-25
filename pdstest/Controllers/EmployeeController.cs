@@ -196,7 +196,41 @@ namespace pdstest.Controllers
 
         }
 
-      
+        [HttpGet("DeleteSession")]
+
+        public IActionResult DeleteSession(string userName,int employeeId,int userTypeId)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (string.IsNullOrEmpty(userName) || employeeId==0||userTypeId==0)
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "DELETE";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                if (!string.IsNullOrEmpty(userName))
+                    userName = userName.CleanString();
+                result = logic.DeleteSession(userName,employeeId,userTypeId);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            //return new CustomResult(result);
+            return Ok(result);
+
+        }
+
+
+
         [HttpGet("RegisteredUsers")]
         //[Authorize(AuthenticationSchemes = "Bearer")]
         [CustomAuthorization]

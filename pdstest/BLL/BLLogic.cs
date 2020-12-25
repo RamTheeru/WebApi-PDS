@@ -314,6 +314,28 @@ namespace pdstest.BLL
 
             return result;
         }
+        public APIResult DeleteSession(string userName,int employeeId,int userTypeId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.DeleteSession(userName, employeeId, userTypeId);
+                result.CommandType = dbr.CommandType;
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
         
         public APIResult CreateSession(UserType usr)
         {

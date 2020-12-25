@@ -72,6 +72,10 @@ namespace pdstest.DAL
         {
             return _ops.CreateSession(input);
         }
+        public DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId)
+        {
+            return _ops.DeleteSession(userName,employeeId, userTypeId);
+        }
 
     }
 }
