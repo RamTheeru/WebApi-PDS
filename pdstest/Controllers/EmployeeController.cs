@@ -200,16 +200,25 @@ namespace pdstest.Controllers
         [HttpGet("RegisteredUsers")]
         //[Authorize(AuthenticationSchemes = "Bearer")]
         [CustomAuthorization]
-        public IActionResult GetRegisteredUsers(string stationCode="")
+        public IActionResult GetRegisteredUsers(APIInput input)
         {
             APIResult result = new APIResult();
 
             try
             {
+                if (input.stationId > 0)
+                {
+                    input.table = "register";
+                    result = logic.GetPagnationRecords(input);
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
 
-                if (stationCode != null)
-                    stationCode = stationCode.CleanString();
-                 result = logic.GetRegisteredUsers(stationCode);
+                }
                 
 
             }

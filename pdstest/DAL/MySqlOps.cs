@@ -30,9 +30,9 @@ namespace pdstest.DAL
             return _ops.GetEmployees(stationCode,isEmployee);
         }
 
-        public DataBaseResult GetRegisteredUsers(string stationCode = "")
+        public DataBaseResult GetRegisteredUsers(int stationId)
         {
-            return _ops.GetRegisteredUsers(stationCode);
+            return _ops.GetRegisteredUsers(stationId);
         }
 
         public DataBaseResult RegisterEmployee(RegisterEmployee input)

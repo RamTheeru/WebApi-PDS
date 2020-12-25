@@ -1901,7 +1901,7 @@ namespace pdstest.DAL
 
         #endregion
 
-        public DataBaseResult GetRegisteredUsers(string stationCode = "")
+        public DataBaseResult GetRegisteredUsers(int stationId)
         {
             string getRegisteredUsers = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -1910,7 +1910,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Select";
-                getRegisteredUsers = DBConnection.GetRegisteredUsers(stationCode);
+                getRegisteredUsers = DBConnection.GetRegisteredUsers(stationId);
 
                 if (string.IsNullOrEmpty(getRegisteredUsers) || string.IsNullOrEmpty(connectionString))
                 {

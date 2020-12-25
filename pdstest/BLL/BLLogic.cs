@@ -122,7 +122,7 @@ namespace pdstest.BLL
         
         }
 
-        public APIResult GetRegisteredUsers(string stationCode = "")
+        public APIResult GetRegisteredUsers(int stationId)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -130,7 +130,7 @@ namespace pdstest.BLL
             {
                 dbr.ds = new System.Data.DataSet();
                 result.registerEmployees = new List<RegisterEmployee>();
-                dbr = ops.GetRegisteredUsers(stationCode);
+                dbr = ops.GetRegisteredUsers(stationId);
                 List<RegisterEmployee> regs = new List<RegisterEmployee>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;

@@ -48,15 +48,15 @@ namespace pdstest.DAL
             return text;
         }
 
-        public static string GetRegisteredUsers(string stationCode="")
+        public static string GetRegisteredUsers(int stationId)
         {
             string text = "";
 
             try
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                if (!string.IsNullOrEmpty(stationCode))
-                    text = string.Format("select * from register where IsActive = 0 and StateCode = '{0}'",stationCode);
+                if (stationId > 0)
+                    text = string.Format("select * from register where IsActive = 0 and StationId = {0}", stationId);
                 else
                     text = "select * from register where IsActive = 0";
 
@@ -138,7 +138,12 @@ namespace pdstest.DAL
                         text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 ;", stationId, isEmployee));
 
                     }
+                    else if (table.ToLower() == "register")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM register where StationId = {0}  AND IsActive = 0 LIMIT {2},{3};", stationId, isEmployee, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM register where StationId = {0}  AND IsActive = 0 ;", stationId, isEmployee));
 
+                    }
 
                 }
            

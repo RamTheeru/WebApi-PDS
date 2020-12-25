@@ -12,7 +12,7 @@ namespace pdstest.services
         DataBaseResult RegisterEmployee(RegisterEmployee input);
         DataBaseResult CreateEmployee(Employee input,bool isEmployee=false);
         DataBaseResult GetConstants();
-        DataBaseResult GetRegisteredUsers(string stationCode = "");
+        DataBaseResult GetRegisteredUsers(int stationId);
         DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false);
         DataBaseResult GetLoginUserInfo(string username, string password);
         DataBaseResult ApproveUser(int registerId);
