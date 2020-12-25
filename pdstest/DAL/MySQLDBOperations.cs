@@ -908,7 +908,7 @@ namespace pdstest.DAL
             {
                 dbr.CommandType = "Insert";
                 isSessionExists = CheckIfSessionExists(input.User, input.EmployeeId, input.UserTypeId);
-                if(isSessionExists)
+                if(!isSessionExists)
                 {
 
                     insertQuery = DBConnection.GetCreateSessionQuery();
