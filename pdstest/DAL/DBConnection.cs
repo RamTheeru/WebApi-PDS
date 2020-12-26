@@ -153,6 +153,8 @@ namespace pdstest.DAL
             {
                 string msg = e.Message;
                 text = new Dictionary<string, string>();
+                text.Add("main", "");
+                text.Add("count", "");
 
             }
             return text;

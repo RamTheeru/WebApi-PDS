@@ -272,7 +272,31 @@ namespace pdstest.BLL
                         result.ledgers = ledgs;
                         result.QueryTotalCount = dbr.QueryTotalCount;
                     }
+                    else if(input.table.ToLower() == "register")
+                    {
+                        result.registerEmployees = new List<RegisterEmployee>();
+                        List<RegisterEmployee> regs = new List<RegisterEmployee>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            RegisterEmployee reg = new RegisterEmployee();
+                            int stationid = 0;
+                            string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                            bool success = int.TryParse(sId, out stationid);
+                            reg.StationId = (success == true) ? stationid : 0;
+   
+                            reg.FirstName= dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            reg.UserName = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
+                            reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                            reg.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            reg.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                            reg.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
 
+                            regs.Add(reg);
+
+                        }
+                        result.registerEmployees = regs;
+                        result.QueryTotalCount = dbr.QueryTotalCount;
+                    }
                     if (result.QueryTotalCount > 0)
                     {
                         if (p > 1)
