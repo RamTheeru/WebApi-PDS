@@ -1211,12 +1211,12 @@ namespace pdstest.DAL
                     {
 
                         dbr.Status = true;
-                        dbr.Message = "Session Ended Successfully!!!!";
+                        dbr.Message = "Signed Out Successfully!!!!";
                     }
                     else
                     {
                         dbr.Status = false;
-                        dbr.Message = "Something went wrong, unable to End Session!!";
+                        dbr.Message = "Something went wrong, unable to Log Out!!";
 
 
                     }
