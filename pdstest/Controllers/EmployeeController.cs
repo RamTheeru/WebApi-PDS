@@ -231,7 +231,7 @@ namespace pdstest.Controllers
 
 
 
-        [HttpGet("RegisteredUsers")]
+        [HttpPost("RegisteredUsers")]
         //[Authorize(AuthenticationSchemes = "Bearer")]
         [CustomAuthorization]
         public IActionResult GetRegisteredUsers(APIInput input)
@@ -305,7 +305,7 @@ namespace pdstest.Controllers
 
         }
 
-        [HttpGet("Employees")]
+        [HttpPost("Employees")]
 
         public IActionResult GetEmployees(APIInput input)
         {
@@ -330,7 +330,7 @@ namespace pdstest.Controllers
         }
 
 
-        [HttpGet("DAEmployees")]
+        [HttpPost("DAEmployees")]
 
         public IActionResult GetDAEmployees(APIInput input)
         {
