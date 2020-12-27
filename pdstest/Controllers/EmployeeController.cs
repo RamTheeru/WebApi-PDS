@@ -269,7 +269,7 @@ namespace pdstest.Controllers
 
         }
         [HttpPut("ApproveUser")]
-        public IActionResult ApproveUser(string registerId)
+        public IActionResult ApproveUser(string registerId,string status)
         {
             APIResult result = new APIResult();
             int regId = 0;
@@ -277,7 +277,7 @@ namespace pdstest.Controllers
             try
             {
                 success = int.TryParse(registerId, out regId);
-                if (string.IsNullOrEmpty(registerId) || regId == 0 || !success)
+                if (string.IsNullOrEmpty(registerId) || regId == 0 || !success||string.IsNullOrEmpty(status))
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;
@@ -289,7 +289,9 @@ namespace pdstest.Controllers
                 }
                 else 
                 {
-                    result = logic.ApproveUser(regId);
+                    if (!string.IsNullOrEmpty(status))
+                        status = status.CleanString();
+                    result = logic.ApproveUser(regId,status);
                 }  
 
             }
@@ -297,7 +299,7 @@ namespace pdstest.Controllers
             {
                 result.Message = e.Message;
                 result.Status = false;
-                result.CommandType = "UPDATE";
+                result.CommandType = status=="a"? "UPDATE":"DELETE";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);

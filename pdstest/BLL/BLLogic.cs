@@ -523,14 +523,14 @@ namespace pdstest.BLL
             return result;
 
         }
-        public APIResult ApproveUser(int registerId)
+        public APIResult ApproveUser(int registerId,string status)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.ApproveUser(registerId);
+                dbr = ops.ApproveUser(registerId,status);
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
                 result.Id = dbr.Id;
@@ -540,7 +540,7 @@ namespace pdstest.BLL
             {
                 result.Message = e.Message;
                 result.Status = false;
-                result.CommandType = "UPDATE";
+                result.CommandType =status=="a"? "UPDATE":"DELETE";
                 result.Id = registerId;
                 throw e;
 

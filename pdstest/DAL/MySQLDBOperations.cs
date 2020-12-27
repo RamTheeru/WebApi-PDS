@@ -2066,7 +2066,7 @@ namespace pdstest.DAL
 
         }
 
-        public DataBaseResult ApproveUser(int registerId)
+        public DataBaseResult ApproveUser(int registerId,string status)
         {
             string getApproveUser = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -2074,8 +2074,8 @@ namespace pdstest.DAL
             try
             {
                 dbr.Id = registerId;
-                dbr.CommandType = "UPDATE";
-                getApproveUser = DBConnection.ApproveUser(registerId);
+                dbr.CommandType = status=="a"?"UPDATE":"DELETE";
+                getApproveUser = DBConnection.ApproveUser(registerId,status);
 
                 if (string.IsNullOrEmpty(getApproveUser) || string.IsNullOrEmpty(connectionString))
                 {
@@ -2097,7 +2097,7 @@ namespace pdstest.DAL
                         if (res > 0)
                         {
                             
-                            dbr.Message = "User Approved Successfully!!!";
+                            dbr.Message = status == "a" ? "User Approved Successfully!!!":"User Removed Successfully!!";
                             dbr.Status = true;
 
                         }

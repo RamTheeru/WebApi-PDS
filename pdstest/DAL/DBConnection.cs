@@ -265,15 +265,17 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public static string ApproveUser(int registerId)
+        public static string ApproveUser(int registerId,string status)
         {
             string text = "";
 
             try
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                
-                text = string.Format("UPDATE register SET IsActive = 1 WHERE RegisterId = {0}", registerId);
+                if(status.ToLower() == "a")
+                    text = string.Format("UPDATE register SET IsActive = 1 WHERE RegisterId = {0}", registerId);
+                else
+                    text = string.Format("DELETE FROM register WHERE RegisterId = {0}", registerId);
 
             }
             catch (Exception e)
