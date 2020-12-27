@@ -283,7 +283,7 @@ namespace pdstest.BLL
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
                             bool success = int.TryParse(sId, out stationid);
                             reg.StationId = (success == true) ? stationid : 0;
-   
+                            reg.RegisterId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["RegisterId"]);
                             reg.FirstName= dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                             reg.UserName = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
                             reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
