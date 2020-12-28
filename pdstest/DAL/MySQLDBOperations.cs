@@ -362,6 +362,11 @@ namespace pdstest.DAL
                         param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
 
+                        param = new MySqlParameter("@PID", input.Pid);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
                         param = new MySqlParameter("@BloodGroup", input.BloodGroup);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
@@ -2066,7 +2071,7 @@ namespace pdstest.DAL
 
         }
 
-        public DataBaseResult ApproveUser(int registerId,string status)
+        public DataBaseResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
         {
             string getApproveUser = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -2088,29 +2093,85 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
-                    //{
-                    //cmd.CommandText = getApproveUser;
-                    //cmd.CommandType = CommandType.Text;
-                    //int res = cmd.ExecuteNonQuery();
-                    int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
+                    if(status.ToLower()=="a")
+                    {
+                        if(!string.IsNullOrEmpty(empCode)&&pId >0)
+                        {
+                            string cmdtxt = string.Format("Update register SET EmpCode='{0}',PID={1} WHERE RegisterId={2};",empCode
+                                ,pId,registerId);
+                            int result = new BasicDBOps().ExceuteCommand(connectionString, cmdtxt);
+                            if (result > 0)
+                            {
+                                int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
+                                if (res > 0)
+                                {
+
+                                    dbr.Message = status == "a" ? "User Approved Successfully!!!" : "User Removed Successfully!!";
+                                    dbr.Status = true;
+
+                                }
+                                else
+                                {
+
+                                    dbr.Message = "Something went wrong,User not approved for this request!!";
+                                    dbr.Status = false;
+
+
+                                }
+                            }
+                            else
+                            {
+
+                                dbr.Message = "Something went wrong,User not approved for this request!!";
+                                dbr.Status = false;
+
+
+                            }
+
+                        }
+                        else
+                        {
+                            dbr.Message = "Something went wrong,invalid input for this request, try again!!";
+                            dbr.Status = false;
+                        }
+
+
+                    }
+                    else if(status.ToLower() == "r")
+                    {
+                        int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
                         if (res > 0)
                         {
-                            
-                            dbr.Message = status == "a" ? "User Approved Successfully!!!":"User Removed Successfully!!";
+
+                            dbr.Message =  "User Removed Successfully!!";
                             dbr.Status = true;
 
                         }
                         else
                         {
-                            
-                            dbr.Message = "User not approved for this request!!";
+
+                            dbr.Message = "Something went wrong,User not removed for this request!!";
                             dbr.Status = false;
 
 
                         }
 
-                   // }
+                    }
+                    else
+                    {
+
+                        dbr.Message = "Invalid Request, Please select proper input!!";
+                        dbr.Status = false;
+
+                    }
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    //cmd.CommandText = getApproveUser;
+                    //cmd.CommandType = CommandType.Text;
+                    //int res = cmd.ExecuteNonQuery();
+
+
+                    // }
 
 
 

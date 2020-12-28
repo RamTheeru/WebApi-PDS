@@ -43,9 +43,9 @@ namespace pdstest.DAL
         {
             return _ops.CheckUserExists(userName);
         }
-        public DataBaseResult ApproveUser(int registerId,string status)
+        public DataBaseResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
         {
-            return _ops.ApproveUser(registerId,status);
+            return _ops.ApproveUser(registerId,status,empCode,pId);
         }
         public DataBaseResult GetLoginUserInfo(string username, string password)
         {

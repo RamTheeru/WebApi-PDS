@@ -13,7 +13,10 @@ namespace pdstest.Models
         public List<UserType> Usertypes { get; set; }
         public List<Designation> Designations { get; set; } 
         public List<Voucher> vouchers { get; set; }
+        public List<CommercialConstant> commercialConstants { get; set; }
+        public CommercialConstant commercialConstant { get; set; }
         public List<Ledger> ledgers { get; set; }
+        public List<Profession> professions { get; set; }
         public List<Station> stations { get; set; }
         public Voucher voucher { get; set; }
         public Ledger ledger { get; set; }

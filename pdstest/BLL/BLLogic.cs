@@ -29,6 +29,7 @@ namespace pdstest.BLL
                 result.Designations = new List<Designation>();
                 result.Usertypes = new List<UserType>();
                 result.stations = new List<Station>();
+                result.professions = new List<Profession>();
                 dbr = ops.GetConstants();
                 List<DropDown> dds = new List<DropDown>();
                 int count = 0;
@@ -52,6 +53,7 @@ namespace pdstest.BLL
                         int designationCount = dds.Where(x => x.Category.ToLower() == "designation").Count();
                         int userTypeCount = dds.Where(x => x.Category.ToLower() == "logintype").Count();
                         int stationCount = dds.Where(x => x.Category.ToLower() == "station").Count();
+                        int professionCount = dds.Where(x => x.Category.ToLower() == "profession").Count(); 
                         if (designationCount > 0)
                         {
                             result.Designations = dds.Where(x => x.Category.ToLower() == "designation").Select(
@@ -67,7 +69,15 @@ namespace pdstest.BLL
                             build.Append("UserTypes,");
 
                         }
-                        if(stationCount>0)
+                        if (professionCount > 0)
+                        {
+                            result.professions = dds.Where(x => x.Category.ToLower() == "profession").Select(
+                            a => new Profession { Pid = a.ConstantId, ProfessionName = a.ConstantName }
+                            ).ToList();
+                            build.Append("Professions,");
+
+                        }
+                        if (stationCount>0)
                         {
                             result.stations = dds.Where(x => x.Category.ToLower() == "station").Select(
                                      a => new Station { StationId = a.ConstantId, StationName = a.ConstantName,StationCode = a.ConstantValue }
@@ -523,14 +533,14 @@ namespace pdstest.BLL
             return result;
 
         }
-        public APIResult ApproveUser(int registerId,string status)
+        public APIResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.ApproveUser(registerId,status);
+                dbr = ops.ApproveUser(registerId,status,empCode);
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
                 result.Id = dbr.Id;

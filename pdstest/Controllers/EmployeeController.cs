@@ -269,7 +269,7 @@ namespace pdstest.Controllers
 
         }
         [HttpPut("ApproveUser")]
-        public IActionResult ApproveUser(string registerId,string status)
+        public IActionResult ApproveUser(string registerId,string status,int pId,string empCode)
         {
             APIResult result = new APIResult();
             int regId = 0;
@@ -278,6 +278,16 @@ namespace pdstest.Controllers
             {
                 success = int.TryParse(registerId, out regId);
                 if (string.IsNullOrEmpty(registerId) || regId == 0 || !success||string.IsNullOrEmpty(status))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "UPDATE";
+                    result.Id = regId;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                else if (status=="a" && (string.IsNullOrEmpty(empCode) || pId==0))
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;
@@ -434,7 +444,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0)
+                if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0||obj.Pid>0)
                 {
                     obj.IsRegister = false;
                     result = logic.CreateEmployee(obj,true);
