@@ -540,7 +540,7 @@ namespace pdstest.BLL
             try
             {
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.ApproveUser(registerId,status,empCode);
+                dbr = ops.ApproveUser(registerId,status,empCode,pId);
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
                 result.Id = dbr.Id;

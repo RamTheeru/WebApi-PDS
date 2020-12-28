@@ -301,7 +301,7 @@ namespace pdstest.Controllers
                 {
                     if (!string.IsNullOrEmpty(status))
                         status = status.CleanString();
-                    result = logic.ApproveUser(regId,status);
+                    result = logic.ApproveUser(regId,status,empCode,pId);
                 }  
 
             }
