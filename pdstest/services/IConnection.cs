@@ -23,5 +23,6 @@ namespace pdstest.services
         DataBaseResult CheckUserExists(string userName);
         bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
+        DataBaseResult GetAdminDetails();
     }
 }

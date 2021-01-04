@@ -30,6 +30,7 @@ namespace pdstest.Models
         public bool Status { get; set; }
         public string Message { get; set; }
         public int Id { get; set; }
+        public List<RequestDetail> requests { get; set; }
 
     }
 }

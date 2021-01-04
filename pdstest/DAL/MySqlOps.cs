@@ -76,6 +76,10 @@ namespace pdstest.DAL
         {
             return _ops.DeleteSession(userName,employeeId, userTypeId);
         }
+        public DataBaseResult GetAdminDetails()
+        {
+            return _ops.GetAdminDetails();
+        }
 
     }
 }

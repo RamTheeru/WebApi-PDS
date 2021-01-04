@@ -1341,6 +1341,137 @@ namespace pdstest.DAL
 
 
         }
+        public DataBaseResult GetAdminDetails()
+        {
+            string getQuery = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
+            //MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                result = DBConnection.GetAdminDetails();
+                DataSet ds = new DataSet();
+                dbr.ds = new DataSet();
+                DataTable dtt = new DataTable("AdminDetails");
+                DataColumn dtColumn;
+                DataRow myDataRow;
+
+                // Create id column  
+                dtColumn = new DataColumn();
+                dtColumn.DataType = typeof(Int32);
+                dtColumn.ColumnName = "Count";
+                dtColumn.Caption = "Count";
+                dtColumn.ReadOnly = false;
+                dtColumn.Unique = false;
+                // Add column to the DataColumnCollection.  
+                dtt.Columns.Add(dtColumn);
+
+                // Create Name column.    
+                dtColumn = new DataColumn();
+                dtColumn.DataType = typeof(String);
+                dtColumn.ColumnName = "Detail";
+                dtColumn.Caption = "Detail";
+                dtColumn.AutoIncrement = false;
+                dtColumn.ReadOnly = false;
+                dtColumn.Unique = false;
+                /// Add column to the DataColumnCollection.   
+                dtt.Columns.Add(dtColumn);
+                foreach (var item in result)
+                {
+                    Dictionary<string, string> dt = new Dictionary<string, string>();
+                    dt = item;
+                    foreach(var i in dt.Keys)
+                    {
+                        getQuery = dt[i];
+                        if (string.IsNullOrEmpty(getQuery) || string.IsNullOrEmpty(connectionString))
+                        {
+                            dbr.Id = 0;
+                            dbr.Message = "Something Wrong with getting DB Commands!!";
+                            dbr.EmployeeName = "";
+                            dbr.Status = false;
+                            dbr.dt = new DataTable();
+                            dbr.ds = new DataSet();
+                        }
+                        else
+                        {
+                            //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                            //{
+                  
+                            //DataTable dt = new DataTable();
+                            //sda = new MySqlDataAdapter(getUserTypes, conn);
+                            //sda.SelectCommand.CommandType = CommandType.Text;
+                            //sda.Fill(ds);
+                            int count = 0;
+                            count = new BasicDBOps().GetTotalCountOfQuery(connectionString, getQuery);
+                            
+                            if (count > 0)
+                            {
+                               
+
+                                myDataRow = dtt.NewRow();
+                                myDataRow["Count"] = count;
+                                myDataRow["Name"] =i;
+                                dtt.Rows.Add(myDataRow);
+
+                            }
+                            if(dtt.Rows.Count>0)
+                            {
+                                ds.Tables.Add(dtt);
+                                dbr.ds = ds;
+                                dbr.Message = "Details retreived Successfully!!!";
+                                dbr.Status = true;
+                            }
+                            else 
+                            {
+                                dbr.ds = ds;
+                                dbr.Message = "No Records Found for this request!!";
+                                dbr.Status = true;
+
+
+                            }
+                        }
+
+                        }
+                   
+
+                        // }
+
+
+
+
+                   
+
+                }
+              
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
         public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false)
         {
             Dictionary<string, string> getSelectQuery = new Dictionary<string, string>();

@@ -195,7 +195,28 @@ namespace pdstest.Controllers
             return Ok(result);
 
         }
+        [HttpGet("AdminDetails")]
 
+        public IActionResult GetAdminDetails()
+        {
+            APIResult result = new APIResult();
+            try
+            {
+
+                result = logic.GetAdminDetails();
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            //return new CustomResult(result);
+            return Ok(result);
+
+        }
         [HttpGet("DeleteSession")]
 
         public IActionResult DeleteSession(string userName,int employeeId,int userTypeId)

@@ -47,6 +47,26 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static List<Dictionary<string, string>> GetAdminDetails()
+        {
+            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
+
+            try
+            {
+                Dictionary<string, string> text = new Dictionary<string, string>();
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                text["loginrequests"] = "SELECT COUNT(*) FROM register WHERE IsActive = 0";
+                result.Add(text);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                result = new List<Dictionary<string, string>>();
+
+            }
+            return result;
+        }
 
         public static string GetRegisteredUsers(int stationId)
         {

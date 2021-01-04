@@ -559,6 +559,57 @@ namespace pdstest.BLL
             return result;
         }
 
+        public APIResult GetAdminDetails()
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                result.requests = new List<RequestDetail>();
+                dbr = ops.GetAdminDetails();
+                List<RequestDetail> details = new List<RequestDetail>();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        RequestDetail req = new RequestDetail();
+                        req.Count = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["Count"]);
+                        req.Detail = dbr.ds.Tables[0].Rows[i]["Detail"].ToString();
+                        details.Add(req);
+
+                    }
+                    result.requests = details;
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+                }
+                else
+                {
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
+
         public APIResult GetEmployees(APIInput input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
