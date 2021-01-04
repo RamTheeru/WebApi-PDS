@@ -1412,7 +1412,7 @@ namespace pdstest.DAL
 
                                 myDataRow = dtt.NewRow();
                                 myDataRow["Count"] = count;
-                                myDataRow["Name"] =i;
+                                myDataRow["Detail"] =i;
                                 dtt.Rows.Add(myDataRow);
 
                             }
