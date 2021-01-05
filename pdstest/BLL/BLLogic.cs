@@ -570,21 +570,32 @@ namespace pdstest.BLL
                 dbr = ops.GetAdminDetails();
                 List<RequestDetail> details = new List<RequestDetail>();
                 int count = 0;
-                count = dbr.ds.Tables[0].Rows.Count;
-                if (count > 0)
+                if (dbr.ds.Tables.Count > 0)
                 {
-                    for (int i = 0; i < count; i++)
+                    count = dbr.ds.Tables[0].Rows.Count;
+                    if (count > 0)
                     {
-                        RequestDetail req = new RequestDetail();
-                        req.Count = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["Count"]);
-                        req.Detail = dbr.ds.Tables[0].Rows[i]["Detail"].ToString();
-                        details.Add(req);
+                        for (int i = 0; i < count; i++)
+                        {
+                            RequestDetail req = new RequestDetail();
+                            req.Count = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["Count"]);
+                            req.Detail = dbr.ds.Tables[0].Rows[i]["Detail"].ToString();
+                            details.Add(req);
+
+                        }
+                        result.requests = details;
+                        result.Message = dbr.Message;
+                        result.Status = dbr.Status;
+                        result.CommandType = dbr.CommandType;
+                    }
+                    else
+                    {
+                        result.Message = dbr.Message;
+                        result.Status = dbr.Status;
+                        result.CommandType = dbr.CommandType;
+
 
                     }
-                    result.requests = details;
-                    result.Message = dbr.Message;
-                    result.Status = dbr.Status;
-                    result.CommandType = dbr.CommandType;
                 }
                 else
                 {

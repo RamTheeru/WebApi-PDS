@@ -1416,21 +1416,7 @@ namespace pdstest.DAL
                                 dtt.Rows.Add(myDataRow);
 
                             }
-                            if(dtt.Rows.Count>0)
-                            {
-                                ds.Tables.Add(dtt);
-                                dbr.ds = ds;
-                                dbr.Message = "Details retreived Successfully!!!";
-                                dbr.Status = true;
-                            }
-                            else 
-                            {
-                                dbr.ds = ds;
-                                dbr.Message = "No Records Found for this request!!";
-                                dbr.Status = true;
 
-
-                            }
                         }
 
                         }
@@ -1444,7 +1430,21 @@ namespace pdstest.DAL
                    
 
                 }
-              
+                if (dtt.Rows.Count > 0)
+                {
+                    ds.Tables.Add(dtt);
+                    dbr.ds = ds;
+                    dbr.Message = "Details retreived Successfully!!!";
+                    dbr.Status = true;
+                }
+                else
+                {
+                    dbr.ds = ds;
+                    dbr.Message = "No Records Found for this request!!";
+                    dbr.Status = true;
+
+
+                }
 
 
             }
