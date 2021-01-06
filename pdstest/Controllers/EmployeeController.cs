@@ -250,7 +250,43 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpPost("Logins")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [CustomAuthorization]
+        public IActionResult GetEmployeeLogins(APIInput input)
+        {
+            APIResult result = new APIResult();
 
+            try
+            {
+                if (input.stationId > 0)
+                {
+                    input.table = "logins";
+                    result = logic.GetPagnationRecords(input);
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
 
         [HttpPost("RegisteredUsers")]
         //[Authorize(AuthenticationSchemes = "Bearer")]

@@ -21,7 +21,7 @@ namespace pdstest.Models
         public string Password { get; set; }
         public string LastName { get;set; }
         public string MiddleName { get; set; }
-
+        public bool IsActive { get; set; }
         public string DOB { get; set; }
 
         public int Age { get; set; }

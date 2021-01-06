@@ -158,6 +158,12 @@ namespace pdstest.DAL
                         text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 ;", stationId, isEmployee));
 
                     }
+                    else if (table.ToLower() == "logins")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND LoginType IS NOT NULL AND UpdateByTrigger = 1 LIMIT {1},{2};", stationId, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND LoginType IS NOT NULL AND UpdateByTrigger = 1 ;", stationId, isEmployee));
+
+                    }
                     else if (table.ToLower() == "register")
                     {
                         text.Add("main", string.Format("SELECT * FROM register where StationId = {0}  AND IsActive = 0 LIMIT {2},{3};", stationId, isEmployee, range, ps));

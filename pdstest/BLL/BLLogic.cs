@@ -307,6 +307,30 @@ namespace pdstest.BLL
                         result.registerEmployees = regs;
                         result.QueryTotalCount = dbr.QueryTotalCount;
                     }
+                    else if (input.table.ToLower() == "logins")
+                    {
+                        result.employees = new List<Employee>();
+                        List<Employee> emps = new List<Employee>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            Employee emp = new Employee();
+                            int stationid = 0;
+                            string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                            bool success = int.TryParse(sId, out stationid);
+                            emp.StationId = (success == true) ? stationid : 0;
+                            emp.EmpCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
+                            emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            emp.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                            emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                            emp.IsActive = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsActive"].ToString());
+
+                            emps.Add(emp);
+
+                        }
+                        result.employees = emps;
+                        result.QueryTotalCount = dbr.QueryTotalCount;
+                    }
                     if (result.QueryTotalCount > 0)
                     {
                         if (p > 1)
