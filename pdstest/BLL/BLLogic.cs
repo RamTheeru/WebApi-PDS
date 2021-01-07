@@ -323,7 +323,8 @@ namespace pdstest.BLL
                             emp.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
                             emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                             emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
-                            emp.IsActive = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsActive"].ToString());
+                            string act = dbr.ds.Tables[0].Rows[i]["IsActive"].ToString();
+                            emp.IsActive = act=="1";
 
                             emps.Add(emp);
 
