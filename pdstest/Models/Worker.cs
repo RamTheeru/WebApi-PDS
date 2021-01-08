@@ -19,11 +19,11 @@ namespace pdstest.Models
         }
         public async Task DoWork(CancellationToken token)
         {
-            string fileName = @"C:\Users\Public\Documents\logs.txt";
-            if(!File.Exists(fileName))
-            {
-                File.Create(fileName).Dispose();
-            }
+            //string fileName = @"C:\Users\Public\Documents\logs.txt";
+            //if(!File.Exists(fileName))
+            //{
+            //    File.Create(fileName).Dispose();
+            //}
            // FileInfo fi = new FileInfo(fileName);
 
             while (!token.IsCancellationRequested)
