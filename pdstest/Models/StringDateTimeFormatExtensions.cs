@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,6 +57,18 @@ namespace pdstest.Models
             DateTime date = new DateTime(dt.Year, dt.Month, dt.Day);
 
             return date.ToString("MMMM");
+        }
+        public static void WriteCustomString(string  file,string text)
+        {
+
+            using (StreamWriter writer = new StreamWriter(file))
+            {
+    
+                    writer.WriteLine(text);
+                
+            }
+
+
         }
 
     }

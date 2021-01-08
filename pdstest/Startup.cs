@@ -35,7 +35,8 @@ namespace pdstest
         {
             services.AddCors();
             services.AddControllers();
-
+            services.AddSingleton<IWorker, Worker>();
+            services.AddHostedService<MyCustomBackgroundService>();
             ////services.AddTransient<IConnection, MySqlOps>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -68,7 +69,7 @@ namespace pdstest
             }
            // else { app.UseHsts(); }
             app.UseHttpsRedirection();
-
+         
             app.UseRouting();
 
             app.UseAuthorization();
