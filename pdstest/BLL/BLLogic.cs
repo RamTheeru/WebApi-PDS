@@ -444,7 +444,7 @@ namespace pdstest.BLL
                         result.CommandType = dbr.CommandType;
                     }
                     if (user.IsAlreadySession)
-                        result.Message = "Session exists already!!! Cannot Create a new session!!!";
+                        result.Message = "Session exists already!!! Please proceed to another page or wait for ten minutes to end this session!!!";
                     else
                         result.Message = dbr.Message;
                 }

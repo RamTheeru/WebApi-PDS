@@ -41,7 +41,8 @@ namespace pdstest.Models
                     checkCount = dbOps.ClearInactiveSessions("c");
                     if (checkCount > 0)
                     {
-                         msg = string.Format("Found {0} inactive sessions and if they dont signed out, will delete after ten minutes", count);
+                        this.WriteToFile("==========================================================================================");
+                         msg = string.Format("Found {0} inactive sessions and if they dont signed out, will delete after ten minutes", checkCount);
                         this.WriteToFile(msg);
                         await Task.Delay(1000 * 60 * 10);
                         count = dbOps.ClearInactiveSessions("d");
@@ -49,6 +50,7 @@ namespace pdstest.Models
                         {
                             msg = string.Format("All sessions signed out before removing");
                             this.WriteToFile(msg);
+                            this.WriteToFile("==========================================================================================");
                         }
 
                     }
@@ -57,12 +59,15 @@ namespace pdstest.Models
                 {
                      msg = string.Format("Something went wrong while removing Sessions. Reason : {0}", e.Message);
                     this.WriteToFile(msg);
+                    count = 0;
+                    this.WriteToFile("==========================================================================================");
                 }
               
                 if(count > 0)
                 {
                      msg = string.Format("Cleared {0} inactive sessions", count);
                     this.WriteToFile(msg);
+                    this.WriteToFile("==========================================================================================");
                 }
                 //using (StreamWriter writer = new StreamWriter(fileName))
                 //{
@@ -95,7 +100,10 @@ namespace pdstest.Models
           //  string path = $"C:\Users\pdsadmin\ServiceLog.txt"; 
             using (StreamWriter writer = new StreamWriter(path, true))
             {
-                writer.WriteLine(string.Format(text+" at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
+                if (!text.StartsWith("="))
+                    writer.WriteLine(string.Format(text + " at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
+                else
+                    writer.WriteLine(text);
                 writer.Close();
             }
         }

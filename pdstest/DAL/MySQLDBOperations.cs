@@ -1221,7 +1221,7 @@ namespace pdstest.DAL
                     else
                     {
                         dbr.Status = false;
-                        dbr.Message = "Something went wrong, Please try login again!!";
+                        dbr.Message = "Session either expired or terminated, Please try login again!!";
 
 
                     }
@@ -1976,7 +1976,7 @@ namespace pdstest.DAL
                     bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
                             if (isExists)
                             {
-                                result.Message = "Invalid token or Session already terminated,  try login again!!";
+                                result.Message = "Invalid token or Session will be terminated, please wait ten minutes,  try login again!!";
                                 result.Status = false;
                             }
                             else {
@@ -2003,7 +2003,7 @@ namespace pdstest.DAL
                             bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
                             if (isExists)
                             {
-                                result.Message = "Unable to terminate Session for this user , try login again!!";
+                                result.Message = "Invalid Session or session  will be terminated for this user, please wait ten minutes , try login again!!";
                                 result.Status = false;
                             }
                             else
