@@ -34,19 +34,34 @@ namespace pdstest.Models
             {
                 MySQLDBOperations dbOps = new MySQLDBOperations();
                 int count = 0;
+                string msg = "";
                 try
                 {
-                    count = dbOps.ClearInactiveSessions();
+                    int checkCount = 0;
+                    checkCount = dbOps.ClearInactiveSessions("c");
+                    if (checkCount > 0)
+                    {
+                         msg = string.Format("Found {0} inactive sessions and if they dont signed out, will delete after ten minutes", count);
+                        this.WriteToFile(msg);
+                        await Task.Delay(1000 * 60 * 10);
+                        count = dbOps.ClearInactiveSessions("d");
+                        if(count == 0)
+                        {
+                            msg = string.Format("All sessions signed out before removing");
+                            this.WriteToFile(msg);
+                        }
+
+                    }
                 }
                 catch(Exception e)
                 {
-                    string msg = string.Format("Something went wrong while removing Sessions. Reason : {0}", e.Message);
+                     msg = string.Format("Something went wrong while removing Sessions. Reason : {0}", e.Message);
                     this.WriteToFile(msg);
                 }
               
                 if(count > 0)
                 {
-                    string msg = string.Format("Cleared {0} inactive sessions.", count);
+                     msg = string.Format("Cleared {0} inactive sessions", count);
                     this.WriteToFile(msg);
                 }
                 //using (StreamWriter writer = new StreamWriter(fileName))

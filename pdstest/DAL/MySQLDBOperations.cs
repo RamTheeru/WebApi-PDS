@@ -1564,15 +1564,18 @@ namespace pdstest.DAL
 
 
         }
-        public int ClearInactiveSessions()
+        public int ClearInactiveSessions(string action)
         {
             int count = 0;
             string cmdText = "";
             try
             {
-                cmdText = DBConnection.ClearInactiveSessions();
-                count = new BasicDBOps().GetTotalCountOfQuery(connectionString,cmdText);
-                if(count > 0)
+                if (action == "c")
+                {
+                    cmdText = DBConnection.ClearInactiveSessions();
+                    count = new BasicDBOps().GetTotalCountOfQuery(connectionString, cmdText);
+                }
+                else
                 {
                     string query = "DELETE from UserSessions where  Now()  not between StartDate and EndDate;";
                     count = new BasicDBOps().ExceuteCommand(connectionString, query);
