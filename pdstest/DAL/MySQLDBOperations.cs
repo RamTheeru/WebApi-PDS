@@ -1221,7 +1221,7 @@ namespace pdstest.DAL
                     else
                     {
                         dbr.Status = false;
-                        dbr.Message = "Something went wrong, unable to Log Out!!";
+                        dbr.Message = "Something went wrong, Please try login again!!";
 
 
                     }
@@ -1973,7 +1973,7 @@ namespace pdstest.DAL
                     bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
                             if (isExists)
                             {
-                                result.Message = "Unable to terminate Session with invalid token or Session already terminated, Contact Support Team or try login again!!";
+                                result.Message = "Invalid token or Session already terminated,  try login again!!";
                                 result.Status = false;
                             }
                             else {
@@ -2000,7 +2000,7 @@ namespace pdstest.DAL
                             bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmd);
                             if (isExists)
                             {
-                                result.Message = "Unable to terminate Session for this user , Contact Support Team!!";
+                                result.Message = "Unable to terminate Session for this user , try login again!!";
                                 result.Status = false;
                             }
                             else

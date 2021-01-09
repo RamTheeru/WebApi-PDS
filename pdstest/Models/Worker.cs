@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using pdstest.DAL;
 using pdstest.services;
 using System;
@@ -14,9 +15,11 @@ namespace pdstest.Models
     public class Worker : IWorker
     {
         private readonly ILogger<Worker> logger;
-        public Worker(ILogger<Worker> logger)
+        private readonly IConfiguration configuration;
+        public Worker(ILogger<Worker> logger, IConfiguration config)
         {
             this.logger = logger;
+            this.configuration = config;
         }
         public async Task DoWork(CancellationToken token)
         {
@@ -73,7 +76,8 @@ namespace pdstest.Models
         }
         private void WriteToFile(string text)
         {
-            string path = "C:\\ServiceLog.txt";
+            string path = configuration["logpath"];
+          //  string path = $"C:\Users\pdsadmin\ServiceLog.txt"; 
             using (StreamWriter writer = new StreamWriter(path, true))
             {
                 writer.WriteLine(string.Format(text+" at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
