@@ -185,7 +185,22 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string ClearInactiveSessions()
+        {
+            string text = "";
+            try
+            {
+                text = "Select COUNT(*) from UserSessions where  Now()  not between StartDate and EndDate;";
 
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetLoginSessionInfo(UserType info)
         {
             string text = "";

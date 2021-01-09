@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using pdstest.DAL;
 using pdstest.services;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,23 @@ namespace pdstest.Models
 
             while (!token.IsCancellationRequested)
             {
+                MySQLDBOperations dbOps = new MySQLDBOperations();
+                int count = 0;
+                try
+                {
+                    count = dbOps.ClearInactiveSessions();
+                }
+                catch(Exception e)
+                {
+                    string msg = string.Format("Something went wrong while removing Sessions. Reason : {0}", e.Message);
+                    this.WriteToFile(msg);
+                }
+              
+                if(count > 0)
+                {
+                    string msg = string.Format("Cleared {0} inactive sessions.", count);
+                    this.WriteToFile(msg);
+                }
                 //using (StreamWriter writer = new StreamWriter(fileName))
                 //{
 
@@ -52,6 +70,15 @@ namespace pdstest.Models
 
             }
 
+        }
+        private void WriteToFile(string text)
+        {
+            string path = "C:\\ServiceLog.txt";
+            using (StreamWriter writer = new StreamWriter(path, true))
+            {
+                writer.WriteLine(string.Format(text+" at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
+                writer.Close();
+            }
         }
     }
 }

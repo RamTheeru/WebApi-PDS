@@ -1564,6 +1564,40 @@ namespace pdstest.DAL
 
 
         }
+        public int ClearInactiveSessions()
+        {
+            int count = 0;
+            string cmdText = "";
+            try
+            {
+                cmdText = DBConnection.ClearInactiveSessions();
+                count = new BasicDBOps().GetTotalCountOfQuery(connectionString,cmdText);
+                if(count > 0)
+                {
+                    string query = "DELETE from UserSessions where  Now()  not between StartDate and EndDate;";
+                    count = new BasicDBOps().ExceuteCommand(connectionString, query);
+                }
+
+            }
+            catch (MySqlException e)
+            {
+                count = 0;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                count = 0;
+                throw e;
+            }
+            finally
+            {
+                //cmd.Dispose();
+
+
+            }
+            return count;
+        }
         public DataBaseResult GetLoginUserInfo(string username,string password)
         {
             string getUserInfo = "";
