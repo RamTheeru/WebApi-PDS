@@ -434,6 +434,13 @@ namespace pdstest.DAL
                         param.Size = 20;
                         cmd.Parameters.Add(param);
 
+                        param = new MySqlParameter("@EmpCode", input.EmpCode);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
+                        cmd.Parameters.Add(param);
+
+
                         param = new MySqlParameter("@IsPermanent", input.IsPermanent);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Bit;
