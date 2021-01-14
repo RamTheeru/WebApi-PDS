@@ -325,7 +325,9 @@ namespace pdstest.Controllers
             //return new CustomResult(result);
 
         }
+       
         [HttpPut("ApproveUser")]
+        [CustomAuthorization]
         public IActionResult ApproveUser(string registerId,string status,int pId,string empCode)
         {
             APIResult result = new APIResult();
@@ -400,6 +402,7 @@ namespace pdstest.Controllers
 
 
         [HttpPost("DAEmployees")]
+        [CustomAuthorization]
 
         public IActionResult GetDAEmployees(APIInput input)
         {

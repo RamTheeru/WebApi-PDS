@@ -516,9 +516,9 @@ namespace pdstest.DAL
                         param.MySqlDbType = MySqlDbType.Bit;
                         cmd.Parameters.Add(param);
 
-                        param = new MySqlParameter("@IsEmployee", isemployee);
+                        param = new MySqlParameter("@PID", input.Pid);
                         param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Bit;
+                        param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
                         
                         param = new MySqlParameter("@UsrTypeId", input.UserTypeId);

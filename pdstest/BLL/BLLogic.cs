@@ -654,7 +654,7 @@ namespace pdstest.BLL
             {
                 dbr.ds = new System.Data.DataSet();
                 result.employees = new List<Employee>();
-                dbr = ops.GetPaginationRecords(input.stationId,"employees",string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
+                dbr = ops.GetPaginationRecords(input.stationId,"daemployees",string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
                 List<Employee> emps = new List<Employee>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;

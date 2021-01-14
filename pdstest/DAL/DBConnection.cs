@@ -152,10 +152,10 @@ namespace pdstest.DAL
                         text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
                           "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
                     }
-                    else if (table.ToLower() == "employees")
+                    else if (table.ToLower() == "daemployees")
                     {
-                        text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, isEmployee, range, ps));
-                        text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND IsEmployee = {1} AND IsActive = 1 ;", stationId, isEmployee));
+                        text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
 
                     }
                     else if (table.ToLower() == "logins")
