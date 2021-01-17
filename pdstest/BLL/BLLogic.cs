@@ -431,6 +431,19 @@ namespace pdstest.BLL
                             employeeid = (succ == true) ? employeeid : 0;
                             user.EmployeeId = employeeid;
                             user.UserTypeId = userTypeid;
+                            if (user.UserTypeId > 0)
+                            {
+                                APIResult res = new APIResult();
+                                res = GetConstants();
+                                if (res.Status)
+                                {
+                                    if (res.Usertypes.Count > 0)
+                                    {
+                                        user.Screen = res.Usertypes.FirstOrDefault(x => x.UserTypeId == user.UserTypeId)?.Role;
+                                    }
+                                }
+
+                            }
                             user.Token = dbr.ds.Tables[0].Rows[i]["UserToken"].ToString();
                             user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
                             user.IsAlreadySession = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsAlreadySession"].ToString());
@@ -488,6 +501,19 @@ namespace pdstest.BLL
                         employeeid = (succ == true) ? employeeid : 0;
                         user.EmployeeId = employeeid;
                         user.UserTypeId = userTypeid;
+                        if(user.UserTypeId>0)
+                        {
+                            APIResult res = new APIResult();
+                            res = GetConstants();
+                            if (res.Status)
+                            {
+                                if(res.Usertypes.Count>0)
+                                {
+                                    user.Screen = res.Usertypes.FirstOrDefault(x => x.UserTypeId == user.UserTypeId)?.Role;
+                                }
+                            }
+
+                        }
                         user.Role = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
                         user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
                         user.Valid = true;

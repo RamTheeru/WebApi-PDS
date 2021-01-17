@@ -13,6 +13,7 @@ namespace pdstest.Models
         public string Role { get; set; }
         public string Token { get; set; }
         public bool Valid { get; set; }
+        public string Screen { get; set; }
         public DateTime StartDate { get; set; }
         public string SessionStartDate { get; set; }
         public DateTime EndDate { get; set; }
