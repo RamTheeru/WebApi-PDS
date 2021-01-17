@@ -362,10 +362,10 @@ namespace pdstest.DAL
                         param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
 
-                        param = new MySqlParameter("@PID", input.Pid);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
+                        //param = new MySqlParameter("@PID", input.Pid);
+                        //param.Direction = ParameterDirection.Input;
+                        //param.MySqlDbType = MySqlDbType.Int32;
+                        //cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@BloodGroup", input.BloodGroup);
                         param.Direction = ParameterDirection.Input;
