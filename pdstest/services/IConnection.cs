@@ -11,6 +11,7 @@ namespace pdstest.services
     {
         DataBaseResult RegisterEmployee(RegisterEmployee input);
         DataBaseResult CreateEmployee(Employee input,bool isEmployee=false);
+        DataBaseResult CreateCDAEmployee(Employee input);
         DataBaseResult GetConstants();
         DataBaseResult GetRegisteredUsers(int stationId);
         DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false);

@@ -794,12 +794,27 @@ namespace pdstest.BLL
             try 
             {
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.CreateEmployee(input,isEmployee);
-                result.Message = dbr.Message;
-                result.Status = dbr.Status;
-                result.Id = dbr.Id;
-                result.EmployeeName = dbr.EmployeeName;
-                result.CommandType = dbr.CommandType;
+                if (isEmployee)
+                {
+
+                    dbr = ops.CreateEmployee(input, isEmployee);
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.Id = dbr.Id;
+                    result.EmployeeName = dbr.EmployeeName;
+                    result.CommandType = dbr.CommandType;
+
+                }
+                else
+                {
+                    dbr = ops.CreateCDAEmployee(input);
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.Id = dbr.Id;
+                    result.EmployeeName = dbr.EmployeeName;
+                    result.CommandType = dbr.CommandType;
+                }
+
             
             }
             catch (Exception e)

@@ -21,6 +21,7 @@ namespace pdstest.DAL
             sqllib["AWSDB"] = "";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
+            sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
             sqllib["LedgerInsertProc"] = "usp_InsertLedger";

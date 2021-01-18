@@ -19,7 +19,10 @@ namespace pdstest.DAL
         {
            return _ops.CreateEmployee(input,isEmployee);
         }
-
+        public DataBaseResult CreateCDAEmployee(Employee input)
+        {
+            return _ops.CreateCDAEmployee(input);
+        }
         public DataBaseResult GetConstants()
         {
             return _ops.GetConstants();
