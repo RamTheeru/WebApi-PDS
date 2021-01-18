@@ -1329,12 +1329,18 @@ namespace pdstest.DAL
                             output5.Size = 100;
                             output5.Direction = ParameterDirection.Output;
                             cmd.Parameters.Add(output5);
-
+                            
                             MySqlParameter output6 = new MySqlParameter();
                             output6.ParameterName = "@IsAlreadySession";
                             output6.MySqlDbType = MySqlDbType.Bit;
                             output6.Direction = ParameterDirection.Output;
                             cmd.Parameters.Add(output6);
+
+                            MySqlParameter output7 = new MySqlParameter();
+                            output7.ParameterName = "@StationId";
+                            output7.MySqlDbType = MySqlDbType.Int32;
+                            output7.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output7);
 
                             conn.Open();
                             cmd.ExecuteNonQuery();
@@ -1347,6 +1353,7 @@ namespace pdstest.DAL
                             string utkn = output4.Value.ToString();
                             string usrnm = output5.Value.ToString();
                             string isssn = output6.Value.ToString();
+                            string statId = output7.Value.ToString();
 
                             conn.Close();
                             dbr.Id = string.IsNullOrEmpty(sId) ? 0 : Convert.ToInt32(sId);
@@ -1355,6 +1362,7 @@ namespace pdstest.DAL
                             {
                                 int usrType = string.IsNullOrEmpty(utId) ? 0 : Convert.ToInt32(utId);
                                 int empId = string.IsNullOrEmpty(eId) ? 0 : Convert.ToInt32(eId);
+                                int stationId = string.IsNullOrEmpty(statId) ? 0 : Convert.ToInt32(statId);
                                 bool isSession = string.IsNullOrEmpty(isssn) ? false : isssn == "0" ? false : true;
 
                                 dbr.dt = new DataTable();
@@ -1364,12 +1372,14 @@ namespace pdstest.DAL
                                 dbr.dt.Columns.Add("UserToken");
                                 dbr.dt.Columns.Add("UserName");
                                 dbr.dt.Columns.Add("IsAlreadySession");
+                                dbr.dt.Columns.Add("StationId");
                                 DataRow dr = dbr.dt.NewRow();
                                 dr["UserType"] = usrType;
                                 dr["EmployeeId"] = empId;
                                 dr["UserToken"] = utkn;
                                 dr["UserName"] = usrnm;
                                 dr["IsAlreadySession"] = isSession;
+                                dr["StationId"] = stationId;
                                 dbr.dt.Rows.Add(dr);
                                 dbr.ds.Tables.Add(dbr.dt);
                                 dbr.Status = true;

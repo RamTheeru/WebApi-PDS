@@ -423,14 +423,19 @@ namespace pdstest.BLL
                         {
                             int userTypeid = 0;
                             int employeeid = 0;
+                            int stationid = 0;
                             string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
                             bool succ = int.TryParse(empId, out employeeid);
                             string usertype = dbr.ds.Tables[0].Rows[i]["UserType"].ToString();
                             bool success = int.TryParse(usertype, out userTypeid);
+                            string statId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                            bool succstat = int.TryParse(statId, out stationid);
                             userTypeid = (success == true) ? userTypeid : 0;
                             employeeid = (succ == true) ? employeeid : 0;
+                            stationid = (succstat == true) ? stationid : 0;
                             user.EmployeeId = employeeid;
                             user.UserTypeId = userTypeid;
+                            user.StationId = stationid;
                             if (user.UserTypeId > 0)
                             {
                                 APIResult res = new APIResult();
@@ -493,14 +498,19 @@ namespace pdstest.BLL
                     {
                         int userTypeid = 0;
                         int employeeid = 0;
+                        int stationid = 0;
                         string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
                         bool succ = int.TryParse(empId, out employeeid);
                         string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();
                         bool success = int.TryParse(usertype, out userTypeid);
+                        string statId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                        bool succstat = int.TryParse(statId, out stationid);
                         userTypeid = (success == true) ? userTypeid : 0;
                         employeeid = (succ == true) ? employeeid : 0;
+                        stationid = (succstat == true) ? stationid : 0;
                         user.EmployeeId = employeeid;
                         user.UserTypeId = userTypeid;
+                        user.StationId = stationid;
                         if(user.UserTypeId>0)
                         {
                             APIResult res = new APIResult();
