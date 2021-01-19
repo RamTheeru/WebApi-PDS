@@ -155,8 +155,8 @@ namespace pdstest.DAL
                     }
                     else if (table.ToLower() == "daemployees")
                     {
-                        text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
-                        text.Add("count", string.Format("SELECT COUNT(*) FROM employees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
+                        text.Add("main", string.Format("SELECT * FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
 
                     }
                     else if (table.ToLower() == "logins")
