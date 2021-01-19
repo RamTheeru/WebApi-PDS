@@ -21,7 +21,7 @@ namespace pdstest.DAL
             sqllib["AWSDB"] = "";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
-            sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
+            sqllib["InsertCDAEmpStoredProc"] = "usp_InsertCDAEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
             sqllib["LedgerInsertProc"] = "usp_InsertLedger";
@@ -394,6 +394,29 @@ namespace pdstest.DAL
                 if (isRegistered) { text = _dbQueries["RegisterEmpStoredProc"]; }
                 else { text = _dbQueries["InsertEmpStoredProc"]; }
                 
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+
+        public static string GetCDAInsertQuery()
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+                //path = Directory.GetCurrentDirectory();
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                //text = builder.Build().GetSection("SQLProcs").GetSection("StoredProc").Value;
+               
+                 text = _dbQueries["InsertCDAEmpStoredProc"]; 
+
 
             }
             catch (Exception e)
