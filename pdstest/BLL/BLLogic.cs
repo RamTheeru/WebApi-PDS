@@ -307,6 +307,29 @@ namespace pdstest.BLL
                         result.registerEmployees = regs;
                         result.QueryTotalCount = dbr.QueryTotalCount;
                     }
+                    else if (input.table.ToLower() == "daemployees")
+                    {
+                        result.employees = new List<Employee>();
+                        List<Employee> emps = new List<Employee>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            Employee emp = new Employee();
+                            int stationid = 0;
+                            string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                            bool success = int.TryParse(sId, out stationid);
+                            emp.StationId = (success == true) ? stationid : 0;
+                            emp.EmpCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
+                            emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
+                            emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+
+                            emps.Add(emp);
+
+                        }
+                        result.employees = emps;
+                        result.QueryTotalCount = dbr.QueryTotalCount;
+                    }
                     else if (input.table.ToLower() == "logins")
                     {
                         result.employees = new List<Employee>();
@@ -690,25 +713,67 @@ namespace pdstest.BLL
             {
                 dbr.ds = new System.Data.DataSet();
                 result.employees = new List<Employee>();
-                dbr = ops.GetPaginationRecords(input.stationId,"daemployees",string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
+                dbr = ops.GetPaginationRecords(input.stationId,input.table,string.Empty,string.Empty,input.page,input.pagesize,string.Empty,isEmployee);
                 List<Employee> emps = new List<Employee>();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)
                 {
-                    for (int i = 0; i < count; i++)
+                    if(input.table.ToLower()=="daemployees")
                     {
-                        Employee emp = new Employee();
-                        emp.EmployeeId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["EmployeeId"]);
-                        emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
-                        emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
-                        emp.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
-                        emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
-                        emp.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
-                        emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
-                        emps.Add(emp);
+                        for (int i = 0; i < count; i++)
+                        {
+                            Employee emp = new Employee();
+                            emp.EmployeeId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["EmployeeId"]);
+                            emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
+                            emp.Guard_FullName = dbr.ds.Tables[0].Rows[i]["Gaurd_fullname"].ToString();
+                            emp.DOB = dbr.ds.Tables[0].Rows[i]["DOB"].ToString();
+                            emp.DOJ = dbr.ds.Tables[0].Rows[i]["DOJ"].ToString();
+                            emp.Guard_Phone = dbr.ds.Tables[0].Rows[i]["Gaurd_Phone"].ToString();
+                            emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                            emp.EmpAge = dbr.ds.Tables[0].Rows[i]["Age"].ToString();
+                            emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
+                            emp.MaritalStatus = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString());
+                            // emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                            emp.Place = dbr.ds.Tables[0].Rows[i]["Place"].ToString();
+                            emp.AadharNumber = dbr.ds.Tables[0].Rows[i]["AadharNumber"].ToString();
+                            emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
+                            emp.Address1 = dbr.ds.Tables[0].Rows[i]["Address1"].ToString();
+                            emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
+                            emp.EmployeeType = dbr.ds.Tables[0].Rows[i]["EmployeeType"].ToString();
+                            emp.BankAccountNumber = dbr.ds.Tables[0].Rows[i]["BankAccountNumber"].ToString();
+                            emp.BranchName = dbr.ds.Tables[0].Rows[i]["BranchName"].ToString();
+                            emp.IFSCCode = dbr.ds.Tables[0].Rows[i]["IFSCCode"].ToString();
+                            emp.VehicleNumber = dbr.ds.Tables[0].Rows[i]["VehicleNumber"].ToString();
+                            emp.DLLRNumber = dbr.ds.Tables[0].Rows[i]["DLLRNumber"].ToString();
+                            emp.DLLRStatus = dbr.ds.Tables[0].Rows[i]["DLLRStatus"].ToString();
+                            emp.State = dbr.ds.Tables[0].Rows[i]["StateName"].ToString();
+                            emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                            emps.Add(emp);
+
+                        }
 
                     }
+                    else if (input.table.ToLower() == "employees")
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            Employee emp = new Employee();
+                            emp.EmployeeId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["EmployeeId"]);
+                            emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            emp.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                            emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                            emp.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                            emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                            emps.Add(emp);
+
+                        }
+
+                    }
+
                     result.employees = emps;
                     result.Message = dbr.Message;
                     result.Status = dbr.Status;

@@ -407,19 +407,19 @@ namespace pdstest.Controllers
         public IActionResult GetDAEmployees(APIInput input)
         {
             APIResult result = new APIResult();
-            try
-            {
-                //if (stationCode != null)
-                //    stationCode = stationCode.Replace(@"\", "");
-                result = logic.GetEmployees(input,false);
 
-            }
-            catch (Exception e)
+            if (input.stationId > 0)
             {
-                result.Message = e.Message;
+                input.table = "daemployees";
+                result = logic.GetEmployees(input, false);
+            }
+            else
+            {
+                result.Message = "Invalid Input!!!";
                 result.Status = false;
                 result.CommandType = "Select";
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status400BadRequest, result);
+
             }
             return Ok(result);
             //return new CustomResult(result);
