@@ -1590,7 +1590,7 @@ namespace pdstest.DAL
             string getUserTypes = "";
             DataBaseResult dbr = new DataBaseResult();
             MySqlCommand cmd = new MySqlCommand();
-            MySqlDataAdapter sda;
+           // MySqlDataAdapter sda;
             try
             {
                 dbr.CommandType = "Select";
@@ -2488,7 +2488,7 @@ namespace pdstest.DAL
             string getRegisteredUsers = "";
             DataBaseResult dbr = new DataBaseResult();
             MySqlCommand cmd = new MySqlCommand();
-            MySqlDataAdapter sda;
+            //MySqlDataAdapter sda;
             try
             {
                 dbr.CommandType = "Select";

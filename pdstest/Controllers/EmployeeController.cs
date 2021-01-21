@@ -402,24 +402,33 @@ namespace pdstest.Controllers
 
 
         [HttpPost("DAEmployees")]
-     ///   [CustomAuthorization]
+        [CustomAuthorization]
 
         public IActionResult GetDAEmployees(APIInput input)
         {
             APIResult result = new APIResult();
+            try
+            {
+                if (input.stationId > 0)
+                {
+                    input.table = "daemployees";
+                    result = logic.GetPagnationRecords(input);
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
 
-            if (input.stationId > 0)
-            {
-                input.table = "daemployees";
-                result = logic.GetPagnationRecords(input);
+                }
             }
-            else
+            catch (Exception e)
             {
-                result.Message = "Invalid Input!!!";
+                result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
-                return StatusCode(StatusCodes.Status400BadRequest, result);
-
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
             //return new CustomResult(result);
