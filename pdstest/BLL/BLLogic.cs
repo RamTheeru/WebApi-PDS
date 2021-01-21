@@ -321,8 +321,32 @@ namespace pdstest.BLL
                             emp.EmpCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
                             emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                             emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
+                            emp.Guard_FullName = dbr.ds.Tables[0].Rows[i]["Gaurd_fullname"].ToString();
                             emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                            emp.Guard_Phone = dbr.ds.Tables[0].Rows[i]["Gaurd_Phone"].ToString();
+                            emp.DOB = dbr.ds.Tables[0].Rows[i]["DOB"].ToString();
+                            emp.DOJ = dbr.ds.Tables[0].Rows[i]["DOJ"].ToString();
+                            emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
                             emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                            emp.EmpAge = dbr.ds.Tables[0].Rows[i]["Age"].ToString();
+                            emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
+                            emp.MaritalStatus = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString());
+                            // emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                            emp.Place = dbr.ds.Tables[0].Rows[i]["Place"].ToString();
+                            emp.AadharNumber = dbr.ds.Tables[0].Rows[i]["AadharNumber"].ToString();
+                            emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
+                            emp.Address1 = dbr.ds.Tables[0].Rows[i]["Address1"].ToString();
+                            emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
+                            emp.EmployeeType = dbr.ds.Tables[0].Rows[i]["EmployeeType"].ToString();
+                            emp.BankAccountNumber = dbr.ds.Tables[0].Rows[i]["BankAccountNumber"].ToString();
+                            emp.BranchName = dbr.ds.Tables[0].Rows[i]["BranchName"].ToString();
+                            emp.IFSCCode = dbr.ds.Tables[0].Rows[i]["IFSCCode"].ToString();
+                            emp.VehicleNumber = dbr.ds.Tables[0].Rows[i]["VehicleNumber"].ToString();
+                            emp.DLLRNumber = dbr.ds.Tables[0].Rows[i]["DLLRNumber"].ToString();
+                            emp.DLLRStatus = dbr.ds.Tables[0].Rows[i]["DLLRStatus"].ToString();
+                            emp.State = dbr.ds.Tables[0].Rows[i]["StateName"].ToString();
+                            emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                            emps.Add(emp);
 
                             emps.Add(emp);
 

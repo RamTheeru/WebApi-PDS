@@ -411,7 +411,7 @@ namespace pdstest.Controllers
             if (input.stationId > 0)
             {
                 input.table = "daemployees";
-                result = logic.GetEmployees(input, false);
+                result = logic.GetPagnationRecords(input);
             }
             else
             {
