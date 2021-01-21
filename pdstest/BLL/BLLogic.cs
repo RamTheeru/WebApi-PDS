@@ -318,7 +318,7 @@ namespace pdstest.BLL
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
                             bool success = int.TryParse(sId, out stationid);
                             emp.StationId = (success == true) ? stationid : 0;
-                            emp.EmpCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
+                            emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
                             emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                             emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
                             emp.Guard_FullName = dbr.ds.Tables[0].Rows[i]["Gaurd_fullname"].ToString();
@@ -330,7 +330,8 @@ namespace pdstest.BLL
                             emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
                             emp.EmpAge = dbr.ds.Tables[0].Rows[i]["Age"].ToString();
                             emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
-                            emp.MaritalStatus = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString());
+                            string mstat = dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString();
+                            emp.MaritalStatus = mstat=="1";
                             // emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
                             emp.Place = dbr.ds.Tables[0].Rows[i]["Place"].ToString();
                             emp.AadharNumber = dbr.ds.Tables[0].Rows[i]["AadharNumber"].ToString();
@@ -346,8 +347,6 @@ namespace pdstest.BLL
                             emp.DLLRStatus = dbr.ds.Tables[0].Rows[i]["DLLRStatus"].ToString();
                             emp.State = dbr.ds.Tables[0].Rows[i]["StateName"].ToString();
                             emp.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
-                            emps.Add(emp);
-
                             emps.Add(emp);
 
                         }
