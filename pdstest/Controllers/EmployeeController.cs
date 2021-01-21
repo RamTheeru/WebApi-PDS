@@ -402,7 +402,7 @@ namespace pdstest.Controllers
 
 
         [HttpPost("DAEmployees")]
-        [CustomAuthorization]
+     ///   [CustomAuthorization]
 
         public IActionResult GetDAEmployees(APIInput input)
         {
