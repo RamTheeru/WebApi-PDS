@@ -7,6 +7,7 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using pdstest.services;
 using Renci.SshNet.Security.Cryptography;
+using System.Text;
 
 namespace pdstest.DAL
 {
@@ -1507,6 +1508,84 @@ namespace pdstest.DAL
 
         }
 
+        public DataBaseResult CreateCommercialConsant(CommercialConstant constant)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.CommandType = "Insert";
+
+                StringBuilder insertCmd = new StringBuilder();
+                insertCmd.Append("Insert into CommercialConstants(StationId,DeliveryRate,PetrolAllowance,Incentives,IsActive) ");
+                insertCmd.AppendLine(" VALUES(");
+                insertCmd.Append(constant.StationId.ToString() + ",");
+                insertCmd.Append(constant.DeliveryRate.ToString() + ",");
+                insertCmd.Append(constant.PetrolAllowance.ToString() + ",");
+                insertCmd.Append(constant.Incentives.ToString() + ",");
+                insertCmd.Append("1 )");
+
+                string cmdtext = insertCmd.ToString();
+                //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                //{
+                DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                if(!string.IsNullOrEmpty(cmdtext))
+                {
+                    int count = 0;
+                    count = new BasicDBOps().ExceuteCommand(connectionString, cmdtext);
+                    if (count > 0)
+                    {
+
+                        dbr.Status = true;
+                        dbr.Message = "Rates fixed for this Station Successfully!!!!";
+                    }
+                    else
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "Something went wrong!!";
+
+
+                    }
+
+                }
+                else
+                {
+                    dbr.Status = false;
+                    dbr.Message = "Something went wrong, No Command to Insert!!";
+                }
+                   
+
+
+                
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+
+            return dbr;
+        }
+
         public DataBaseResult DeleteSession(string userName, int employeeId, int userTypeId)
         {
             string getDeleteInfo = "";
@@ -2850,6 +2929,35 @@ namespace pdstest.DAL
 
 
          }
+
+        public Dictionary<string,string> GetStationNameByStationId(int stationId)
+        {
+            Dictionary<string, string> station = new Dictionary<string, string>();
+            try
+            {
+                DataSet ds = new DataSet();
+                if(stationId>0)
+                {
+                    string cmd = string.Format("Select Station,StationCode from stations where StationId={0}", stationId);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, cmd);
+                    if(ds.Tables.Count> 0)
+                    {
+                        if(ds.Tables[0].Rows.Count>0)
+                        {
+                            string code = ds.Tables[0].Rows[0]["StationCode"].ToString();
+                            string name = ds.Tables[0].Rows[0]["Station"].ToString();
+                            station[code] = name;
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+                station = new Dictionary<string, string>();
+            }
+            return station;
+        }
 
      }
 

@@ -83,6 +83,10 @@ namespace pdstest.DAL
         {
             return _ops.GetAdminDetails();
         }
+        public DataBaseResult CreateCommercialConsant(CommercialConstant constant)
+        {
+            return _ops.CreateCommercialConsant(constant);
+        }
 
     }
 }

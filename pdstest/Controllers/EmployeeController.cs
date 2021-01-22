@@ -583,6 +583,45 @@ namespace pdstest.Controllers
             // return new CustomResult(result);
 
         }
+
+        [HttpPost]
+        [Route("CreateCC")]
+        [CustomAuthorization]
+        public IActionResult CreateCommercialConstant(CommercialConstant obj)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (obj.StationId > 0 && obj.PetrolAllowance > 0 && obj.DeliveryRate > 0)
+                {
+                    result = logic.CreateCommercialConstants(obj);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "INSERT";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
+
+        }
         #region FILEUPLOAD
         ////[HttpPost("upload", Name = "upload")]
         ////[ProducesResponseType(StatusCodes.Status200OK)]
@@ -601,12 +640,12 @@ namespace pdstest.Controllers
         ////            if (isSuccess)
         ////            {
         ////                result.Status = true;
-                      
+
         ////            }
         ////            else 
         ////            {
         ////                result.Status = false;
-                         
+
         ////            }
         ////            result.Message = t.Item2;
         ////            return Ok(result);

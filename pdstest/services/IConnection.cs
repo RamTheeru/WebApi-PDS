@@ -25,5 +25,6 @@ namespace pdstest.services
         bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
         DataBaseResult GetAdminDetails();
+        DataBaseResult CreateCommercialConsant(CommercialConstant constant);
     }
 }

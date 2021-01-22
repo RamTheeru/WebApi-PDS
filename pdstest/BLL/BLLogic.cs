@@ -441,7 +441,28 @@ namespace pdstest.BLL
 
             return result;
         }
-        
+        public APIResult CreateCommercialConstants(CommercialConstant constant)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.CreateCommercialConsant(constant);
+                result.CommandType = dbr.CommandType;
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
         public APIResult CreateSession(UserType usr)
         {
             APIResult result = new APIResult();
@@ -891,6 +912,10 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try 
             {
+                int age = 0;
+                string empage = input.EmpAge;
+                bool success = int.TryParse(empage, out age);
+                input.Age = (success == true) ? age : 0;
                 dbr.ds = new System.Data.DataSet();
                 if (isEmployee)
                 {
