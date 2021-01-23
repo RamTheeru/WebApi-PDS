@@ -324,8 +324,10 @@ namespace pdstest.BLL
                             emp.Guard_FullName = dbr.ds.Tables[0].Rows[i]["Gaurd_fullname"].ToString();
                             emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                             emp.Guard_Phone = dbr.ds.Tables[0].Rows[i]["Gaurd_Phone"].ToString();
-                            emp.DOB = dbr.ds.Tables[0].Rows[i]["DOB"].ToString();
-                            emp.DOJ = dbr.ds.Tables[0].Rows[i]["DOJ"].ToString();
+                            string db = dbr.ds.Tables[0].Rows[i]["DOB"].ToString();
+                            string dj = dbr.ds.Tables[0].Rows[i]["DOJ"].ToString();
+                            emp.DOB = db.ShowDatetimeView();
+                            emp.DOJ = dj.ShowDatetimeView();
                             emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
                             emp.StationCode = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
                             emp.EmpAge = dbr.ds.Tables[0].Rows[i]["Age"].ToString();

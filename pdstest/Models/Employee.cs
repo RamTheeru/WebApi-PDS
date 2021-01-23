@@ -17,6 +17,7 @@ namespace pdstest.Models
         public string BankName { get; set; }
         public string BranchName { get; set; }
         public string IFSCCode { get; set; }
+        public DeliveryDetails delivery { get; set; }
 
     }
 }

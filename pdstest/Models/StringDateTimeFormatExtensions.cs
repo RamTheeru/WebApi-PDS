@@ -58,6 +58,20 @@ namespace pdstest.Models
 
             return date.ToString("MMMM");
         }
+        public static string ShowDatetimeView(this string date)
+        {
+            string dt = "";
+            if(!string.IsNullOrEmpty(date))
+            {
+                DateTime dtt = Convert.ToDateTime(date);
+                dt = dtt.ToString("MM/dd/yyyy hh:mm:ss");
+            }
+            else
+            {
+                dt = "--";
+            }
+            return dt;
+        }
         public static void WriteCustomString(string  file,string text)
         {
 
