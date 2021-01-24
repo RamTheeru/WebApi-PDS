@@ -318,6 +318,10 @@ namespace pdstest.BLL
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
                             bool success = int.TryParse(sId, out stationid);
                             emp.StationId = (success == true) ? stationid : 0;
+                            int empid = 0;
+                            string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                            bool success2 = int.TryParse(eId, out empid);
+                            emp.EmployeeId = (success2 == true) ? empid : 0;
                             emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
                             emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                             emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
@@ -366,6 +370,10 @@ namespace pdstest.BLL
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
                             bool success = int.TryParse(sId, out stationid);
                             emp.StationId = (success == true) ? stationid : 0;
+                            int empid = 0;
+                            string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                            bool success2 = int.TryParse(eId, out empid);
+                            emp.EmployeeId = (success2 == true) ? empid : 0;
                             emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
                             emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                             if(input.currentmonth > 0)
