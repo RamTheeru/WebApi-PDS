@@ -622,6 +622,83 @@ namespace pdstest.Controllers
             // return new CustomResult(result);
 
         }
+        [HttpPost]
+        [Route("CDAGetDeiveryDetails")]
+        public IActionResult CDAGetDeliveryDetails(APIInput input)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (input.stationId > 0 && input.currentmonth > 0)
+                {
+                    input.table = "getcdadel";
+                    result = logic.GetPagnationRecords(input);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
+
+        }
+
+        [HttpPost]
+        [Route("CDAUpdateDeiveryDetails")]
+        public IActionResult CDAUpdateDeliveryDetails(List<DeliveryDetails> cdds)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (cdds.Count>0)
+                {
+                    
+                    result = logic.UpdateDeliveryRates(cdds);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "INSERT";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
+
+        }
         #region FILEUPLOAD
         ////[HttpPost("upload", Name = "upload")]
         ////[ProducesResponseType(StatusCodes.Status200OK)]

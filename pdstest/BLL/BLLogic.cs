@@ -355,6 +355,33 @@ namespace pdstest.BLL
                         result.employees = emps;
                         result.QueryTotalCount = dbr.QueryTotalCount;
                     }
+                    else if(input.table.ToLower()== "getcdadel")
+                    {
+                        result.employees = new List<Employee>();
+                        List<Employee> emps = new List<Employee>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            Employee emp = new Employee();
+                            int stationid = 0;
+                            string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                            bool success = int.TryParse(sId, out stationid);
+                            emp.StationId = (success == true) ? stationid : 0;
+                            emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
+                            emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                            if(input.currentmonth > 0)
+                            {
+                                emp.delivery = new DeliveryDetails();
+                                DeliveryDetails dd = new DeliveryDetails();
+                                dd.CurrentMonth = input.currentmonth;
+                                dd.EmployeeId = emp.EmployeeId;
+                                dd.EmployeeCode = emp.EmpCode;
+                                dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
+                                emp.delivery = dd;
+                            }
+                        }
+                        result.employees = emps;
+                        result.QueryTotalCount = dbr.QueryTotalCount;
+                    }
                     else if (input.table.ToLower() == "logins")
                     {
                         result.employees = new List<Employee>();
@@ -419,6 +446,94 @@ namespace pdstest.BLL
 
             }
 
+            return result;
+        }
+        public int HandleStringtoInt(string str)
+        {
+            int result = 0;
+            bool success = int.TryParse(str, out result);
+            result = (success == true) ? result : 0;
+            return result;
+        }
+        public DeliveryDetails GetCDADeliveryDetailsbyMonth(int employeeId,int stationId,int currentMonth)
+        {
+            DeliveryDetails dd = new DeliveryDetails();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.GetCDADeliveryDetails(employeeId, stationId, currentMonth);
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if(count > 0)
+                {
+                    string dc = dbr.ds.Tables[0].Rows[0]["DeliveryCount"].ToString();
+                   // string dr = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
+                   // string petrl = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
+                    string inc = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
+                    string total = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
+                    dd.DeliveryCount = this.HandleStringtoInt(dc);
+                   // dd.DeliveryRate = this.HandleStringtoInt(dr);
+                    //dd.PetrolAllowance = this.HandleStringtoInt(petrl);
+                    dd.Incentive = this.HandleStringtoInt(inc);
+                    dd.TotalAmount = this.HandleStringtoInt(total);
+                    if (stationId > 0)
+                    {
+                        int c = 0;
+                        dbr = new DataBaseResult();
+                        dbr = ops.GetDeliveryRatesbyStation(stationId);
+                        c = dbr.ds.Tables[0].Rows.Count;
+                        if (c > 0)
+                        {
+                            string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
+                            string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
+                            string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
+                            dd.DeliveryRate = this.HandleStringtoInt(dr2);
+                            dd.PetrolAllowance = this.HandleStringtoInt(petr2);
+                           // dd.Incentive = this.HandleStringtoInt(inc2);
+                        }
+                    }
+        
+                }
+                else
+                {
+                    dd.DeliveryCount = 0;
+                    //dd.DeliveryRate = 0;
+                    dd.CurrentMonth = currentMonth;
+                    dd.Incentive = 0;
+                    dd.TotalAmount = 0;
+                }
+            }
+            catch 
+            {
+                dd.DeliveryCount = 0;
+                //dd.DeliveryRate = 0;
+                dd.CurrentMonth = currentMonth;
+                dd.Incentive = 0;
+                dd.TotalAmount = 0;
+                //throw e;
+            }
+            return dd;
+        }
+
+        public APIResult UpdateDeliveryRates(List<DeliveryDetails> cdds)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.UpdateDeliveryDetails(cdds);
+                result.CommandType = dbr.CommandType;
+                result.Status = dbr.Status;
+                result.Message = dbr.Message;
+
+            }
+            catch(Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Insert";
+                throw e;
+            }
             return result;
         }
         public APIResult DeleteSession(string userName,int employeeId,int userTypeId)

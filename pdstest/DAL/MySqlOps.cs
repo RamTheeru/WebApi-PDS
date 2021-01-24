@@ -87,6 +87,21 @@ namespace pdstest.DAL
         {
             return _ops.CreateCommercialConsant(constant);
         }
-
+        public Dictionary<string, string> GetStationNameByStationId(int stationId)
+        {
+            return _ops.GetStationNameByStationId(stationId);
+        }
+        public DataBaseResult UpdateDeliveryDetails(List<DeliveryDetails> cdds)
+        {
+            return _ops.UpdateDeliveryDetails(cdds);
+        }
+        public DataBaseResult GetCDADeliveryDetails(int empId, int stationId, int currentMonth)
+        {
+            return _ops.GetCDADeliveryDetails(empId, stationId, currentMonth);
+        }
+        public DataBaseResult GetDeliveryRatesbyStation(int stationId)
+        {
+            return _ops.GetDeliveryRatesbyStation(stationId);
+        }
     }
 }

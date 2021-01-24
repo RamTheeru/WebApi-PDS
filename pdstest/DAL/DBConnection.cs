@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using pdstest.Models;
+using System.Text;
 
 namespace pdstest.DAL
 {
@@ -159,6 +160,12 @@ namespace pdstest.DAL
                         text.Add("count", string.Format("SELECT COUNT(*) FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
 
                     }
+                    else if (table.ToLower() == "getcdadel")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
+
+                    }                   
                     else if (table.ToLower() == "logins")
                     {
                         text.Add("main", string.Format("SELECT * FROM employees where StationId = {0} AND LoginType IS NOT NULL AND UpdateByTrigger = 1 LIMIT {1},{2};", stationId, range, ps));
@@ -380,6 +387,59 @@ namespace pdstest.DAL
 
             return connection;
         
+        }
+
+        public static string GetUpdateDeiverydetailInsertQuery(DeliveryDetails cdd)
+        {
+            string cmdText = "";
+            try
+            {
+                DateTime d = DateTime.Now;
+                StringBuilder insertCmd = new StringBuilder();
+                insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,IsActive) ");
+                insertCmd.AppendLine(" VALUES(");
+                insertCmd.Append(cdd.StationId.ToString() + ",");
+                insertCmd.Append(d.Month.ToString() + ",");
+                insertCmd.Append(cdd.DeliveryCount.ToString() + ",");
+                insertCmd.Append(cdd.DeliveryRate.ToString() + ",");
+                insertCmd.Append(cdd.PetrolAllowance.ToString() + ",");
+                insertCmd.Append(cdd.EmployeeId.ToString() + ",");
+                insertCmd.Append(cdd.Incentive.ToString() + ",");
+                insertCmd.Append("1 )");
+                cmdText = insertCmd.ToString();
+
+            }
+            catch
+            {
+                cmdText = "";
+            }
+            return cmdText;
+        }
+        public static string GetDeliveryDetailCDAbyStation(int StationId)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("Select * from CommercialConstants Where StationId = {0} AND IsActive=1", StationId);
+            }
+            catch 
+            {
+                text = "";
+            }
+            return text;
+        }
+        public static string GetDeliveryDetailCDAbyMonth(int employeeId,int StationId,int currentMonth)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("Select * from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId ={2} AND IsActive=1", StationId, currentMonth, employeeId);
+            }
+            catch 
+            {
+                text = "";
+            }
+            return text;
         }
 
         public static string GetInsertQuery(bool isRegistered)

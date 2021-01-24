@@ -1440,6 +1440,91 @@ namespace pdstest.DAL
             return dbr;
         }
 
+        public DataBaseResult UpdateDeliveryDetails(List<DeliveryDetails> cdds)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlConnection con = new MySqlConnection(connectionString);
+            int i = 0;
+            MySqlTransaction transaction=con.BeginTransaction();
+            try
+            {
+                dbr.CommandType = "Insert";            
+                con.Open();
+                if(cdds.Count>0)
+                {
+                    var valid = cdds.Any(x => x.EmployeeId == 0 || x.StationId == 0);
+                    if (!valid)
+                    {
+                        foreach (var item in cdds)
+                        {
+
+                            //int deliveryRate = item.DeliveryRate;
+                            //int deliveryCount = item.DeliveryCount;
+                            //int petrolAllowance = item.PetrolAllowance;
+                            item.TotalAmount = this.GetDeliveryAmountTotal(item);
+                            string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
+                            MySqlCommand command = new MySqlCommand(cmdText, con, transaction);
+                            //command.Connection = con;
+                            //command.Transaction = transaction;
+                            transaction = command.Transaction;
+                            i = command.ExecuteNonQuery();
+                            command.Dispose();
+                            //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                        }
+                        transaction.Commit();
+                    }
+                }
+
+            }
+            catch(Exception e)
+            {
+                try
+                {
+                    i = 0;
+                    transaction.Rollback();
+                    dbr.Status = false;
+                    dbr.Message = "Cannot Complete the operation Please try again. Reason : "+e.Message;
+                }
+                catch (Exception ex2)
+                {
+                    i = 0;
+                    dbr.Status = false;
+                    dbr.Message = "Operation failed while updating details. Reason : "+ex2.Message + ". Please contact support team";
+                   // throw ex2;
+                    // This catch block will handle any errors that may have occurred 
+                    // on the server that would cause the rollback to fail, such as 
+                    // a closed connection.
+
+                }
+                throw e;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+                if (i > 0)
+                {
+                    dbr.Status = true;
+                    dbr.Message = "Updated delivery details for all Successfully!!!";
+                }
+            }
+            return dbr;
+        }
+        public int GetDeliveryAmountTotal(DeliveryDetails delv)
+        {
+            int result = 0;
+            try
+            {
+                delv.TotalAmount = (delv.DeliveryCount * delv.DeliveryRate) + delv.PetrolAllowance + delv.Incentive;
+                result = delv.TotalAmount;
+
+            }
+            catch 
+            {
+                result = 0;
+            }
+            return result;
+        }
         public bool CheckIfSessionExists(string userName,int employeeId,int userTypeId)
         {
             string getsessionInfo = "";
@@ -1505,6 +1590,139 @@ namespace pdstest.DAL
 
             }
             return isExists;
+
+        }
+
+        public DataBaseResult GetDeliveryRatesbyStation(int stationId)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            string cmdText = "";
+            try
+            {
+                dbr.CommandType = "Select";
+                cmdText = DBConnection.GetDeliveryDetailCDAbyStation(stationId);
+                dbr.ds = new DataSet();
+                DataSet ds = new DataSet();
+                if (string.IsNullOrEmpty(cmdText) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, cmdText);
+                    int count = 0;
+                    count = ds.Tables[0].Rows.Count;
+                    if (ds.Tables.Count > 0 && count > 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "Record(s) retreived Successfully!!!";
+                        dbr.Status = true;
+
+                    }
+                    else if (count == 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "No Records Found for this request!!";
+                        dbr.Status = true;
+
+
+                    }
+                }
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+
+
+
+            }
+            return dbr;
+
+        }
+    
+
+        public DataBaseResult GetCDADeliveryDetails(int empId,int stationId,int currentMonth)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            string cmdText = "";
+            try
+            {
+                dbr.CommandType = "Select";
+                cmdText = DBConnection.GetDeliveryDetailCDAbyMonth(empId,stationId,currentMonth);
+                dbr.ds = new DataSet();
+                DataSet ds = new DataSet();
+                if (string.IsNullOrEmpty(cmdText) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, cmdText);
+                    int count = 0;
+                    count = ds.Tables[0].Rows.Count;
+                    if (ds.Tables.Count > 0 && count > 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "Record(s) retreived Successfully!!!";
+                        dbr.Status = true;
+
+                    }
+                    else if (count == 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "No Records Found for this request!!";
+                        dbr.Status = true;
+
+
+                    }
+                }
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+              
+
+
+            }
+            return dbr;
 
         }
 
