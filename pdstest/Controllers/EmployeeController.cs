@@ -622,7 +622,7 @@ namespace pdstest.Controllers
             // return new CustomResult(result);
 
         }
-        [HttpPost]
+        [HttpGet]
         [Route("CDAStationDeiveryDetails")]
         public IActionResult GetCDAStationDeliveryDetails(int stationId)
         {
