@@ -384,7 +384,7 @@ namespace pdstest.BLL
                                 dd.EmployeeId = emp.EmployeeId;
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
-                                dd.TotalAmount = new MySQLDBOperations().GetDeliveryAmountTotal(dd);
+                                
                                 emp.delivery = dd;
                             }
                             emps.Add(emp);
@@ -465,6 +465,52 @@ namespace pdstest.BLL
             result = (success == true) ? result : 0;
             return result;
         }
+        public APIResult GetCDADeliveryDetailsbyStation(int stationId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            CommercialConstant cc = new CommercialConstant();
+            try
+            {
+                result.commercialConstant = new CommercialConstant();
+                if (stationId > 0)
+                {
+                    int c = 0;
+                    
+                    dbr = new DataBaseResult();
+                    dbr = ops.GetDeliveryRatesbyStation(stationId);
+                    c = dbr.ds.Tables[0].Rows.Count;
+                    if (c > 0)
+                    {
+                      
+                        string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
+                        string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
+                        string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
+                        cc.DeliveryRate = this.HandleStringtoInt(dr2);
+                        cc.PetrolAllowance = this.HandleStringtoInt(petr2);
+                       
+                        // dd.Incentive = this.HandleStringtoInt(inc2);
+                    }
+                }
+                else
+                {
+                    cc.DeliveryRate = 0;
+                    //dd.DeliveryRate = 0;
+                    cc.PetrolAllowance = 0;
+                }
+                result.commercialConstant = cc;
+            }
+            catch
+            {
+                cc.DeliveryRate = 0;
+                //dd.DeliveryRate = 0;
+                cc.PetrolAllowance = 0;
+                //throw e;
+                result.commercialConstant = cc;
+            }
+            return result;
+
+        }
         public DeliveryDetails GetCDADeliveryDetailsbyMonth(int employeeId,int stationId,int currentMonth)
         {
             DeliveryDetails dd = new DeliveryDetails();
@@ -477,31 +523,16 @@ namespace pdstest.BLL
                 if(count > 0)
                 {
                     string dc = dbr.ds.Tables[0].Rows[0]["DeliveryCount"].ToString();
-                   // string dr = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
-                   // string petrl = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
+                    string dr = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
+                    string petrl = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
                     string inc = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
                     string total = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
                     dd.DeliveryCount = this.HandleStringtoInt(dc);
-                   // dd.DeliveryRate = this.HandleStringtoInt(dr);
-                    //dd.PetrolAllowance = this.HandleStringtoInt(petrl);
+                     dd.DeliveryRate = this.HandleStringtoInt(dr);
+                    dd.PetrolAllowance = this.HandleStringtoInt(petrl);
                     dd.Incentive = this.HandleStringtoInt(inc);
                     dd.TotalAmount = this.HandleStringtoInt(total);
-                    if (stationId > 0)
-                    {
-                        int c = 0;
-                        dbr = new DataBaseResult();
-                        dbr = ops.GetDeliveryRatesbyStation(stationId);
-                        c = dbr.ds.Tables[0].Rows.Count;
-                        if (c > 0)
-                        {
-                            string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
-                            string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
-                            string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
-                            dd.DeliveryRate = this.HandleStringtoInt(dr2);
-                            dd.PetrolAllowance = this.HandleStringtoInt(petr2);
-                           // dd.Incentive = this.HandleStringtoInt(inc2);
-                        }
-                    }
+                  
         
                 }
                 else
