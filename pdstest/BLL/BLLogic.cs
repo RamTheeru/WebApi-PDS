@@ -376,6 +376,7 @@ namespace pdstest.BLL
                                 dd.EmployeeId = emp.EmployeeId;
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
+                                dd.TotalAmount = new MySQLDBOperations().GetDeliveryAmountTotal(dd);
                                 emp.delivery = dd;
                             }
                         }
