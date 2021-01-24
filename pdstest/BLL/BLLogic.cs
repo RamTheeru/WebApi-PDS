@@ -379,6 +379,7 @@ namespace pdstest.BLL
                                 dd.TotalAmount = new MySQLDBOperations().GetDeliveryAmountTotal(dd);
                                 emp.delivery = dd;
                             }
+                            emps.Add(emp);
                         }
                         result.employees = emps;
                         result.QueryTotalCount = dbr.QueryTotalCount;
