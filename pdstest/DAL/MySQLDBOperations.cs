@@ -3062,6 +3062,68 @@ namespace pdstest.DAL
             }
             return dbr;
         }
+
+        public DataBaseResult CheckEmpCodeExists(string empCode,bool isEmployee)
+        {
+            string getUserInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "Select";
+                getUserInfo = DBConnection.CheckEmpCodeExists(empCode,isEmployee);
+
+                if (string.IsNullOrEmpty(getUserInfo) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+
+                    dbr.IsExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, getUserInfo);
+                    if (dbr.IsExists)
+                    {
+
+                        dbr.Message = "EmployeeCode Already Existed,Please try another one!!!";
+                        dbr.Status = false;
+
+                    }
+                    else
+                    {
+                        dbr.Message = "Given EmployeeCode Accepted!!";
+                        dbr.Status = true;
+                    }
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+        }
         public DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false)
         {
             string getEmployees = "";

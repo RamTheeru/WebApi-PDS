@@ -1089,23 +1089,34 @@ namespace pdstest.BLL
                 dbr.ds = new System.Data.DataSet();
                 if (isEmployee)
                 {
-
-                    dbr = ops.CreateEmployee(input, isEmployee);
+                    dbr = ops.CheckEmpCodeExists(input.EmpCode, true);
+                    if (!dbr.IsExists)
+                    {
+                        dbr = new DataBaseResult();
+                        dbr.ds = new System.Data.DataSet();
+                        dbr = ops.CreateEmployee(input, isEmployee);
+                        result.EmployeeName = dbr.EmployeeName;
+                        result.Id = dbr.Id;
+                    }
                     result.Message = dbr.Message;
                     result.Status = dbr.Status;
-                    result.Id = dbr.Id;
-                    result.EmployeeName = dbr.EmployeeName;
-                    result.CommandType = dbr.CommandType;
+                    result.CommandType = "INSERT";
 
                 }
                 else
                 {
-                    dbr = ops.CreateCDAEmployee(input);
+                    dbr = ops.CheckEmpCodeExists(input.EmpCode, false);
+                    if (!dbr.IsExists)
+                    {
+                        dbr = new DataBaseResult();
+                        dbr.ds = new System.Data.DataSet();
+                        dbr = ops.CreateCDAEmployee(input);
+                        result.Id = dbr.Id;
+                        result.EmployeeName = dbr.EmployeeName;
+                    }
                     result.Message = dbr.Message;
                     result.Status = dbr.Status;
-                    result.Id = dbr.Id;
-                    result.EmployeeName = dbr.EmployeeName;
-                    result.CommandType = dbr.CommandType;
+                    result.CommandType = "INSERT";
                 }
 
             
@@ -1132,6 +1143,31 @@ namespace pdstest.BLL
             {
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.CheckUserExists(userName);
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+                result.CommandType = dbr.CommandType;
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "SELECT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                throw e;
+            }
+            return result;
+        }
+
+        public APIResult CheckEmpCodeExists(string empCode,bool isEmployee)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.CheckEmpCodeExists(empCode,isEmployee);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
                 result.CommandType = dbr.CommandType;

@@ -263,6 +263,25 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckEmpCodeExists(string empCode,bool isEmployee)
+        {
+            string text = "";
+
+            try
+            {
+                if(isEmployee)
+                    text = string.Format("select COUNT(*) from employees where EmpCode = '{0}';", empCode);
+                else
+                    text = string.Format("select COUNT(*) from employees where CDACode = '{0}';", empCode);
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetSessionDetails(string userName,int employeeId, int userTypeId)
         {
             string text = "";

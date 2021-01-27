@@ -103,5 +103,9 @@ namespace pdstest.DAL
         {
             return _ops.GetDeliveryRatesbyStation(stationId);
         }
+        public DataBaseResult CheckEmpCodeExists(string empCode,bool isEmployee)
+        {
+            return _ops.CheckEmpCodeExists(empCode,isEmployee);
+        }
     }
 }

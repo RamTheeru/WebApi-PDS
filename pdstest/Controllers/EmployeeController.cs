@@ -467,6 +467,69 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpGet("CheckEmpCode")]
+
+        public IActionResult CheckEmpCode(string empCode)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(empCode))
+                    empCode = empCode.CleanString();
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                result = logic.CheckEmpCodeExists(empCode,true);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpGet("CheckCDACode")]
+
+        public IActionResult CheckCDACode(string cdaCode)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(cdaCode))
+                    cdaCode = cdaCode.CleanString();
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                result = logic.CheckEmpCodeExists(cdaCode, false);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+
         [HttpPost]
         [Route("RegisterEmployee")]
         public IActionResult RegisterEmployee(RegisterEmployee obj)

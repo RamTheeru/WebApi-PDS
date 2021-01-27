@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using pdstest.services;
 
 namespace pdstest.Controllers
 {
@@ -19,13 +20,24 @@ namespace pdstest.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IPdfFile _pdf;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IPdfFile pdf)
         {
             _logger = logger;
+            _pdf = pdf;
         }
-
-        [HttpGet("excelfile")]
+        [HttpGet("pdfget")]
+        public IActionResult GetPdf()
+        {
+            string contentType = "application/pdf";
+            MemoryStream stream = new MemoryStream();
+            //Define the file name.
+            stream = _pdf.CreatePdfFilewthTable();
+            string fileName = "Output.pdf";
+            return File(stream, contentType, fileName);
+        }
+            [HttpGet("excelfile")]
         public IActionResult Get()
         {
             var rng = new Random();

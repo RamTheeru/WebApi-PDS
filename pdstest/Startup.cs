@@ -36,6 +36,7 @@ namespace pdstest
             services.AddCors();
             services.AddControllers();
             services.AddSingleton<IWorker, Worker>();
+            services.AddScoped<IPdfFile, CustomPdfFile>();
             services.AddHostedService<MyCustomBackgroundService>();
             ////services.AddTransient<IConnection, MySqlOps>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
