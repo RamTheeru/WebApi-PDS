@@ -508,13 +508,14 @@ namespace pdstest.BLL
                 }
                 result.commercialConstant = cc;
             }
-            catch
+            catch(Exception e)
             {
                 cc.DeliveryRate = 0;
                 //dd.DeliveryRate = 0;
                 cc.PetrolAllowance = 0;
                 //throw e;
                 result.commercialConstant = cc;
+                throw e;
             }
             return result;
 
