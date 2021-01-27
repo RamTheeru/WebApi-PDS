@@ -484,15 +484,17 @@ namespace pdstest.BLL
                     {
                       string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
                         string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
-                        string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
+                        string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowance"].ToString();
                         string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
                         cc.DeliveryRate = this.HandleStringtoInt(dr2);
                         cc.PetrolAllowance = this.HandleStringtoInt(petr2);
                         cc.StationId = this.HandleStringtoInt(sId);
+                        cc.Incentives = this.HandleStringtoInt(inc2);
                         // dd.Incentive = this.HandleStringtoInt(inc2);
                     }
                     else
                     {
+                        cc.Incentives = 0;
                         cc.DeliveryRate = 0;
                         //dd.DeliveryRate = 0;
                         cc.PetrolAllowance = 0;
@@ -501,6 +503,7 @@ namespace pdstest.BLL
                 }
                 else
                 {
+                    cc.Incentives = 0;
                     cc.DeliveryRate = 0;
                     //dd.DeliveryRate = 0;
                     cc.PetrolAllowance = 0;
@@ -553,14 +556,14 @@ namespace pdstest.BLL
                     dd.TotalAmount = 0;
                 }
             }
-            catch 
+            catch(Exception e)
             {
                 dd.DeliveryCount = 0;
                 //dd.DeliveryRate = 0;
                 dd.CurrentMonth = currentMonth;
                 dd.Incentive = 0;
                 dd.TotalAmount = 0;
-                //throw e;
+                throw e;
             }
             return dd;
         }
