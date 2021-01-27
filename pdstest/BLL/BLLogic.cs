@@ -482,14 +482,21 @@ namespace pdstest.BLL
                     c = dbr.ds.Tables[0].Rows.Count;
                     if (c > 0)
                     {
-                      
+                      string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
                         string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
                         string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
                         string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
                         cc.DeliveryRate = this.HandleStringtoInt(dr2);
                         cc.PetrolAllowance = this.HandleStringtoInt(petr2);
-                       
+                        cc.StationId = this.HandleStringtoInt(sId);
                         // dd.Incentive = this.HandleStringtoInt(inc2);
+                    }
+                    else
+                    {
+                        cc.DeliveryRate = 0;
+                        //dd.DeliveryRate = 0;
+                        cc.PetrolAllowance = 0;
+                        cc.StationId = stationId;
                     }
                 }
                 else
@@ -497,6 +504,7 @@ namespace pdstest.BLL
                     cc.DeliveryRate = 0;
                     //dd.DeliveryRate = 0;
                     cc.PetrolAllowance = 0;
+                    cc.StationId = stationId;
                 }
                 result.commercialConstant = cc;
             }
