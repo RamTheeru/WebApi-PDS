@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using pdstest.Models;
 using pdstest.services;
+using Wkhtmltopdf.NetCore;
 
 namespace pdstest.Controllers
 {
@@ -21,11 +23,13 @@ namespace pdstest.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IPdfFile _pdf;
+        private readonly IGeneratePdf _generatePdf;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IPdfFile pdf)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IPdfFile pdf,IGeneratePdf generatePdf)
         {
             _logger = logger;
             _pdf = pdf;
+            _generatePdf = generatePdf;
         }
         [HttpGet("pdfget")]
         public IActionResult GetPdf()
@@ -37,7 +41,18 @@ namespace pdstest.Controllers
             string fileName = "Output.pdf";
             return File(stream, contentType, fileName);
         }
-            [HttpGet("excelfile")]
+        [HttpGet("pdffile")]
+        public async Task<IActionResult> GetPdffile()
+        {
+            PDFLayout fil = new PDFLayout();
+            fil.HeaderText = "PennaDeliveryServices";
+            fil.BodyText = "This is for test purpose";
+            byte[] ct=  await _generatePdf.GetByteArray("pdflayout/pdfformat.cshtml", fil);
+            string fileName = "PdsSample.pdf";
+            string contentType = "application/pdf";
+            return File(ct, contentType, fileName);
+        }
+        [HttpGet("excelfile")]
         public IActionResult Get()
         {
             var rng = new Random();

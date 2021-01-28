@@ -18,6 +18,7 @@ using System.Text;
 using pdstest.Models;
 using DocumentFormat.OpenXml.EMMA;
 using Microsoft.OpenApi.Models;
+using Wkhtmltopdf.NetCore;
 
 namespace pdstest
 {
@@ -38,6 +39,7 @@ namespace pdstest
             services.AddSingleton<IWorker, Worker>();
             services.AddScoped<IPdfFile, CustomPdfFile>();
             services.AddHostedService<MyCustomBackgroundService>();
+            services.AddWkhtmltopdf("pagetopdf");
             ////services.AddTransient<IConnection, MySqlOps>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

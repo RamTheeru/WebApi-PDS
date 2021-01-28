@@ -14,6 +14,7 @@ namespace pdstest.Models
 {
     public class CustomPdfFile : IPdfFile
     {
+        int count = 0;
         public void CreatePdfFilewithData()
         {
             //Create a new PDF document
@@ -77,6 +78,7 @@ namespace pdstest.Models
 
         public MemoryStream CreatePdfFilewthTable()
         {
+            count = 0;
             //Create a new PDF document.
             PdfDocument doc = new PdfDocument();
             //Add a page.
@@ -99,6 +101,7 @@ namespace pdstest.Models
             IEnumerable<object> dataTable = data;
             //Assign data source.
             pdfGrid.DataSource = dataTable;
+            pdfGrid.BeginCellLayout += PdfGrid_BeginCellLayout;
             //Draw grid to the page of PDF document.
             pdfGrid.Draw(page, new Syncfusion.Drawing.PointF(10, 10));
             //Save the PDF document to stream
@@ -115,6 +118,15 @@ namespace pdstest.Models
             //Creates a FileContentResult object by using the file contents, content type, and file name.
             // return File(stream, contentType, fileName);
             return stream;
+        }
+        private void PdfGrid_BeginCellLayout(object sender, PdfGridBeginCellLayoutEventArgs args)
+        {
+            count++;
+            PdfGrid grid = (sender as PdfGrid);
+            if (count <= grid.Headers.Count * grid.Columns.Count)
+            {
+                args.Skip = true;
+            }
         }
     }
 }
