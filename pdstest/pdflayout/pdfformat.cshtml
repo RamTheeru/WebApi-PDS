@@ -2,12 +2,196 @@
 @model pdstest.Models.PDFLayout
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@Model.HeaderText</title>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>@Model.Title</title>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ 
+    <style>
+        #main {
+  /*          border-radius: 3px;
+            border-style: solid;*/
+            width: 100%;
+            height: 100%;
+        
+            
+        }
+        #mn{
+                  border-radius: 3px;
+            border-style: solid;
+        }
+
+        #th {
+            border-style: solid;
+            border-width: medium;
+        }
+
+        h4 {
+            text-align: center;
+             border-radius: 3px;
+            border-style: solid;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .bilto {
+            border-style: solid;
+            height: 120px;
+            width: 300px;
+        }
+        .col{
+            width:100%;
+        }
+        #tb {
+  width: 100%;
+        margin-left:20px;
+}
+
+        .row {
+            min-width : 100%;
+            min-height:100%;
+            padding-top: .2em;
+            padding-bottom: .2em;
+        }
+
+
+             .grid-container {
+          display: grid;
+         grid-template-columns: auto auto auto;
+          grid-gap: 120px;
+
+        }
+        .grid-container2 {
+          display: grid;
+         grid-template-columns: auto auto auto;
+          grid-gap: 260px;
+
+        }
+
+        .grid-container-fluid > div {
+  
+          text-align: center;
+          padding: 20px 0;
+          font-size: 10px;
+        }
+        .grid-container2-fluid > div {
+          text-align: center;
+          padding: 20px 0;
+          font-size: 10px;
+        }
+
+
+    </style>
 </head>
 <body>
-    <div>
-      @Model.BodyText
-    </div>
+    <div class="container" id="mn">
+     <h1><u><b>Contract Delivery Associate Invoice</b></u></h1>
+   <table  id="tb" >
+  <tr>
+    <td><u>Name:</u><br><p>@Model.Name</p><br><u>Address:</u> <br> <textarea id="w3review2" name="w3review" rows="4" cols="30">@Model.Address</textarea></td>
+    <td><u>Mobile Number:</u><br><p>@Model.MobileNumber </p><br>  <u>Billing Period:</u><br><p>@Model.BillingPeriod</p></td>
+    <td><u>Vendor Code:</u><br><p>@Model.VendorCode</p><br>  <u>Invoice Date:</u><br><p>@Model.InvoiceDate</p><br>
+                          <u>PAN Details::</u><br><p>@Model.PANDetails</p></td>
+  </tr>
+  <tr>
+    <td> <b><u>BILL TO:</u></b><br><textarea id="w3review2" name="w3review" rows="4" cols="30">@Model.BillTo</textarea></td>
+    <td></td>
+    <td><b><u>Work Performed:</u></b><br><textarea id="w3review3" name="w3review" rows="4" cols="30">@Model.WorkPerformed</textarea></td>
+  </tr>
+
+</table>
+  
+        <div class="row">
+           
+        </div>
+                 <div class="row">
+ 
+
+                 
+                 </div>
+
+            <div class="row">   </div>
+            <div class="row" ><h4> Job</h4>  </div>
+            <div class="row">
+                <table class="table table-bordered table-sm">
+
+                    <thead>
+
+                        <tr>
+                            <th>S.NO</th>
+                            <th>Description</th>
+                            <th>#Qty</th>
+                            <th>PRICE</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                            int c = @Model.tbContents.Count;
+                            var list = @Model.tbContents;// as @System.Collections.Generic.List<@pdstest.Models.PdfTbContent>();
+                            foreach (var item in list)
+                            {
+                                i = i + 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Description</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price</td>
+                                    <td>@item.Amount</td>
+                                </tr>
+
+                            }
+                        }
+                        <tr>
+                            <td style="visibility:hidden;"></td>
+                            <td style="visibility:hidden;"></td>
+                            <td style="visibility:hidden;"></td>
+                            <td>TDS</td>
+                            <td>@Model.TDS</td>
+                        </tr>
+                        <tr>
+                            <td style="visibility:hidden;"></td>
+                            <td style="visibility:hidden;"></td>
+                            <td style="visibility:hidden;"></td>
+                            <td>Total</td>
+                            <td>@Model.Total</td>
+                        </tr>
+                        @*<tr>
+                        <td>John</td>
+                        <td>Doe</td>
+                        <td>john@example.com</td>
+                        <td>Doe</td>
+                        <td>Doe</td>
+                    </tr>*@
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row"  id="tb"><label><b><u>Amount in Words:</u></b></label> <p>@Model.AmountInWords</p>  </div>
+            <div class="row"  id="tb"><label><b><u>Comments:</u></b></label> <p>@Model.Comments</p>  </div>
+            <div class="row"> </div>
+            <div class="row">  </div>
+            <div class="row">
+
+            </div>
+       
+<table  id="tb">
+  <tr>
+  <td>@Model.Sign1</td>
+    <td>@Model.Sign2</td>
+    <td>@Model.Sign3</td>
+  </tr>
+</table>
+        </div>
+    @*<div>
+          @Model.BodyText
+        </div>*@
 </body>
 </html>

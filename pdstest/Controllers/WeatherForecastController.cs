@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 using pdstest.Models;
 using pdstest.services;
 using Wkhtmltopdf.NetCore;
+using Wkhtmltopdf.NetCore.Interfaces;
+using Wkhtmltopdf;
+using Wkhtmltopdf.NetCore.Options;
 
 namespace pdstest.Controllers
 {
@@ -22,34 +25,50 @@ namespace pdstest.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IPdfFile _pdf;
+        //private readonly IPdfFile _pdf;
         private readonly IGeneratePdf _generatePdf;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IPdfFile pdf,IGeneratePdf generatePdf)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IGeneratePdf generatePdf)
         {
             _logger = logger;
-            _pdf = pdf;
+            //_pdf = pdf;
             _generatePdf = generatePdf;
         }
-        [HttpGet("pdfget")]
-        public IActionResult GetPdf()
-        {
-            string contentType = "application/pdf";
-            MemoryStream stream = new MemoryStream();
-            //Define the file name.
-            stream = _pdf.CreatePdfFilewthTable();
-            string fileName = "Output.pdf";
-            return File(stream, contentType, fileName);
-        }
+        //[HttpGet("pdfget")]
+        //public IActionResult GetPdf()
+        //{
+        //    string contentType = "application/pdf";
+        //    MemoryStream stream = new MemoryStream();
+        //    //Define the file name.
+        //    stream = _pdf.CreatePdfFilewithData();
+        //    string fileName = "Output.pdf";
+        //    return File(stream, contentType, fileName);
+        //}
         [HttpGet("pdffile")]
         public async Task<IActionResult> GetPdffile()
         {
             PDFLayout fil = new PDFLayout();
-            fil.HeaderText = "PennaDeliveryServices";
-            fil.BodyText = "This is for test purpose";
+            fil.Title = "PennaDeliveryServices";
+            //fil.BodyText = "This is for test purpose";
+            fil = this.GetPdfContent();
+            ConvertOptions opts = new ConvertOptions();
+            //opts.PageWidth = 800;
+            //opts.PageHeight = 508;
+            opts.PageSize = Size.A4;
+            opts.PageMargins = new Margins();
+            ///opts.PageOrientation = Wkhtmltopdf.NetCore.Options.Orientation.Portrait;
+            Margins mrgns = new Margins();
+            mrgns.Left = 0;
+            mrgns.Right = 0;
+            opts.PageMargins = mrgns;
+            _generatePdf.SetConvertOptions(opts);
             byte[] ct=  await _generatePdf.GetByteArray("pdflayout/pdfformat.cshtml", fil);
-            string fileName = "PdsSample.pdf";
+            //var pdfStream = new System.IO.MemoryStream();
+            //pdfStream.Write(ct, 0, ct.Length);
+            //pdfStream.Position = 0;
+            string fileName = "CDAInvoiceFormat.pdf";
             string contentType = "application/pdf";
+           //return new FileStreamResult(pdfStream,contentType);
             return File(ct, contentType, fileName);
         }
         [HttpGet("excelfile")]
@@ -99,5 +118,59 @@ namespace pdstest.Controllers
 
             //return Ok(); 
         }
+        [NonAction]
+        public PDFLayout GetPdfContent()
+        {
+            PDFLayout pdfC = new PDFLayout();
+            pdfC.Name = "Ram Theertha";
+            pdfC.Address = "Thapovanam, " + Environment.NewLine + "Anantapur, " + Environment.NewLine + "PINCODE : 500004";
+            pdfC.MobileNumber = "95796706668";
+            pdfC.BillingPeriod = "JAN-2021";
+            pdfC.VendorCode = "V-ATP";
+            pdfC.InvoiceDate = DateTime.Now.ToShortDateString();
+            pdfC.PANDetails = "AJR476TDH8U";
+            pdfC.BillTo = "Billing to someone";
+            pdfC.WorkPerformed = "Transport and delivery 50 packges";
+            pdfC.tbContents = new List<PdfTbContent>();
+            List<PdfTbContent> tbs = new List<PdfTbContent>();
+            PdfTbContent tb = new PdfTbContent();
+            tb.Price = "200";
+            tb.Description = "Delivery Rate";
+            tb.Quantity = "1";
+            int r = 0;
+            r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+            tb.FinalAmount = r;
+            tb.Amount = r.ToString() ;
+            tbs.Add(tb);
+             tb = new PdfTbContent();
+            tb.Price = "100";
+            tb.Description = "Allowances";
+            tb.Quantity = "2";
+             r = 0;
+            r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+            tb.FinalAmount = r;
+            tb.Amount = r.ToString();
+            tbs.Add(tb);
+             tb = new PdfTbContent();
+            tb.Price = "25";
+            tb.Description = "Incentives";
+            tb.Quantity = "4";
+             r = 0;
+            r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+            tb.FinalAmount = r;
+            tb.Amount = r.ToString();
+            tbs.Add(tb);
+            pdfC.tbContents = tbs;
+            pdfC.TDS = "20";
+            int tot = pdfC.tbContents.Sum(x => x.FinalAmount) + Convert.ToInt32(pdfC.TDS);
+            pdfC.Total = tot.ToString() ;
+            pdfC.AmountInWords = "Five Hundred And Twenty Only";
+            pdfC.Comments = "No Comments as of now";
+            pdfC.Sign1 = "Signature of Branch Incharge";
+            pdfC.Sign2 = "Signature of Signing Authority";
+            pdfC.Sign3 = "Signature of Delivery Associate";
+            return pdfC;
+        }
+
     }
 }

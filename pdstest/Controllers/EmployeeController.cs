@@ -767,11 +767,18 @@ namespace pdstest.Controllers
         public IActionResult CDAUpdateDeliveryDetails(List<DeliveryDetails> cdds)
         {
             APIResult result = new APIResult();
+           // List<DeliveryDetails> inputs = new List<DeliveryDetails>();
             try
             {
                 if (cdds.Count>0)
                 {
-                    
+                    //foreach(var item in cdds)
+                    //{
+                    //    DeliveryDetails d = new DeliveryDetails();
+                        
+
+
+                    //}
                     result = logic.UpdateDeliveryRates(cdds);
 
                 }

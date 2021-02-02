@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+@model pdstest.Models.PDFLayout
+<html>
+<head>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>@Model.Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        #main {
+            /*          border-radius: 3px;
+            border-style: solid;*/
+            width: 100%;
+            height: 100%;
+        }
+
+        #th {
+            border-style: solid;
+            border-width: medium;
+        }
+
+        h4 {
+            text-align: center;
+            margin-left: 450px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .bilto {
+            border-style: solid;
+            height: 120px;
+            width: 300px;
+        }
+
+        .col {
+            width: 100%;
+        }
+
+        .row {
+            min-width: 100%;
+            min-height: 100%;
+            padding-top: .2em;
+            padding-bottom: .2em;
+        }
+
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-gap: 120px;
+        }
+
+        .grid-container2 {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-gap: 260px;
+        }
+
+        .grid-container-fluid > div {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 10px;
+        }
+
+        .grid-container2-fluid > div {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1><u><b>Contract Delivery Associate Invoice</b></u></h1>
+    <div class="grid-container" style="display: grid;grid-template-columns: auto auto auto;grid-gap: 120px;">
+        <div class="item1"><u>Address:</u> <br> <p>@Model.Address</p></div>
+        <div class="item2">
+            <u>Mobile Number:</u><br><p>@Model.MobileNumber </p><br>  <u>Billing Period:</u><br><p>@Model.BillingPeriod</p>
+
+        </div>
+
+        <div class="item3">
+            <u>Vendor Code:</u><br><p>@Model.VendorCode</p><br>  <u>Invoice Date:</u><br><p>@Model.InvoiceDate</p><br>
+            <u>PAN Details::</u><br><p>@Model.PANDetails</p>
+        </div>
+        <div class="item4">  <textarea id="w3review2" name="w3review" rows="4" cols="30">BILL TO:@Model.BillTo</textarea></div>
+        <div class="item5"></div>
+        <div class="item6">
+            <textarea id="w3review3" name="w3review" rows="4" cols="30">Work Performed:@Model.WorkPerformed</textarea>
+        </div>
+
+    </div>
+    <div class="container-fluid" id="main">
+        <div class="row">
+
+        </div>
+        <div class="row">
+
+
+
+        </div>
+
+        <div class="row">   </div>
+        <div class="row" id="th"><h4> Job</h4>  </div>
+        <div class="row">
+            <table class="table table-bordered table-sm">
+
+                <thead>
+
+                    <tr>
+                        <th>S.NO</th>
+                        <th>Description</th>
+                        <th>#Qty</th>
+                        <th>PRICE</th>
+                        <th>AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 0;
+                        int c = @Model.tbContents.Count;
+                        var list = @Model.tbContents;// as @System.Collections.Generic.List<@pdstest.Models.PdfTbContent>();
+                        foreach (var item in list)
+                        {
+                            i = i + 1;
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.Description</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <td>@item.Amount</td>
+                            </tr>
+
+                        }
+                    }
+                    <tr>
+                        <td style="visibility:hidden;"></td>
+                        <td style="visibility:hidden;"></td>
+                        <td style="visibility:hidden;"></td>
+                        <td>TDS</td>
+                        <td>@Model.TDS</td>
+                    </tr>
+                    <tr>
+                        <td style="visibility:hidden;"></td>
+                        <td style="visibility:hidden;"></td>
+                        <td style="visibility:hidden;"></td>
+                        <td>Total</td>
+                        <td>@Model.Total</td>
+                    </tr>
+                    @*<tr>
+                            <td>John</td>
+                            <td>Doe</td>
+                            <td>john@example.com</td>
+                            <td>Doe</td>
+                            <td>Doe</td>
+                        </tr>*@
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row"><label>Amount in Words:</label> <p>@Model.AmountInWords</p>  </div>
+        <div class="row"><label>Comments:</label> <p>@Model.Comments</p>  </div>
+        <div class="row"> </div>
+        <div class="row">  </div>
+        <div class="row">
+
+        </div>
+    </div>
+    <div class="grid-container2">
+        <div class="item1">@Model.Sign1</div>
+        <div class="item2">@Model.Sign2</div>
+        <div class="item3">@Model.Sign3</div>
+    </div>
+    @*<div>
+          @Model.BodyText
+        </div>*@
+</body>
+</html>
