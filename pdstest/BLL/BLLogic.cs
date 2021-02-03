@@ -473,42 +473,26 @@ namespace pdstest.BLL
             try
             {
                 result.commercialConstant = new CommercialConstant();
-                if (stationId > 0)
-                {
                     int c = 0;
-                    
-                    dbr = new DataBaseResult();
-                    dbr = ops.GetDeliveryRatesbyStation(stationId);
-                    c = dbr.ds.Tables[0].Rows.Count;
-                    if (c > 0)
-                    {
-                      string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
-                        string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
-                        string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowance"].ToString();
-                        string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
-                        cc.DeliveryRate = this.HandleStringtoInt(dr2);
-                        cc.PetrolAllowance = this.HandleStringtoInt(petr2);
-                        cc.StationId = this.HandleStringtoInt(sId);
-                        cc.Incentives = this.HandleStringtoInt(inc2);
-                        // dd.Incentive = this.HandleStringtoInt(inc2);
-                    }
-                    else
-                    {
-                        cc.Incentives = 0;
-                        cc.DeliveryRate = 0;
-                        //dd.DeliveryRate = 0;
-                        cc.PetrolAllowance = 0;
-                        cc.StationId = stationId;
-                    }
-                }
-                else
+
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.GetDeliveryRatesbyStation(stationId);
+                c = dbr.ds.Tables[0].Rows.Count;
+                if (c > 0)
                 {
-                    cc.Incentives = 0;
-                    cc.DeliveryRate = 0;
-                    //dd.DeliveryRate = 0;
-                    cc.PetrolAllowance = 0;
-                    cc.StationId = stationId;
+                    string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
+                    string dr2 = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
+                    string petr2 = dbr.ds.Tables[0].Rows[0]["PetrolAllowance"].ToString();
+                    string inc2 = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
+                    cc.DeliveryRate = this.HandleStringtoInt(dr2);
+                    cc.PetrolAllowance = this.HandleStringtoInt(petr2);
+                    cc.StationId = this.HandleStringtoInt(sId);
+                    cc.Incentives = this.HandleStringtoInt(inc2);
+                    // dd.Incentive = this.HandleStringtoInt(inc2);
                 }
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+
                 result.commercialConstant = cc;
             }
             catch(Exception e)
@@ -517,6 +501,8 @@ namespace pdstest.BLL
                 //dd.DeliveryRate = 0;
                 cc.PetrolAllowance = 0;
                 //throw e;
+                result.Status = false;
+                result.Message = e.Message;
                 result.commercialConstant = cc;
                 throw e;
             }

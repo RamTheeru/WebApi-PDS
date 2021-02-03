@@ -1632,6 +1632,12 @@ namespace pdstest.DAL
 
 
                     }
+                    else
+                    {
+                        dbr.ds = new DataSet();
+                        dbr.Message = "Something went wrong!!!!";
+                        dbr.Status = false;
+                    }
                 }
 
             }
