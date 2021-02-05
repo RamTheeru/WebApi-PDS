@@ -382,6 +382,7 @@ namespace pdstest.BLL
                                 DeliveryDetails dd = new DeliveryDetails();
                                 dd.CurrentMonth = input.currentmonth;
                                 dd.EmployeeId = emp.EmployeeId;
+                                dd.StationId = emp.StationId;
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
                                 
@@ -515,6 +516,7 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                dbr.ds = new System.Data.DataSet();
                 dbr = ops.GetCDADeliveryDetails(employeeId, stationId, currentMonth);
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
