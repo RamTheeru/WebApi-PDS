@@ -1445,12 +1445,12 @@ namespace pdstest.DAL
             DataBaseResult dbr = new DataBaseResult();
             MySqlConnection con = new MySqlConnection(connectionString);
             int i = 0;
-            MySqlTransaction transaction=con.BeginTransaction();
+            con.Open();
+            MySqlTransaction transaction = con.BeginTransaction();
             try
             {
                 dbr.CommandType = "Insert";            
-                con.Open();
-                if(cdds.Count>0)
+                if (cdds.Count>0)
                 {
                     var valid = cdds.Any(x => x.EmployeeId == 0 || x.StationId == 0);
                     if (!valid)
@@ -1472,6 +1472,12 @@ namespace pdstest.DAL
                             //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
                         }
                         transaction.Commit();
+                    }
+                    else
+                    {
+                        i= 0;
+                        dbr.Status = false;
+                        dbr.Message = "Invalid Data to update, Please try again";
                     }
                 }
 
