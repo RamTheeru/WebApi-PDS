@@ -425,7 +425,7 @@ namespace pdstest.DAL
                 insertCmd.Append(cdd.EmployeeId.ToString() + ",");
                 insertCmd.Append(cdd.Incentive.ToString() + ",");
                 insertCmd.Append(cdd.TotalAmount.ToString() + ",");
-                insertCmd.Append(DateTime.Now.DateTimetoString() + ",");
+                insertCmd.Append(""+DateTime.Now.DateTimetoString()+"" + ",");
                 insertCmd.Append("1 )");
                 cmdText = insertCmd.ToString();
 
