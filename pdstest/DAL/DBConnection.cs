@@ -415,7 +415,7 @@ namespace pdstest.DAL
             {
                 DateTime d = DateTime.Now;
                 StringBuilder insertCmd = new StringBuilder();
-                insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,TotalAmount,IsActive) ");
+                insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,TotalAmount,CreatedDate,IsActive) ");
                 insertCmd.AppendLine(" VALUES(");
                 insertCmd.Append(cdd.StationId.ToString() + ",");
                 insertCmd.Append(d.Month.ToString() + ",");
@@ -425,6 +425,7 @@ namespace pdstest.DAL
                 insertCmd.Append(cdd.EmployeeId.ToString() + ",");
                 insertCmd.Append(cdd.Incentive.ToString() + ",");
                 insertCmd.Append(cdd.TotalAmount.ToString() + ",");
+                insertCmd.Append(DateTime.Now.DateTimetoString() + ",");
                 insertCmd.Append("1 )");
                 cmdText = insertCmd.ToString();
 
