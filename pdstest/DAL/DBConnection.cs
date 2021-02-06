@@ -272,7 +272,7 @@ namespace pdstest.DAL
                 if(isEmployee)
                     text = string.Format("select COUNT(*) from employees where EmpCode = '{0}';", empCode);
                 else
-                    text = string.Format("select COUNT(*) from employees where CDACode = '{0}';", empCode);
+                    text = string.Format("select COUNT(*) from CDAEmployees where CDACode = '{0}';", empCode);
             }
             catch (Exception e)
             {
