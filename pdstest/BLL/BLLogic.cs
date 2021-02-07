@@ -422,7 +422,10 @@ namespace pdstest.BLL
                     {
                         if (p >= 1 && result.QueryTotalCount > ps)
                         {
-                            double pages = Convert.ToDouble((result.QueryTotalCount / ps));
+                            double n1 = (double)result.QueryTotalCount;
+                            double n2 = (double)ps;
+                            double pages = 0.0;
+                             pages =   n1 / n2;//Convert.ToDouble(( / ps));
                             ///result.QueryPages = (int)Math.Round(pages, MidpointRounding.AwayFromZero);
                             result.QueryPages = (int)Math.Ceiling(pages);
                         }
