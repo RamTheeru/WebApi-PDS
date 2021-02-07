@@ -407,7 +407,32 @@ namespace pdstest.DAL
             return connection;
         
         }
-
+        public static string GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(DeliveryDetails dd)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("DELETE from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1", dd.StationId,dd.CurrentMonth,dd.EmployeeId);
+            }
+            catch
+            {
+                text = "";
+            }
+            return text;
+        }
+        public static string GetCHECKDeliveryDetailCDAforEmployeeCurrentMonth(DeliveryDetails dd)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("SELECT COUNT(*) from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1", dd.StationId, dd.CurrentMonth, dd.EmployeeId);
+            }
+            catch
+            {
+                text = "";
+            }
+            return text;
+        }
         public static string GetUpdateDeiverydetailInsertQuery(DeliveryDetails cdd)
         {
             string cmdText = "";
@@ -418,7 +443,7 @@ namespace pdstest.DAL
                 insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,TotalAmount,IsActive) ");
                 insertCmd.AppendLine(" VALUES(");
                 insertCmd.Append(cdd.StationId.ToString() + ",");
-                insertCmd.Append(d.Month.ToString() + ",");
+                insertCmd.Append(cdd.CurrentMonth.ToString() + ",");
                 insertCmd.Append(cdd.DeliveryCount.ToString() + ",");
                 insertCmd.Append(cdd.DeliveryRate.ToString() + ",");
                 insertCmd.Append(cdd.PetrolAllowance.ToString() + ",");

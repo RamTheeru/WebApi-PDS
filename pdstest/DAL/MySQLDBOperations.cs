@@ -1455,9 +1455,18 @@ namespace pdstest.DAL
                     var valid = cdds.Any(x => x.EmployeeId == 0 || x.StationId == 0);
                     if (!valid)
                     {
+                        bool isExists = false;
                         foreach (var item in cdds)
                         {
-
+                            string checkText = DBConnection.GetCHECKDeliveryDetailCDAforEmployeeCurrentMonth(item);
+                            isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, checkText);
+                            if(isExists)
+                            {
+                                string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
+                                i = new BasicDBOps().ExceuteCommand(connectionString, delText);
+                                if (i == 0)
+                                    throw new Exception("Something went wrong!!,Unable to Delete Existing Delivery Details");
+                            }
                             //int deliveryRate = item.DeliveryRate;
                             //int deliveryCount = item.DeliveryCount;
                             //int petrolAllowance = item.PetrolAllowance;
