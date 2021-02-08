@@ -18,5 +18,7 @@ namespace pdstest.Models
         public int DeliveryRate { get; set; }
         public int Incentive { get; set; }
         public int  TotalAmount { get; set; }
+        public string CreatedDate { get; set; }
+        public DateTime CreateDt { get; set; }
     }
 }

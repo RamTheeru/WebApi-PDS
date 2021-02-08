@@ -433,6 +433,32 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetEmployeedatabyEmpId(int employeeId)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("SELECT FirstName,LastName,Phone,Address1,Address2,CDACode,PAN from CDAEmployees WHERE EmployeeId={0}", employeeId);
+            }
+            catch
+            {
+                text = "";
+            }
+            return text;
+        }
+        public static string GetEmployeedeliverydetailsbyEmpId(int employeeId,int currentMonth,int stationId)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("SELECT * from CDADelivery WHERE EmployeeId={0} AND CurrentMonth={1} AND StationId={2}", employeeId,currentMonth,stationId);
+            }
+            catch
+            {
+                text = "";
+            }
+            return text;
+        }
         public static string GetUpdateDeiverydetailInsertQuery(DeliveryDetails cdd)
         {
             string cmdText = "";

@@ -14,6 +14,10 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using Wkhtmltopdf.NetCore;
+using Wkhtmltopdf.NetCore.Interfaces;
+using Wkhtmltopdf;
+using Wkhtmltopdf.NetCore.Options;
 
 namespace pdstest.Controllers
 {
@@ -22,18 +26,20 @@ namespace pdstest.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IConfiguration configuration;
+        private readonly IGeneratePdf _generatePdf;
         //public EmployeeController(IConfiguration config) {
         //    this.configuration = config;
 
         //}
         private static IConnection conn;
         private BLLogic logic;
-        public EmployeeController(IConnection con,IConfiguration config)
+        public EmployeeController(IConnection con,IConfiguration config, IGeneratePdf generatePdf)
         {
 
             conn = con;
             configuration = config;
             logic = new BLLogic(conn);
+            _generatePdf = generatePdf;
         }
         [HttpGet("Login")]
         public IActionResult Login(string username,string password)
@@ -807,6 +813,79 @@ namespace pdstest.Controllers
             // return new CustomResult(result);
 
         }
+
+        #region FILEDOWNLOAD
+
+        [HttpPost]
+        [Route("DownloadCDADeiveryDetails")]
+        public async Task<IActionResult> CDADownloadDeliveryDetails(PDFInput input)
+        {
+            APIResult result = new APIResult();
+            // List<DeliveryDetails> inputs = new List<DeliveryDetails>();
+            try
+            {
+                if (input.emps.Count > 0)
+                {
+                    foreach (var item in input.emps)
+                    {
+                        PDFLayout fil = new PDFLayout();
+                        result = logic.GetEmpDataforPDFFile(item,input.currentmonth);
+                        fil = result.pdfLayout;
+                        ConvertOptions opts = new ConvertOptions();
+                        //opts.PageWidth = 800;
+                        //opts.PageHeight = 508;
+                        opts.PageSize = Size.A4;
+                        opts.PageMargins = new Margins();
+                        ///opts.PageOrientation = Wkhtmltopdf.NetCore.Options.Orientation.Portrait;
+                        Margins mrgns = new Margins();
+                        mrgns.Left = 0;
+                        mrgns.Right = 0;
+                        opts.PageMargins = mrgns;
+                        _generatePdf.SetConvertOptions(opts);
+                        byte[] ct = await _generatePdf.GetByteArray("pdflayout/pdfformat.cshtml", fil);
+                        //var pdfStream = new System.IO.MemoryStream();
+                        //pdfStream.Write(ct, 0, ct.Length);
+                        //pdfStream.Position = 0;
+                        string fileName = fil.VendorCode+".pdf" ; //"CDAInvoiceFormat.pdf";
+                        string contentType = "application/pdf";
+                        //return new FileStreamResult(pdfStream,contentType);
+                        return File(ct, contentType, fileName);
+
+
+
+                    }
+                    // result = logic.UpdateDeliveryRates(cdds);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Download";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Download";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
+
+        }
+
+
+        #endregion
+
         #region FILEUPLOAD
         ////[HttpPost("upload", Name = "upload")]
         ////[ProducesResponseType(StatusCodes.Status200OK)]

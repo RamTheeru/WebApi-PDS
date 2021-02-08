@@ -107,5 +107,14 @@ namespace pdstest.DAL
         {
             return _ops.CheckEmpCodeExists(empCode,isEmployee);
         }
+        public DataBaseResult GetEmpDataforPDF(int employeeId)
+        {
+            return _ops.GetEmpDataforPDF(employeeId);
+        }
+        public DataBaseResult GetEmpDeliveryDetailsforPDF(int employeeId, int stationId, int currentMonth)
+        {
+            return _ops.GetEmpDeliveryDetailsforPDF(employeeId, stationId, currentMonth);
+        }
+
     }
 }

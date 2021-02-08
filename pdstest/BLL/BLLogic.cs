@@ -1067,7 +1067,199 @@ namespace pdstest.BLL
             return result;
 
         }
+        public APIResult GetEmpDataforPDFFile(int empId,int currentMonth)
+        {
+            APIResult result = new APIResult();
+           // PDFLayout layout = new PDFLayout();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                Employee emp = new Employee();
+                if (currentMonth == 0)
+                    currentMonth = DateTime.Now.Month;
+                dbr.ds = new System.Data.DataSet();
+                result.employee = new Employee();
+                result.pdfLayout = new PDFLayout();
+                dbr = ops.GetEmpDataforPDF(empId);
+                 int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                      
+                        int stationid = 0;
+                        string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                        bool success = int.TryParse(sId, out stationid);
+                        emp.StationId = (success == true) ? stationid : 0;
+                        int empid = 0;
+                        string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool success2 = int.TryParse(eId, out empid);
+                        emp.EmployeeId = (success2 == true) ? empid : 0;
+                        emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
+                        emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        emp.LastName = dbr.ds.Tables[0].Rows[i]["LastName"].ToString();
+                        emp.Address1 = dbr.ds.Tables[0].Rows[i]["Address1"].ToString();
+                        emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
+                        emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
+                        emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                        dbr.ds = new System.Data.DataSet();
+                        dbr = ops.GetEmpDeliveryDetailsforPDF(empid, emp.StationId, currentMonth);
+                        count = dbr.ds.Tables[0].Rows.Count;
+                        if (count > 0)
+                        {
+                            emp.delivery = new DeliveryDetails();
+                            for (int k = 0; k < count; k++)
+                            {
+                                emp.delivery.StandardRate = dbr.ds.Tables[0].Rows[k]["DeliveryRate"].ToString();
+                                string ptrallw = dbr.ds.Tables[0].Rows[k]["PetrolAllowanceRate"].ToString();
+                                emp.delivery.PetrolAllowance = this.HandleStringtoInt(ptrallw);
+                                string dc = dbr.ds.Tables[0].Rows[k]["DeliveryCount"].ToString();
+                                emp.delivery.DeliveryCount = this.HandleStringtoInt(dc);
+                                string cd = dbr.ds.Tables[0].Rows[k]["CreatedDate"].ToString();
+                                DateTime cdDate = cd.StringtoDateTime();
+                                emp.delivery.CreateDt = cdDate;
+                                string inc = dbr.ds.Tables[0].Rows[k]["Incentives"].ToString();
+                                emp.delivery.Incentive = this.HandleStringtoInt(inc);
+                                emp.delivery.CurrentMonth = currentMonth;
+                            }
+                        }
 
+                    }
+                    result.employee = emp;
+                    result.pdfLayout = this.GetPdfContent(result.employee);
+                }
+                else
+                {
+                    result.Message = "No Employee Found.";
+                    result.Status = false;
+                    result.CommandType = "Download";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Download";
+                result.Id = 0;
+                result.EmployeeName = "";
+                throw e;
+
+
+            }
+            return result;
+        }
+        public PDFLayout GetPdfContent(Employee emp)
+        {
+            PDFLayout pdfC = new PDFLayout();
+            try
+            {
+                pdfC.Title = "CDAInvoice";
+                pdfC.Name = emp.FirstName +" "+emp.LastName;
+                pdfC.Address = emp.Address1 +" , " + Environment.NewLine +emp.Address2;
+                pdfC.MobileNumber = emp.Phone;
+                pdfC.BillingPeriod = this.GetMonth(emp.delivery.CurrentMonth)+"-"+emp.delivery.CreateDt.Year.ToString();//"JAN-2021";
+                pdfC.VendorCode = emp.EmpCode;
+                pdfC.InvoiceDate = DateTime.Now.ToShortDateString();
+                pdfC.PANDetails = emp.PANNumber;
+                pdfC.BillTo = "Penna Delivery Services";
+                pdfC.WorkPerformed = "Deliveries did till to Amazon";
+                pdfC.tbContents = new List<PdfTbContent>();
+                List<PdfTbContent> tbs = new List<PdfTbContent>();
+                PdfTbContent tb = new PdfTbContent();
+                tb.Price = emp.delivery.StandardRate;
+                tb.Description = "Delivery Rate";
+                tb.Quantity =emp.delivery.DeliveryCount.ToString();
+                int r = 0;
+                r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+                tb.FinalAmount = r;
+                tb.Amount = r.ToString();
+                tbs.Add(tb);
+                tb = new PdfTbContent();
+                tb.Price = emp.delivery.PetrolAllowance.ToString();
+                tb.Description = "Allowances";
+                tb.Quantity = "1";
+                r = 0;
+                r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+                tb.FinalAmount = r;
+                tb.Amount = r.ToString();
+                tbs.Add(tb);
+                tb = new PdfTbContent();
+                tb.Price = emp.delivery.Incentive.ToString();
+                tb.Description = "Incentives";
+                tb.Quantity = "1";
+                r = 0;
+                r = Convert.ToInt32(tb.Price) * Convert.ToInt32(tb.Quantity);
+                tb.FinalAmount = r;
+                tb.Amount = r.ToString();
+                tbs.Add(tb);
+                pdfC.tbContents = tbs;
+                pdfC.TDS = "0";
+                int tot = pdfC.tbContents.Sum(x => x.FinalAmount) + Convert.ToInt32(pdfC.TDS);
+                pdfC.Total = tot.ToString();
+                pdfC.AmountInWords = NumberToWords.ConvertAmount(double.Parse(pdfC.Total)) ;//"Five Hundred And Twenty Only";
+                pdfC.Comments = "--";
+                pdfC.Sign1 = "Signature of Branch Incharge";
+                pdfC.Sign2 = "Signature of Signing Authority";
+                pdfC.Sign3 = "Signature of Delivery Associate";
+            }
+            catch(Exception e)
+            {
+                pdfC = new PDFLayout();
+                throw e;
+            }
+            return pdfC;
+        }
+        public string GetMonth(int i)
+        {
+            string month = "";
+                switch (i)
+                {
+                    case 1:month = "JAN";
+                        break;
+                    case 2:
+                        month = "FEB";
+                        break;
+                    case 3:
+                        month = "MAR";
+                        break;
+                    case 4:
+                        month = "APR";
+                        break;
+                    case 5:
+                        month = "MAY";
+                        break;
+                    case 6:
+                        month = "JUN";
+                        break;
+                    case 7:
+                        month = "JUL";
+                        break;
+                    case 8:
+                        month = "Aug";
+                        break;
+                    case 9:
+                        month = "SEP";
+                        break;
+                    case 10:
+                        month = "OCT";
+                        break;
+                    case 11:
+                        month = "NOV";
+                        break;
+                    case 12:
+                        month = "DEC";
+                        break;
+                    default:
+                        month = "";
+                        break;
+            }
+            return month;
+
+        }
         public APIResult CreateEmployee(Employee input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
