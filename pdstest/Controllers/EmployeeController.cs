@@ -883,7 +883,7 @@ namespace pdstest.Controllers
                     {
                         byte[] zipFileContent = await logic.GetZipArchive(files);
                         if(zipFileContent != null)
-                            return File(zipFileContent, contentType, "CDAInvoice"+result.employee.StationCode);
+                            return File(zipFileContent, contentType, "CDAInvoice"+result.employee.StationCode+result.pdfLayout.BillingPeriod);
                         else
                         {
                             result.Status = false;

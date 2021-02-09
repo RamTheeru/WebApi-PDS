@@ -1109,7 +1109,7 @@ namespace pdstest.BLL
                         emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                         Tuple<string, string> sta = Tuple.Create("", "");
                         sta = ops.GetStationNameByStationId(emp.StationId);
-                        emp.StationCode = sta.Item1;
+                        emp.StationCode = sta.Item2;
                         dbr.ds = new System.Data.DataSet();
                         dbr = ops.GetEmpDeliveryDetailsforPDF(emp.EmployeeId, emp.StationId, currentMonth);
                         count = dbr.ds.Tables[0].Rows.Count;
