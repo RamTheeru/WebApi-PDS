@@ -1123,11 +1123,20 @@ namespace pdstest.BLL
                                 emp.delivery.Incentive = this.HandleStringtoInt(inc);
                                 emp.delivery.CurrentMonth = currentMonth;
                             }
+                            result.employee = emp;
+                            result.pdfLayout = this.GetPdfContent(result.employee);
+                        }
+                        else
+                        {
+                            result.Message = "No Delivery Details found for this month for this employee.";
+                            result.Status = false;
+                            result.CommandType = "Download";
+                            result.Id = 0;
+                            result.EmployeeName = "";
                         }
 
                     }
-                    result.employee = emp;
-                    result.pdfLayout = this.GetPdfContent(result.employee);
+
                 }
                 else
                 {
