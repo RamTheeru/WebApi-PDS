@@ -29,11 +29,12 @@ namespace pdstest.Models
                     return Convert(amount_int) + " Point " + Convert(amount_dec) + " Only.";
                 }
             }
-            catch (Exception e)
+            catch 
             {
+                return "";
                 // TODO: handle exception  
             }
-            return "";
+           // return "";
         }
 
         public static String Convert(Int64 i)

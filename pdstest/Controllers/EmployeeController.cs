@@ -787,6 +787,7 @@ namespace pdstest.Controllers
                     //}
                     result = logic.UpdateDeliveryRates(cdds);
 
+
                 }
                 else
                 {
@@ -821,6 +822,9 @@ namespace pdstest.Controllers
         public async Task<IActionResult> CDADownloadDeliveryDetails(PDFInput input)
         {
             APIResult result = new APIResult();
+            List<InMemoryFile> files = new List<InMemoryFile>();
+            string contentType = "application/zip";
+            string fileName = "";
             // List<DeliveryDetails> inputs = new List<DeliveryDetails>();
             try
             {
@@ -828,30 +832,68 @@ namespace pdstest.Controllers
                 {
                     foreach (var item in input.emps)
                     {
-                        PDFLayout fil = new PDFLayout();
-                        result = logic.GetEmpDataforPDFFile(item,input.currentmonth);
-                        fil = result.pdfLayout;
-                        ConvertOptions opts = new ConvertOptions();
-                        //opts.PageWidth = 800;
-                        //opts.PageHeight = 508;
-                        opts.PageSize = Size.A4;
-                        opts.PageMargins = new Margins();
-                        ///opts.PageOrientation = Wkhtmltopdf.NetCore.Options.Orientation.Portrait;
-                        Margins mrgns = new Margins();
-                        mrgns.Left = 0;
-                        mrgns.Right = 0;
-                        opts.PageMargins = mrgns;
-                        _generatePdf.SetConvertOptions(opts);
-                        byte[] ct = await _generatePdf.GetByteArray("pdflayout/pdfformat.cshtml", fil);
-                        //var pdfStream = new System.IO.MemoryStream();
-                        //pdfStream.Write(ct, 0, ct.Length);
-                        //pdfStream.Position = 0;
-                        string fileName = fil.VendorCode+".pdf" ; //"CDAInvoiceFormat.pdf";
-                        string contentType = "application/pdf";
-                        //return new FileStreamResult(pdfStream,contentType);
-                        return File(ct, contentType, fileName);
+                        if ((input.currentmonth > 0) && item > 0)
+                        {
+                            PDFLayout fil = new PDFLayout();
+                            result = logic.GetEmpDataforPDFFile(item, input.currentmonth);
+                            if (!result.Status)
+                            {
+                                result.Message = "Something went wrong!!  Reason : " + result.Message;
+                                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                            }
+                            fil = result.pdfLayout;
+                            ConvertOptions opts = new ConvertOptions();
+                            //opts.PageWidth = 800;
+                            //opts.PageHeight = 508;
+                            opts.PageSize = Size.A4;
+                            opts.PageMargins = new Margins();
+                            ///opts.PageOrientation = Wkhtmltopdf.NetCore.Options.Orientation.Portrait;
+                            Margins mrgns = new Margins();
+                            mrgns.Left = 0;
+                            mrgns.Right = 0;
+                            opts.PageMargins = mrgns;
+                            _generatePdf.SetConvertOptions(opts);
+                            byte[] ct = await _generatePdf.GetByteArray("pdflayout/pdfformat.cshtml", fil);
+                            //var pdfStream = new System.IO.MemoryStream();
+                            //pdfStream.Write(ct, 0, ct.Length);
+                            //pdfStream.Position = 0;
+                             fileName = fil.VendorCode + ".pdf"; //"CDAInvoiceFormat.pdf";
+
+                            InMemoryFile file = new InMemoryFile();
+                            file.FileName = fileName;
+                            file.Content = ct;
+                            files.Add(file);
+                            //return new FileStreamResult(pdfStream,contentType);
+                            //return File(ct, contentType, fileName);
+                        }
+                        else
+                        {
+                            result.Message = "Invalid Input!!!";
+                            result.Status = false;
+                            result.CommandType = "Download";
+                            result.Id = 0;
+                            result.EmployeeName = "";
+                            return StatusCode(StatusCodes.Status400BadRequest, result);
+                        }
 
 
+
+                    }
+                    if(files.Count>0 && files.Count == input.emps.Count)
+                    {
+                        byte[] zipFileContent = logic.GetZipArchive(files);
+                        if(files.Count == input.emps.Count)
+                        {
+
+                        }
+                        return File(zipFileContent, contentType, fileName);
+                    }
+                    else
+                    {
+                        result.Status = false;
+                        result.CommandType = "Download";
+                        result.Message = "Something went wrong,No file created!!  Reason : " + result.Message;
+                        return StatusCode(StatusCodes.Status500InternalServerError, result);
 
                     }
                     // result = logic.UpdateDeliveryRates(cdds);
@@ -878,7 +920,7 @@ namespace pdstest.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
 
             }
-            return Ok(result);
+            //return Ok(result);
             // return new CustomResult(result);
 
         }

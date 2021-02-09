@@ -3,6 +3,8 @@ using pdstest.Models;
 using pdstest.services;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -1067,6 +1069,8 @@ namespace pdstest.BLL
             return result;
 
         }
+
+        #region Download PDF file
         public APIResult GetEmpDataforPDFFile(int empId,int currentMonth)
         {
             APIResult result = new APIResult();
@@ -1125,6 +1129,7 @@ namespace pdstest.BLL
                             }
                             result.employee = emp;
                             result.pdfLayout = this.GetPdfContent(result.employee);
+                            result.Status = true;
                         }
                         else
                         {
@@ -1222,6 +1227,42 @@ namespace pdstest.BLL
             }
             return pdfC;
         }
+        public  byte[] GetZipArchive(List<InMemoryFile> files)
+        {
+            byte[] archiveFile;
+            try
+            {
+                using (var archiveStream = new MemoryStream())
+                {
+                    using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
+                    {
+                        //foreach (var file in files)
+                        //{
+                        //    var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                        //    using (var zipStream = zipArchiveEntry.Open())
+                        //       await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
+                        //}
+                        Parallel.ForEach(files, async file =>
+                         {
+                             var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                             using (var zipStream = zipArchiveEntry.Open())
+                                 await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
+                         }
+                            );
+                    }
+
+                    archiveFile = archiveStream.ToArray();
+                }
+            }
+            catch(Exception e)
+            {
+                archiveFile = null;//new byte[];
+                throw e;
+            }
+
+            return archiveFile;
+        }
+
         public string GetMonth(int i)
         {
             string month = "";
@@ -1269,6 +1310,8 @@ namespace pdstest.BLL
             return month;
 
         }
+
+        #endregion
         public APIResult CreateEmployee(Employee input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
