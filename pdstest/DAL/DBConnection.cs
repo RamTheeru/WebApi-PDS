@@ -438,7 +438,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("SELECT FirstName,LastName,Phone,Address1,Address2,CDACode,PAN from CDAEmployees WHERE EmployeeId={0}", employeeId);
+                text = string.Format("SELECT StationId,EmployeeId,FirstName,LastName,Phone,Address1,Address2,CDACode,PAN from CDAEmployees WHERE EmployeeId={0}", employeeId);
             }
             catch
             {

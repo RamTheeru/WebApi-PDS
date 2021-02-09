@@ -1104,7 +1104,7 @@ namespace pdstest.BLL
                         emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
                         emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                         dbr.ds = new System.Data.DataSet();
-                        dbr = ops.GetEmpDeliveryDetailsforPDF(empid, emp.StationId, currentMonth);
+                        dbr = ops.GetEmpDeliveryDetailsforPDF(emp.EmployeeId, emp.StationId, currentMonth);
                         count = dbr.ds.Tables[0].Rows.Count;
                         if (count > 0)
                         {
