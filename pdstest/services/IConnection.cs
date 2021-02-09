@@ -27,7 +27,7 @@ namespace pdstest.services
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
         DataBaseResult GetAdminDetails();
         DataBaseResult CreateCommercialConsant(CommercialConstant constant);
-        Dictionary<string, string> GetStationNameByStationId(int stationId);
+        Tuple<string, string> GetStationNameByStationId(int stationId);
         DataBaseResult UpdateDeliveryDetails(List<DeliveryDetails> cdds);
         DataBaseResult GetCDADeliveryDetails(int empId, int stationId, int currentMonth);
         DataBaseResult GetDeliveryRatesbyStation(int stationId);

@@ -3401,9 +3401,9 @@ namespace pdstest.DAL
 
          }
 
-        public Dictionary<string,string> GetStationNameByStationId(int stationId)
+        public Tuple<string,string> GetStationNameByStationId(int stationId)
         {
-            Dictionary<string, string> station = new Dictionary<string, string>();
+            Tuple<string, string> station =Tuple.Create("","");
             try
             {
                 DataSet ds = new DataSet();
@@ -3417,7 +3417,7 @@ namespace pdstest.DAL
                         {
                             string code = ds.Tables[0].Rows[0]["StationCode"].ToString();
                             string name = ds.Tables[0].Rows[0]["Station"].ToString();
-                            station[code] = name;
+                            station = Tuple.Create(name, code);
                         }
                     }
                 }
@@ -3425,7 +3425,7 @@ namespace pdstest.DAL
             }
             catch
             {
-                station = new Dictionary<string, string>();
+                station = Tuple.Create("", "");
             }
             return station;
         }

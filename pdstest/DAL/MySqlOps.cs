@@ -87,7 +87,7 @@ namespace pdstest.DAL
         {
             return _ops.CreateCommercialConsant(constant);
         }
-        public Dictionary<string, string> GetStationNameByStationId(int stationId)
+        public Tuple<string, string> GetStationNameByStationId(int stationId)
         {
             return _ops.GetStationNameByStationId(stationId);
         }

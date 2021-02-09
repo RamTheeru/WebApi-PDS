@@ -881,12 +881,16 @@ namespace pdstest.Controllers
                     }
                     if(files.Count>0 && files.Count == input.emps.Count)
                     {
-                        byte[] zipFileContent = logic.GetZipArchive(files);
-                        if(files.Count == input.emps.Count)
+                        byte[] zipFileContent = await logic.GetZipArchive(files);
+                        if(zipFileContent != null)
+                            return File(zipFileContent, contentType, "CDAInvoice"+result.employee.StationCode);
+                        else
                         {
-
+                            result.Status = false;
+                            result.CommandType = "Download";
+                            result.Message = "Something went wrong,No file created!!  Reason :  Error occurred while compressing the files";
+                            return StatusCode(StatusCodes.Status500InternalServerError, result);
                         }
-                        return File(zipFileContent, contentType, fileName);
                     }
                     else
                     {

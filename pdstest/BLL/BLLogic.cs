@@ -1107,6 +1107,9 @@ namespace pdstest.BLL
                         emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
                         emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
                         emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                        Tuple<string, string> sta = Tuple.Create("", "");
+                        sta = ops.GetStationNameByStationId(emp.StationId);
+                        emp.StationCode = sta.Item1;
                         dbr.ds = new System.Data.DataSet();
                         dbr = ops.GetEmpDeliveryDetailsforPDF(emp.EmployeeId, emp.StationId, currentMonth);
                         count = dbr.ds.Tables[0].Rows.Count;
@@ -1227,7 +1230,7 @@ namespace pdstest.BLL
             }
             return pdfC;
         }
-        public  byte[] GetZipArchive(List<InMemoryFile> files)
+        public async Task<byte[]> GetZipArchive(List<InMemoryFile> files)
         {
             byte[] archiveFile;
             try
@@ -1236,19 +1239,19 @@ namespace pdstest.BLL
                 {
                     using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
                     {
-                        //foreach (var file in files)
-                        //{
-                        //    var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
-                        //    using (var zipStream = zipArchiveEntry.Open())
-                        //       await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
-                        //}
-                        Parallel.ForEach(files, async file =>
-                         {
-                             var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
-                             using (var zipStream = zipArchiveEntry.Open())
-                                 await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
-                         }
-                            );
+                        foreach (var file in files)
+                        {
+                            var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                            using (var zipStream = zipArchiveEntry.Open())
+                                await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
+                        }
+                        //Parallel.ForEach(files, async file =>
+                        // {
+                        //     var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                        //     using (var zipStream = zipArchiveEntry.Open())
+                        //         await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
+                        // }
+                        //    );
                     }
 
                     archiveFile = archiveStream.ToArray();
