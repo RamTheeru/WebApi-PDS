@@ -388,8 +388,8 @@ namespace pdstest.BLL
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
                                 Tuple<string, string> sta = Tuple.Create("", "");
-                                sta = ops.GetStationNameByStationId(dd.StationId);
-                                result.EmployeeName=sta.Item2+this.GetMonth(input.currentmonth) + "-" + dd.CreateDt.Year.ToString();
+                                sta = ops.GetStationNameByStationId(emp.StationId);
+                                result.EmployeeName=sta.Item2 + this.GetMonth(input.currentmonth) + "-" + dd.CreateDt.Year.ToString();
                                 emp.delivery = dd;
                             }
                             emps.Add(emp);
