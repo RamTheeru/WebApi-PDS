@@ -387,7 +387,9 @@ namespace pdstest.BLL
                                 dd.StationId = emp.StationId;
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
-                                
+                                Tuple<string, string> sta = Tuple.Create("", "");
+                                sta = ops.GetStationNameByStationId(dd.StationId);
+                                result.EmployeeName=sta.Item2+this.GetMonth(input.currentmonth) + "-" + dd.CreateDt.Year.ToString();
                                 emp.delivery = dd;
                             }
                             emps.Add(emp);
@@ -532,7 +534,12 @@ namespace pdstest.BLL
                     string dr = dbr.ds.Tables[0].Rows[0]["DeliveryRate"].ToString();
                     string petrl = dbr.ds.Tables[0].Rows[0]["PetrolAllowanceRate"].ToString();
                     string inc = dbr.ds.Tables[0].Rows[0]["Incentives"].ToString();
-                    string total = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
+                    string total = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString(); 
+                  //  string stat = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
+                    string cd = dbr.ds.Tables[0].Rows[0]["CreatedDate"].ToString();
+                    DateTime cdDate = cd.StringtoDateTime();
+                    dd.CreateDt = cdDate;
+                   // dd.StationId = this.HandleStringtoInt(stat);
                     dd.DeliveryCount = this.HandleStringtoInt(dc);
                      dd.DeliveryRate = this.HandleStringtoInt(dr);
                     dd.PetrolAllowance = this.HandleStringtoInt(petrl);
