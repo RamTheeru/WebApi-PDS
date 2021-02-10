@@ -1071,6 +1071,36 @@ namespace pdstest.BLL
         }
 
         #region Download PDF file
+
+        public List<int> GetAllEmpIdsforPDF(int currentmonth,int stationId)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            List<int> empIds = new List<int>();
+            try
+            {
+                if (currentmonth == 0)
+                    currentmonth = DateTime.Now.Month;
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.GetAllEmpsDeliveryDetailsforPDF(currentmonth, stationId);
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int empid = 0;
+                        string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool success2 = int.TryParse(eId, out empid);
+                        empIds.Add(empid);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                empIds = new List<int>();
+            }
+            return empIds;
+        }
         public APIResult GetEmpDataforPDFFile(int empId,int currentMonth)
         {
             APIResult result = new APIResult();

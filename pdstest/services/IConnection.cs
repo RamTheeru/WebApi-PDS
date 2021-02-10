@@ -31,6 +31,7 @@ namespace pdstest.services
         DataBaseResult UpdateDeliveryDetails(List<DeliveryDetails> cdds);
         DataBaseResult GetCDADeliveryDetails(int empId, int stationId, int currentMonth);
         DataBaseResult GetDeliveryRatesbyStation(int stationId);
+        DataBaseResult GetAllEmpsDeliveryDetailsforPDF(int stationId, int currentMonth);
         DataBaseResult GetEmpDataforPDF(int employeeId);
         DataBaseResult GetEmpDeliveryDetailsforPDF(int employeeId, int stationId, int currentMonth);
     }

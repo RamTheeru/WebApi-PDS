@@ -828,6 +828,21 @@ namespace pdstest.Controllers
             // List<DeliveryDetails> inputs = new List<DeliveryDetails>();
             try
             {
+
+                if(input.forall && input.emps.Count == 0)
+                {
+                    if(input.stationId > 0 && input.currentmonth > 0)
+                        input.emps = logic.GetAllEmpIdsforPDF(input.currentmonth, input.stationId);
+                    else
+                    {
+                        result.Message = "Invalid Input!!!";
+                        result.Status = false;
+                        result.CommandType = "Download";
+                        result.Id = 0;
+                        result.EmployeeName = "";
+                        return StatusCode(StatusCodes.Status400BadRequest, result);
+                    }
+                }
                 if (input.emps.Count > 0)
                 {
                     foreach (var item in input.emps)

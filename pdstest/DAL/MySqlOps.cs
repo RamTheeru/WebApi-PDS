@@ -115,6 +115,10 @@ namespace pdstest.DAL
         {
             return _ops.GetEmpDeliveryDetailsforPDF(employeeId, stationId, currentMonth);
         }
+        public DataBaseResult GetAllEmpsDeliveryDetailsforPDF(int stationId, int currentMonth)
+        {
+            return _ops.GetAllEmpsDeliveryDetailsforPDF(stationId, currentMonth);
+        }
 
     }
 }

@@ -433,6 +433,19 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetEmpIds(int currentMonth, int stationId)
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("SELECT * from CDADelivery WHERE CurrentMonth={0} AND StationId={1}", currentMonth, stationId);
+            }
+            catch
+            {
+                text = "";
+            }
+            return text;
+        }
         public static string GetEmployeedatabyEmpId(int employeeId)
         {
             string text = "";
