@@ -91,6 +91,7 @@ namespace pdstest
             app.UseSwagger();
             app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
+            app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
