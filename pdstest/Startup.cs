@@ -94,14 +94,14 @@ namespace pdstest
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine("C:\\Users\\Public\\", "PDSImages")),
+                Path.Combine(Directory.GetCurrentDirectory(), "PDSImages")),
                 RequestPath = "/PDSImages"
             });
             //Enable directory browsing
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                            Path.Combine("C:\\Users\\Public\\", "PDSImages")),
+                            Path.Combine(Directory.GetCurrentDirectory(), "PDSImages")),
                 RequestPath = "/PDSImages"
             });
         }
