@@ -61,7 +61,7 @@ namespace pdstest
                 );
             services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
             services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
-            services.AddDirectoryBrowser();
+            //services.AddDirectoryBrowser();
             
             // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -93,20 +93,20 @@ namespace pdstest
             app.UseSwagger();
             app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
-            app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "PDSImages")),
-                RequestPath = "/StaticFiles"
-            });
-            //Enable directory browsing
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "PDSImages")),
-                RequestPath = "/StaticFiles"
-            });
+            //app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "PDSImages")),
+            //    RequestPath = "/StaticFiles"
+            //});
+            ////Enable directory browsing
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "PDSImages")),
+            //    RequestPath = "/StaticFiles"
+            //});
         }
     }
 }
