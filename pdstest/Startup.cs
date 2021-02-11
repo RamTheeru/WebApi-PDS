@@ -19,6 +19,8 @@ using pdstest.Models;
 using DocumentFormat.OpenXml.EMMA;
 using Microsoft.OpenApi.Models;
 using Wkhtmltopdf.NetCore;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace pdstest
 {
@@ -89,6 +91,19 @@ namespace pdstest
             app.UseSwagger();
             app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine("C:\\Users\\Public\\", "PDSImages")),
+                RequestPath = "/PDSImages"
+            });
+            //Enable directory browsing
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine("C:\\Users\\Public\\", "PDSImages")),
+                RequestPath = "/PDSImages"
+            });
         }
     }
 }
