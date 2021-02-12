@@ -42,6 +42,7 @@ namespace pdstest
             services.AddControllers();
             services.AddSingleton<IWorker, Worker>();
             services.AddHostedService<MyCustomBackgroundService>();
+            services.AddHostedService<MySqlBackupService>();
             services.AddWkhtmltopdf("pagetopdf");
             ////services.AddTransient<IConnection, MySqlOps>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
