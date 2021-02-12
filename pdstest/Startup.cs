@@ -19,6 +19,7 @@ using pdstest.Models;
 using DocumentFormat.OpenXml.EMMA;
 using Microsoft.OpenApi.Models;
 using Wkhtmltopdf.NetCore;
+using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
@@ -76,7 +77,21 @@ namespace pdstest
             }
            // else { app.UseHsts(); }
             app.UseHttpsRedirection();
-         
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
+                RequestPath = new PathString("/Images")
+            });
+            //Enable directory browsing
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
+                RequestPath = new PathString("/Images")
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -94,20 +109,8 @@ namespace pdstest
             app.UseSwagger();
             app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
-            app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(),  @"PDSImages")),
-                RequestPath = new PathString("/Images")
-            });
-            //Enable directory browsing
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(),  @"PDSImages")),
-                RequestPath = new PathString("/Images")
-            });
+           
+   
         }
     }
 }
