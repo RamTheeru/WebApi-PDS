@@ -1,4 +1,5 @@
-﻿using pdstest.DAL;
+﻿using Microsoft.Extensions.Configuration;
+using pdstest.DAL;
 using pdstest.Models;
 using pdstest.services;
 using System;
@@ -16,9 +17,11 @@ namespace pdstest.BLL
     {
          //DBOperations ops = new DBOperations();
         private readonly IConnection ops;
-        public BLLogic(IConnection conn)
+        private readonly IConfiguration configuration;
+        public BLLogic(IConnection conn, IConfiguration config)
         {
             ops = conn;
+            configuration = config;
         }
 
         public APIResult GetConstants()
@@ -1490,6 +1493,74 @@ namespace pdstest.BLL
             }
             return result;
 
+        }
+
+        public APIResult BackupList()
+        {
+            APIResult result = new APIResult();
+            List<DbBackupInfo> backupInfos = new List<DbBackupInfo>();
+            result.dbBackups = new List<DbBackupInfo>();
+            try
+            {
+                string pathbackup = configuration["backuppath"];
+                DirectoryInfo d = new DirectoryInfo(pathbackup);//Assuming Test is your Folder
+                FileInfo[] Files = d.GetFiles("*.sql"); //Getting Text files
+                foreach (FileInfo file in Files)
+                {
+                    DbBackupInfo info = new DbBackupInfo();
+                    info.fileName = file.Name;
+                    info.FilePath = file.FullName;
+                   // int from = info.fileName.IndexOf("_")+
+
+                    //info.CreatedDate = 
+                    backupInfos.Add(info);
+                }
+                
+                if (backupInfos.Count > 0)
+                {
+                    result.dbBackups = backupInfos;
+                    result.CommandType = "Backup";
+                    result.Message = "Info retreived Successfully!!!";
+                    result.Status = true;
+                }
+                else
+                {
+                    result.CommandType = "Backup";
+                    result.Message = "NO file found!!!";
+                    result.Status = false;
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.CommandType = "Backup";
+                result.Message = e.Message;
+                result.Status = false;
+                throw e;
+            }
+            return result;
+        }
+
+        public APIResult RestoreDatabase(string file)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.RestoreDB(file);
+                result.CommandType = dbr.CommandType;
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+            }
+            catch(Exception e)
+            {
+                result.CommandType = "Restore";
+                result.Message = e.Message;
+                result.Status = false;
+                throw e;
+            }
+            return result;
         }
     }
 }

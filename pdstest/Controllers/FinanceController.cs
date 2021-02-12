@@ -33,7 +33,7 @@ namespace pdstest.Controllers
 
             conn = con;
             configuration = config;
-            logic = new BLLogic(conn);
+            logic = new BLLogic(conn,configuration);
         }
 
         [HttpPost]

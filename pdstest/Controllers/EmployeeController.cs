@@ -38,7 +38,7 @@ namespace pdstest.Controllers
 
             conn = con;
             configuration = config;
-            logic = new BLLogic(conn);
+            logic = new BLLogic(conn,configuration);
             _generatePdf = generatePdf;
         }
         [HttpGet("Login")]
@@ -1036,6 +1036,60 @@ namespace pdstest.Controllers
         ////    return t;
         ////}
         #endregion
+        [HttpGet("Backups")]
+        [CustomAuthorization]
+        public IActionResult BackupList()
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                result = logic.BackupList();
 
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Backup";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpGet("RestoreDb")]
+        [CustomAuthorization]
+        public IActionResult RestoreDb(string file)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (string.IsNullOrEmpty(file))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Restore";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(file))
+                        file = file.CleanString();
+                    result = logic.RestoreDatabase(file);
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Restore";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
     }
 }

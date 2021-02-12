@@ -3515,7 +3515,55 @@ namespace pdstest.DAL
             return station;
         }
 
-     }
+        public void CreateBackup(string file)
+        {
+            try
+            {
+                BasicDBOps dbops = new BasicDBOps();
+                dbops.TakeBackup(connectionString, file);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                //con.
+            }
+        }
+        public DataBaseResult RestoreDB(string file)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.CommandType = "Restore";
+                BasicDBOps dbops = new BasicDBOps();
+                dbr.IsExists = dbops.RestoreDB(connectionString, file);
+                if(dbr.IsExists)
+                {
+                    dbr.Message = "DataBase recovered Succesfully with this backup file!!!!";
+                    dbr.Status = true;
+                }
+                else
+                {
+                    dbr.Message = "Something went wrong!! Database not recovered properly,Please try again!!!!";
+                    dbr.Status = false; 
+                }
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                //con.
+            }
+            return dbr;
+        }
+
+    }
 
 
 }

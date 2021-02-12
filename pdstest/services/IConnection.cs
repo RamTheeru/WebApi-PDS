@@ -34,5 +34,6 @@ namespace pdstest.services
         DataBaseResult GetAllEmpsDeliveryDetailsforPDF(int stationId, int currentMonth);
         DataBaseResult GetEmpDataforPDF(int employeeId);
         DataBaseResult GetEmpDeliveryDetailsforPDF(int employeeId, int stationId, int currentMonth);
+        DataBaseResult RestoreDB(string file);
     }
 }

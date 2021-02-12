@@ -119,6 +119,9 @@ namespace pdstest.DAL
         {
             return _ops.GetAllEmpsDeliveryDetailsforPDF(stationId, currentMonth);
         }
-
+        public DataBaseResult RestoreDB(string file)
+        {
+            return _ops.RestoreDB(file);
+        }
     }
 }

@@ -171,5 +171,65 @@ namespace pdstest.DAL
             return changes;
 
         }
+
+        public void TakeBackup(string connectionString,string file)
+        {
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(connectionString))
+                {
+                    using(MySqlCommand cmd = new MySqlCommand())
+                    {
+                        using(MySqlBackup mb = new MySqlBackup(cmd))
+                        {
+                            cmd.Connection = con;
+                            con.Open();
+                            mb.ExportToFile(file);
+                            con.Close();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                //con.
+            }
+        }
+
+        public bool RestoreDB(string connectionString, string file)
+        {
+            bool isSuccess = false;
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand())
+                    {
+                        using (MySqlBackup mb = new MySqlBackup(cmd))
+                        {
+                            cmd.Connection = con;
+                            con.Open();
+                            mb.ImportFromFile(file);
+                            con.Close();
+                            isSuccess = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                isSuccess = false;
+                throw e;
+            }
+            finally
+            {
+                //con.
+            }
+            return isSuccess;
+        }
     }
 }
