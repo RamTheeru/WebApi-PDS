@@ -74,9 +74,9 @@ namespace pdstest.Models
                     this.WriteToFile("Backup generated suceesfully with filename :" + filename, true);
                    
                 }
-                this.WriteToFile("===============================================END=================================================");
-                //await Task.Delay(1000 * 60 * 60 * 24 * 7);
-               await Task.Delay(1000 * 10);
+                this.WriteToFile("===============================================END=================================================",true);
+                await Task.Delay(1000 * 60 * 60 * 24 * 7);
+              // await Task.Delay(1000 * 10);
             }
         }
         public async Task DoWork(CancellationToken token)
