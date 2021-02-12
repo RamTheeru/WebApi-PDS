@@ -15,7 +15,7 @@ namespace pdstest.BLL
     public class BLLogic
     {
          //DBOperations ops = new DBOperations();
-        private  IConnection ops;
+        private readonly IConnection ops;
         public BLLogic(IConnection conn)
         {
             ops = conn;
@@ -1102,7 +1102,7 @@ namespace pdstest.BLL
                     }
                 }
             }
-            catch (Exception e)
+            catch 
             {
                 empIds = new List<int>();
             }
