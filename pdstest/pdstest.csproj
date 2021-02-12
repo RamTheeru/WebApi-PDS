@@ -58,6 +58,9 @@
     <None Update="PDSImages\pdslogo.jpeg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PDSImages\pdslogo_transparent.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PDSImages\vision.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
