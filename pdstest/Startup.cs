@@ -85,12 +85,12 @@ namespace pdstest
                 RequestPath = new PathString("/Images")
             });
             //Enable directory browsing
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
-                RequestPath = new PathString("/Images")
-            });
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
+            //    RequestPath = new PathString("/Images")
+            //});
 
             app.UseRouting();
 
