@@ -1510,8 +1510,16 @@ namespace pdstest.BLL
                     DbBackupInfo info = new DbBackupInfo();
                     info.fileName = file.Name;
                     info.FilePath = file.FullName;
-                   // int from = info.fileName.IndexOf("_")+
-
+                    string dstring = this.Between(info.fileName, "Backup_", ".sql");
+                    if(!string.IsNullOrEmpty(dstring))
+                    {
+                        string year = dstring.Substring(0, 4);
+                        string month = dstring.Substring(4, 2);
+                        string date = dstring.Substring(6, 2);
+                        string cd = month + "/" + date + "/" + year;
+                        info.CreatedDate = cd;
+                    }
+                    
                     //info.CreatedDate = 
                     backupInfos.Add(info);
                 }
@@ -1541,7 +1549,22 @@ namespace pdstest.BLL
             }
             return result;
         }
+        public string Between(string STR, string FirstString, string LastString)
+        {
+            string FinalString;
+             if(!string.IsNullOrEmpty(STR)&& !string.IsNullOrEmpty(STR)&& !string.IsNullOrEmpty(STR))
+            {
+                int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
+                int Pos2 = STR.IndexOf(LastString);
+                FinalString = STR.Substring(Pos1, Pos2 - Pos1);
+            }
+            else
+            {
+                FinalString = "";
+            }
 
+            return FinalString;
+        }
         public APIResult RestoreDatabase(string file)
         {
             APIResult result = new APIResult();
