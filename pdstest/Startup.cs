@@ -62,7 +62,7 @@ namespace pdstest
                 );
             services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
             services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
-            services.AddDirectoryBrowser();
+            //services.AddDirectoryBrowser();
             
             // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
