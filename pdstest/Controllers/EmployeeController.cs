@@ -896,7 +896,7 @@ namespace pdstest.Controllers
                     }
                     if(files.Count>0 && files.Count == input.emps.Count)
                     {
-                        byte[] zipFileContent = await logic.GetZipArchive(files);
+                        byte[] zipFileContent = await Task.Run(()=> logic.GetZipArchive(files));
                         if(zipFileContent != null)
                             return File(zipFileContent, contentType, "CDAInvoice"+result.employee.StationCode+result.pdfLayout.BillingPeriod);
                         else

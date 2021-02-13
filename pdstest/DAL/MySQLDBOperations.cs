@@ -1711,11 +1711,10 @@ namespace pdstest.DAL
                     if (!valid)
                     {
                         bool isExists = false;
-                        foreach (var item in cdds)
-                        {
+                        Parallel.ForEach(cdds, item=>{
                             string checkText = DBConnection.GetCHECKDeliveryDetailCDAforEmployeeCurrentMonth(item);
                             isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, checkText);
-                            if(isExists)
+                            if (isExists)
                             {
                                 string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
                                 i = new BasicDBOps().ExceuteCommand(connectionString, delText);
@@ -1733,8 +1732,32 @@ namespace pdstest.DAL
                             transaction = command.Transaction;
                             i = command.ExecuteNonQuery();
                             command.Dispose();
-                            //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
                         }
+                            );
+                        //foreach (var item in cdds)
+                        //{
+                        //    string checkText = DBConnection.GetCHECKDeliveryDetailCDAforEmployeeCurrentMonth(item);
+                        //    isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, checkText);
+                        //    if(isExists)
+                        //    {
+                        //        string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
+                        //        i = new BasicDBOps().ExceuteCommand(connectionString, delText);
+                        //        if (i == 0)
+                        //            throw new Exception("Something went wrong!!,Unable to Delete Existing Delivery Details");
+                        //    }
+                        //    //int deliveryRate = item.DeliveryRate;
+                        //    //int deliveryCount = item.DeliveryCount;
+                        //    //int petrolAllowance = item.PetrolAllowance;
+                        //    item.TotalAmount = this.GetDeliveryAmountTotal(item);
+                        //    string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
+                        //    MySqlCommand command = new MySqlCommand(cmdText, con, transaction);
+                        //    //command.Connection = con;
+                        //    //command.Transaction = transaction;
+                        //    transaction = command.Transaction;
+                        //    i = command.ExecuteNonQuery();
+                        //    command.Dispose();
+                        //    //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                        //}
                         transaction.Commit();
                     }
                     else

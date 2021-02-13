@@ -1270,7 +1270,7 @@ namespace pdstest.BLL
             }
             return pdfC;
         }
-        public async Task<byte[]> GetZipArchive(List<InMemoryFile> files)
+        public  byte[] GetZipArchive(List<InMemoryFile> files)
         {
             byte[] archiveFile;
             try
@@ -1279,19 +1279,19 @@ namespace pdstest.BLL
                 {
                     using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
                     {
-                        foreach (var file in files)
-                        {
-                            var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
-                            using (var zipStream = zipArchiveEntry.Open())
-                                await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
-                        }
-                        //Parallel.ForEach(files, async file =>
-                        // {
-                        //     var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
-                        //     using (var zipStream = zipArchiveEntry.Open())
-                        //         await zipStream.WriteAsync(file.Content, 0, file.Content.Length);
-                        // }
-                        //    );
+                        //foreach (var file in files)
+                        //{
+                        //    var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                        //    using (var zipStream = zipArchiveEntry.Open())
+                        //         zipStream.WriteAsync(file.Content, 0, file.Content.Length);
+                        //}
+                        Parallel.ForEach(files,  file =>
+                         {
+                             var zipArchiveEntry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                             using (var zipStream = zipArchiveEntry.Open())
+                                  zipStream.Write(file.Content, 0, file.Content.Length);
+                         }
+                            );
                     }
 
                     archiveFile = archiveStream.ToArray();
