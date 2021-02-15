@@ -15,7 +15,7 @@ namespace pdstest.DAL
     {
 
         public static string connectionString = DBConnection.GetDBConnection(false);
-
+        public static string connectionString2 = DBConnection.GetDBConnection(true);
 
         public DataBaseResult RegisterEmployee(RegisterEmployee input)
         {
@@ -3538,7 +3538,7 @@ namespace pdstest.DAL
             {
                 dbr.CommandType = "Restore";
                 BasicDBOps dbops = new BasicDBOps();
-                dbr.IsExists = dbops.RestoreDB(connectionString, file);
+                dbr.IsExists = dbops.RestoreDB(connectionString2, file);
                 if(dbr.IsExists)
                 {
                     dbr.Message = "DataBase recovered Succesfully with this backup file!!!!";
