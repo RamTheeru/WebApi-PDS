@@ -332,7 +332,7 @@ namespace pdstest.Controllers
 
         }
        
-        [HttpPut("ApproveUser")]
+        [HttpGet("ApproveUser")]
         [CustomAuthorization]
         public IActionResult ApproveUser(string registerId,string status,int pId,string empCode)
         {

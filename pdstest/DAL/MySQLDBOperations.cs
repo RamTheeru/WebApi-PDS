@@ -3541,7 +3541,7 @@ namespace pdstest.DAL
                 dbr.IsExists = dbops.RestoreDB(connectionString2, file);
                 if(dbr.IsExists)
                 {
-                    dbr.Message = "DataBase recovered Succesfully with this backup file!!!!";
+                    dbr.Message = "DataBase recovered Succesfully with this backup file. Please try login again after 10 mins!!!!";
                     dbr.Status = true;
                 }
                 else
