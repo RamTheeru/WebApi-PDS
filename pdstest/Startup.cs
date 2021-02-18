@@ -83,7 +83,7 @@ namespace pdstest
                 await next();
                 if (context.Response.StatusCode == 404 && !System.IO.Path.HasExtension(context.Request.Path.Value))
                 {
-                    context.Request.Path = "/index.html";
+                    context.Request.Path = "/ClientApp/index.html";
                     await next();
                 }
             });
