@@ -77,7 +77,16 @@ namespace pdstest
                 app.UseDeveloperExceptionPage();
             }
            // else { app.UseHsts(); }
+
             app.UseHttpsRedirection();
+            app.Use(async (context,next)=> {
+                await next();
+                if (context.Response.StatusCode == 404 && !System.IO.Path.HasExtension(context.Request.Path.Value))
+                {
+                    context.Request.Path = "/ClientApp/index.html";
+                    await next();
+                }
+            });
             app.UseStaticFiles();
             app.UseFileServer(new FileServerOptions()
             {
