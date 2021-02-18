@@ -87,6 +87,7 @@ namespace pdstest
                     await next();
                 }
             });
+            app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseFileServer(new FileServerOptions()
             {
