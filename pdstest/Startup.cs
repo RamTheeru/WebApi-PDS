@@ -80,6 +80,16 @@ namespace pdstest
             ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
 
+        
+             app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseFileServer(new FileServerOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
+                RequestPath = new PathString("/Images"),
+                EnableDirectoryBrowsing = true
+            });
             DefaultFilesOptions options = new DefaultFilesOptions();
             options.DefaultFileNames.Clear();
             options.DefaultFileNames.Add("home.html");
@@ -103,15 +113,6 @@ namespace pdstest
                     await next();
                 }
             });
-            // app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseFileServer(new FileServerOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
-                RequestPath = new PathString("/Images"),
-                EnableDirectoryBrowsing = true
-            });
             //Enable directory browsing
             //app.UseDirectoryBrowser(new DirectoryBrowserOptions
             //{
@@ -119,11 +120,11 @@ namespace pdstest
             //                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
             //    RequestPath = new PathString("/Images")
             //});
-    //        app.UseDefaultFiles(new DefaultFilesOptions
-    //        {
-    //            DefaultFileNames = new
-    //List<string> { "home.html" }
-    //        });
+            //        app.UseDefaultFiles(new DefaultFilesOptions
+            //        {
+            //            DefaultFileNames = new
+            //List<string> { "home.html" }
+            //        });
             app.UseRouting();
 
             app.UseAuthorization();
