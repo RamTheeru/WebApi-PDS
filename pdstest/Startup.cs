@@ -81,12 +81,12 @@ namespace pdstest
             app.UseHttpsRedirection();
             app.Use(async (context,next)=> {
                 await next();
-                if(context.Request.Host.Host.StartsWith("local"))
+                if(context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
                 {
                     context.Request.Path = context.Request.Host.Host+"/ClientApp";
                     await next();
                 }
-               else if (context.Request.Host.Host.Contains("kleenandshine"))
+               else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
                 {
                     context.Request.Path = context.Request.Host.Host + "/ClientApp";
                     await next();
