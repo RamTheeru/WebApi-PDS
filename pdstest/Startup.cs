@@ -79,30 +79,30 @@ namespace pdstest
             // else { app.UseHsts(); }
             ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
-            app.Use(async (context, next) =>
-            {
-                await next();
-                //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
-                //{
-                //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
-                //    await next();
-                //}
-                //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
-                //{
-                //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
-                //    await next();
-                //}
-                if (context.Response.StatusCode == 404)
-                {
-                    context.Request.Path = "/ClientApp";
-                    await next();
-                }
-            });
-            //DefaultFilesOptions options = new DefaultFilesOptions();
-            //options.DefaultFileNames.Clear();
-            //options.DefaultFileNames.Add("/ClientApp/index.html");
-            //app.UseDefaultFiles(options);
-            app.UseDefaultFiles();
+            //app.Use(async (context, next) =>
+            //{
+            //    await next();
+            //    //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
+            //    //{
+            //    //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
+            //    //    await next();
+            //    //}
+            //    //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
+            //    //{
+            //    //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
+            //    //    await next();
+            //    //}
+            //    if (context.Response.StatusCode == 404)
+            //    {
+            //        context.Request.Path = "/ClientApp";
+            //        await next();
+            //    }
+            //});
+            DefaultFilesOptions options = new DefaultFilesOptions();
+            options.DefaultFileNames.Clear();
+            options.DefaultFileNames.Add("home.html");
+            app.UseDefaultFiles(options);
+           // app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseFileServer(new FileServerOptions()
             {
@@ -118,11 +118,16 @@ namespace pdstest
             //                Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
             //    RequestPath = new PathString("/Images")
             //});
-
+    //        app.UseDefaultFiles(new DefaultFilesOptions
+    //        {
+    //            DefaultFileNames = new
+    //List<string> { "home.html" }
+    //        });
             app.UseRouting();
 
             app.UseAuthorization();
             app.UseMyMiddleware();
+
             //app.UseMiddleware<JwtMiddleware>();
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>
