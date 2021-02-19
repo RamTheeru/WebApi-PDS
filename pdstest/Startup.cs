@@ -79,24 +79,28 @@ namespace pdstest
             // else { app.UseHsts(); }
             ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
-            app.Use(async (context,next)=> {
+           // app.Use(async (context,next)=> {
                 await next();
-               // if(context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
-               // {
-               //     context.Request.Path = context.Request.Host.Host+"/ClientApp";
-               //     await next();
-               // }
-               //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
-               // {
-               //     context.Request.Path = context.Request.Host.Host + "/ClientApp";
-               //     await next();
-               // }
-                if (context.Response.StatusCode == 404)
-                {
-                    context.Request.Path = "/ClientApp";
-                    await next();
-                }
-            });
+            // if(context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
+            // {
+            //     context.Request.Path = context.Request.Host.Host+"/ClientApp";
+            //     await next();
+            // }
+            //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
+            // {
+            //     context.Request.Path = context.Request.Host.Host + "/ClientApp";
+            //     await next();
+            // }
+            //if (context.Response.StatusCode == 404)
+            //{
+            //    context.Request.Path = "/ClientApp";
+            //    await next();
+            //}
+            // });
+            DefaultFilesOptions options = new DefaultFilesOptions();
+            options.DefaultFileNames.Clear();
+            options.DefaultFileNames.Add("/ClientApp/index.html");
+            app.UseDefaultFiles(options);
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseFileServer(new FileServerOptions()
@@ -122,6 +126,7 @@ namespace pdstest
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.Map
                 endpoints.MapControllers();
             });
 
