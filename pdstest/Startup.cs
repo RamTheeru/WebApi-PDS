@@ -76,14 +76,14 @@ namespace pdstest
             {
                 app.UseDeveloperExceptionPage();
             }
-           // else { app.UseHsts(); }
-
+            // else { app.UseHsts(); }
+            ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
             app.Use(async (context,next)=> {
                 await next();
-                if (context.Response.StatusCode == 404 && !System.IO.Path.HasExtension(context.Request.Path.Value))
+                if (context.Response.StatusCode == 404)
                 {
-                    context.Request.Path = "/ClientApp/index.html";
+                    context.Request.Path = "/ClientApp";
                     await next();
                 }
             });
