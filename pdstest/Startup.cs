@@ -40,6 +40,7 @@ namespace pdstest
         {
             services.AddCors();
             services.AddControllers();
+            services.AddRazorPages();
             services.AddSingleton<IWorker, Worker>();
             services.AddHostedService<MyCustomBackgroundService>();
             services.AddHostedService<MySqlBackupService>();
@@ -132,8 +133,11 @@ namespace pdstest
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 //endpoints.Map
-                endpoints.MapControllers();
+                // endpoints.MapControllers();
+                endpoints.MapControllerRoute(name: "default", pattern: "{controller=WeatherForecast/{action=Index}/{id?}");
+
             });
             //app.UseMvc(routes => {
             //    routes.MapRoute(name: "default",template:"",defaults:new { Controller });
