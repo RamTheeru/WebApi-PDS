@@ -80,25 +80,25 @@ namespace pdstest
             // else { app.UseHsts(); }
             ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
-            //app.Use(async (context, next) =>
-            //{
-            //    await next();
-            //    //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
-            //    //{
-            //    //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
-            //    //    await next();
-            //    //}
-            //    //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
-            //    //{
-            //    //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
-            //    //    await next();
-            //    //}
-            //    if (context.Response.StatusCode == 404)
-            //    {
-            //        context.Request.Path = "/ClientApp";
-            //        await next();
-            //    }
-            //});
+            app.Use(async (context, next) =>
+            {
+                await next();
+                //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
+                //{
+                //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
+                //    await next();
+                //}
+                //else if (context.Request.Host.Host.Contains("kleenandshine") && context.Response.StatusCode == 404)
+                //{
+                //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
+                //    await next();
+                //}
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Request.Path = "/ClientApp";
+                    await next();
+                }
+            });
             //DefaultFilesOptions options = new DefaultFilesOptions();
             //options.DefaultFileNames.Clear();
             //options.DefaultFileNames.Add("/ClientApp/index.html");
@@ -110,6 +110,13 @@ namespace pdstest
                 FileProvider = new PhysicalFileProvider(
                 Path.Combine(Directory.GetCurrentDirectory(), @"PDSImages")),
                 RequestPath = new PathString("/Images"),
+                EnableDirectoryBrowsing = true
+            });
+            app.UseFileServer(new FileServerOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+    Path.Combine(Directory.GetCurrentDirectory(), @"ClientApp")),
+                RequestPath = new PathString("/ClientApp"),
                 EnableDirectoryBrowsing = true
             });
             //Enable directory browsing
@@ -136,7 +143,7 @@ namespace pdstest
                 endpoints.MapRazorPages();
                 //endpoints.Map
                 // endpoints.MapControllers();
-                endpoints.MapControllerRoute(name: "default", pattern: "{controller=WeatherForecast/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action}/{id?}",defaults:new { controller="WeatherForecast",action="Index"});
 
             });
             //app.UseMvc(routes => {
