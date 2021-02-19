@@ -80,7 +80,7 @@ namespace pdstest
             ///&& !System.IO.Path.HasExtension(context.Request.Path.Value)
             app.UseHttpsRedirection();
            // app.Use(async (context,next)=> {
-                await next();
+           //     await next();
             // if(context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
             // {
             //     context.Request.Path = context.Request.Host.Host+"/ClientApp";
