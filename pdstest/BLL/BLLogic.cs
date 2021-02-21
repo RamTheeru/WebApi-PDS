@@ -657,7 +657,10 @@ namespace pdstest.BLL
                 {
                     UserType user = new UserType();
                     int count = 0;
-                    count = dbr.ds.Tables[0].Rows.Count;
+                    if (dbr.ds.Tables.Count <= 0)
+                        count = 0;
+                    else
+                        count = dbr.ds.Tables[0].Rows.Count;
                     if (count > 0)
                     {
                         for (int i = 0; i < count; i++)
@@ -701,6 +704,12 @@ namespace pdstest.BLL
 
                         result.Status = dbr.Status;
                         result.CommandType = dbr.CommandType;
+                    }
+                    else
+                    {
+                        result.Status =false;
+                        result.CommandType = dbr.CommandType;
+                        result.Message = dbr.Message;
                     }
                     if (user.IsAlreadySession)
                         result.Message = "Session exists already!!! Please proceed to another page or wait for ten minutes to end this session!!!";
@@ -798,7 +807,84 @@ namespace pdstest.BLL
 
             return result;
         }
-       public APIResult CheckIfSessionExists(UserType user)
+        public APIResult GetLoginUserInfo(int userTypeId, int employeeId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                result.userInfo = new UserType();
+                dbr = ops.GetLoginUserInfo(userTypeId, employeeId);
+                UserType user = new UserType();
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int userTypeid = 0;
+                        int employeeid = 0;
+                        int stationid = 0;
+                        string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        bool succ = int.TryParse(empId, out employeeid);
+                        string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();
+                        bool success = int.TryParse(usertype, out userTypeid);
+                        string statId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
+                        bool succstat = int.TryParse(statId, out stationid);
+                        userTypeid = (success == true) ? userTypeid : 0;
+                        employeeid = (succ == true) ? employeeid : 0;
+                        stationid = (succstat == true) ? stationid : 0;
+                        user.EmployeeId = employeeid;
+                        user.UserTypeId = userTypeid;
+                        user.StationId = stationid;
+                        if (user.UserTypeId > 0)
+                        {
+                            APIResult res = new APIResult();
+                            res = GetConstants();
+                            if (res.Status)
+                            {
+                                if (res.Usertypes.Count > 0)
+                                {
+                                    user.Screen = res.Usertypes.FirstOrDefault(x => x.UserTypeId == user.UserTypeId)?.Role;
+                                }
+                            }
+
+                        }
+                        user.Role = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                        user.User = dbr.ds.Tables[0].Rows[i]["UserName"].ToString();
+                        user.Valid = true;
+
+                    }
+                    result.userInfo = user;
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+                }
+                else
+                {
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.CommandType = dbr.CommandType;
+
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                throw e;
+
+            }
+
+            return result;
+        }
+        public APIResult CheckIfSessionExists(UserType user)
         {
             APIResult result = new APIResult();
             bool isExists = false;
@@ -834,6 +920,31 @@ namespace pdstest.BLL
 
             return result;
 
+        }
+
+        public APIResult UpdateSession(UserType usr)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.UpdateSession(usr);
+                result.Status = dbr.Status;
+                result.Message = dbr.Message;
+                result.CommandType = dbr.CommandType;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType ="Session update";
+                //result.Id = registerId;
+                throw e;
+
+            }
+
+            return result;
         }
         public APIResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
         {

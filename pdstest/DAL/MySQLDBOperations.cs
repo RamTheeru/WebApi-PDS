@@ -1234,6 +1234,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Insert";
+                dbr.ds = new DataSet();
                 isSessionExists = CheckIfSessionExists(input.User, input.EmployeeId, input.UserTypeId);
                 if(!isSessionExists)
                 {
@@ -1269,7 +1270,7 @@ namespace pdstest.DAL
                             cmd.Parameters.Add(param);
 
                             input.SessionStartDate = DateTime.Now.DateTimetoString();
-                            input.SessionEndDate = DateTime.Now.AddMinutes(10).DateTimetoString();
+                            input.SessionEndDate = DateTime.Now.AddMinutes(20).DateTimetoString();
 
                             input.StartDate = input.SessionStartDate.StringtoDateTime();
                             input.EndDate = input.SessionEndDate.StringtoDateTime();
@@ -1342,9 +1343,10 @@ namespace pdstest.DAL
                             output7.MySqlDbType = MySqlDbType.Int32;
                             output7.Direction = ParameterDirection.Output;
                             cmd.Parameters.Add(output7);
-
+                          ///  string t = string.Format("INSERT INTO UserSessions (UserName,UserTypeId,Token,EmployeeId,StartDate,EndDate,IsActive) VALUES('{0}',{1},'{2}',{3},'2020-02-02','2020=02-02',1)",input.User,input.UserTypeId,input.Token,input.EmployeeId);
+                            //MySqlCommand cmd2 = new MySqlCommand(t, conn);
                             conn.Open();
-                            cmd.ExecuteNonQuery();
+                           int ind = cmd.ExecuteNonQuery();
 
                             dbr.ds = new DataSet();
 
@@ -1355,7 +1357,7 @@ namespace pdstest.DAL
                             string usrnm = output5.Value.ToString();
                             string isssn = output6.Value.ToString();
                             string statId = output7.Value.ToString();
-
+                          //  cmd2.Dispose();
                             conn.Close();
                             dbr.Id = string.IsNullOrEmpty(sId) ? 0 : Convert.ToInt32(sId);
 
@@ -2079,6 +2081,83 @@ namespace pdstest.DAL
 
             return dbr;
         }
+        public DataBaseResult UpdateSession(UserType usr)
+        {
+            string getupdateInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "Delete";
+                getupdateInfo = DBConnection.SessionUpdate(usr);
+
+                if (string.IsNullOrEmpty(getupdateInfo) || string.IsNullOrEmpty(getupdateInfo))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                    int count = 0;
+                    count = new BasicDBOps().ExceuteCommand(connectionString, getupdateInfo);
+                    if (count > 0)
+                    {
+
+                        dbr.Status = true;
+                        dbr.Message = "Sesson Updated Successfully!!!!";
+                    }
+                    else
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "Session either expired or terminated, Please try login again!!";
+
+
+                    }
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+        }
 
         public DataBaseResult DeleteSession(string userName, int employeeId, int userTypeId)
         {
@@ -2557,6 +2636,92 @@ namespace pdstest.DAL
 
 
                         }
+
+                    //}
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
+        public DataBaseResult GetLoginUserInfo(int usertypeId, int employeeID)
+        {
+            string getUserInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "Select";
+                getUserInfo = DBConnection.GetLoginUserInfo(usertypeId, employeeID);
+
+                if (string.IsNullOrEmpty(getUserInfo) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, getUserInfo);
+                    int count = 0;
+                    count = ds.Tables[0].Rows.Count;
+                    if (ds.Tables.Count > 0 && count > 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "Record(s) retreived Successfully!!!";
+                        dbr.Status = true;
+
+                    }
+                    else if (count == 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "No Records Found for this request!!";
+                        dbr.Status = true;
+
+
+                    }
 
                     //}
 

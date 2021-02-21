@@ -16,6 +16,7 @@ namespace pdstest.services
         DataBaseResult GetRegisteredUsers(int stationId);
         DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false);
         DataBaseResult GetLoginUserInfo(string username, string password);
+        DataBaseResult GetLoginUserInfo(int usertypeId, int employeeId);
         DataBaseResult ApproveUser(int registerId,string status,string empCode="",int pId = 0);
         DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false);
         DataBaseResult InsertVoucher(Voucher input);
@@ -24,6 +25,7 @@ namespace pdstest.services
         DataBaseResult CheckUserExists(string userName);
         DataBaseResult CheckEmpCodeExists(string empCode,bool isEmployee);
         bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
+        DataBaseResult UpdateSession(UserType usr);
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
         DataBaseResult GetAdminDetails();
         DataBaseResult CreateCommercialConsant(CommercialConstant constant);

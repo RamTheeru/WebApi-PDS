@@ -115,9 +115,16 @@ namespace pdstest.Controllers
 
                     }
 
-                    if (result.Message != "Session already exists for this user!!")
+                    if (result.Message != "Session already exists for this user!!" && result.Status==true)
                     {
                         result.Status = true;
+                        result.CommandType = result.CommandType;
+                        result.EmployeeName = username;
+                        result.Message = result.Message;
+                    }
+                    else
+                    {
+                        result.Status = false;
                         result.CommandType = result.CommandType;
                         result.EmployeeName = username;
                         result.Message = result.Message;
@@ -143,7 +150,85 @@ namespace pdstest.Controllers
             return Ok(result);
         
         }
+        [HttpGet("SessionUpdate")]
+        public IActionResult SessionUpdate(int usertypeId, int employeeId)
+        {
+            APIResult result = new APIResult();
+            result.userInfo = new UserType();
+            try
+            {
+                if (usertypeId > 0 && employeeId > 0)
+                {
+                    result = logic.GetLoginUserInfo(usertypeId, employeeId);
+                    if (!string.IsNullOrEmpty(result.userInfo.User))
+                    {
+                        if (result.userInfo.Valid && result.userInfo.UserTypeId > 0)
+                        {
+                            result = logic.CheckIfSessionExists(result.userInfo);
+                            if (result.Status)
+                            {
+                                result.Message = result.Message;
+                                result.Status = false;
+                                result.CommandType = "Session Update";
+                                return StatusCode(StatusCodes.Status400BadRequest, result);
+                            }
+                            else
+                            {
+                                string token = GenerateJSONWebToken(result.userInfo);
+                                if (!string.IsNullOrEmpty(token))
+                                {
+                                    result.userInfo.Token = token;
+                                    result = logic.UpdateSession(result.userInfo);
 
+                                }
+                                else
+                                {
+                                    result.Message = "Something Went Wrong : Session cant be updated for this user.Please login again";
+                                    result.Status = false;
+                                    result.CommandType = "Session Update";
+                                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            result.Message = "User Authentication failed.Please login again!!!";
+                            result.Status = false;
+                            result.CommandType = "Session Update";
+                            return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                        }
+                    }
+                    else
+                    {
+                        result.Message = "No User Found : User Authentication failed.Please login again!!!";
+                        result.Status = false;
+                        result.CommandType = "Session Update";
+                        return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                    }
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Session Update";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Session Update";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+        }
         private string GenerateJSONWebToken(UserType user)
         {
             string tkn = "";
@@ -164,7 +249,7 @@ namespace pdstest.Controllers
                     issuer: configuration["Jwt:Issuer"],
                     audience: configuration["Jwt:Issuer"],
                     claims,
-                    expires: DateTime.Now.AddMinutes(10),
+                    expires: DateTime.Now.AddMinutes(20),
                     signingCredentials: credentials);
 
                 var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);

@@ -54,6 +54,10 @@ namespace pdstest.DAL
         {
             return _ops.GetLoginUserInfo(username,password);
         }
+        public DataBaseResult GetLoginUserInfo(int usertypeId, int employeeId)
+        {
+            return _ops.GetLoginUserInfo(usertypeId, employeeId);
+        }
         public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false)
         {
             return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status,isEmployee);
@@ -74,6 +78,10 @@ namespace pdstest.DAL
         public DataBaseResult CreateSession(UserType input)
         {
             return _ops.CreateSession(input);
+        }
+        public DataBaseResult UpdateSession(UserType usr)
+        {
+            return _ops.UpdateSession(usr);
         }
         public DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId)
         {

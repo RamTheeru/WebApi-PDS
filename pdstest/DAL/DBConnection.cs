@@ -18,7 +18,8 @@ namespace pdstest.DAL
         public static Dictionary<string, string> StoreQuiries()
         {
             Dictionary<string, string> sqllib = new Dictionary<string, string>();
-            sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=12345;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
+            // sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=12345;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
+            sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=root;password=12345;";
             sqllib["AWSDB"] = @"server=localhost;database=PDS;userid=root;password=12345;";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
@@ -323,6 +324,46 @@ namespace pdstest.DAL
             try
             {
                     text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName,UserName,StationId FROM employees where UserName = '{0}' AND Passwrd = '{1}' AND IsActive=1 LIMIT 1;", username,password);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetLoginUserInfo(int usertypeId, int employeeId)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName,UserName,StationId FROM employees where UserTypeId = {0} AND EmployeeId = {1} AND IsActive=1 LIMIT 1;", usertypeId, employeeId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string SessionUpdate(UserType usr)
+        {
+            string text = "";
+
+            try
+            {
+                string SessionStartDate = DateTime.Now.DateTimetoString();
+                string SessionEndDate = DateTime.Now.AddMinutes(20).DateTimetoString();
+
+                //DateTime StartDate = SessionStartDate.StringtoDateTime();
+                //DateTime EndDate = SessionEndDate.StringtoDateTime();
+
+                text = string.Format("UPDATE UserSessions Set Token='{0}',StartDate='{1}',EndDate='{2}'   where UserTypeId = {3} AND EmployeeId = {4} AND IsActive=1;", usr.Token, SessionStartDate, SessionEndDate, usr.UserTypeId, usr.EmployeeId);
 
             }
             catch (Exception e)

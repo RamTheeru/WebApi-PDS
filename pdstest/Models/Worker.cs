@@ -76,8 +76,8 @@ namespace pdstest.Models
                 }
                 this.WriteToFile("===============================================END=================================================",true);
                 //// await Task.Delay((((1000 * 60) * 60 )* 24 )* 7);
-                TimeSpan span = new TimeSpan(7, 0, 0, 0);
-               await Task.Delay(span);
+               // TimeSpan span = new TimeSpan(7, 0, 0, 0);
+               await Task.Delay(TimeSpan.FromDays(7));
             }
         }
         public async Task DoWork(CancellationToken token)
