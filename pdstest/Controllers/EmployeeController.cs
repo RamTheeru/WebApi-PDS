@@ -165,7 +165,7 @@ namespace pdstest.Controllers
                         if (result.userInfo.Valid && result.userInfo.UserTypeId > 0)
                         {
                             result = logic.CheckIfSessionExists(result.userInfo);
-                            if (result.Status)
+                            if (!result.Status)
                             {
                                 result.Message = result.Message;
                                 result.Status = false;
