@@ -928,8 +928,10 @@ namespace pdstest.BLL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                result.userInfo = new UserType();
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.UpdateSession(usr);
+                result.userInfo = usr;
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
                 result.CommandType = dbr.CommandType;

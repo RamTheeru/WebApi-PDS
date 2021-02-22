@@ -177,10 +177,10 @@ namespace pdstest.Controllers
                                 string token = GenerateJSONWebToken(result.userInfo);
                                 if (!string.IsNullOrEmpty(token))
                                 {
-                                   // result.userInfo.Token = token;
+                                    result.userInfo.Token = token;
                                     result = logic.UpdateSession(result.userInfo);
-                                    if (result.Status)
-                                        result.userInfo.Token = token;
+                                    //if (result.Status)
+                                    //    result.userInfo.Token = token;
 
                                 }
                                 else
