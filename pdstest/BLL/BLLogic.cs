@@ -905,7 +905,7 @@ namespace pdstest.BLL
                     result.userInfo = user;
                     result.CommandType = "Insert";
                     result.EmployeeName = user.User;
-
+                    result.Message = "Session Expired or terminated, Please login again!!";
                 }
 
             }
