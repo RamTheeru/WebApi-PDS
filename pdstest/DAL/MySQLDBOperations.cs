@@ -55,6 +55,12 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.VarChar;
                         param.Size = 50;
+                        cmd.Parameters.Add(param); 
+
+                        param = new MySqlParameter("@Email", input.Email);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.VarChar;
+                        param.Size = 50;
                         cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@LastName", input.LastName);
@@ -2081,6 +2087,83 @@ namespace pdstest.DAL
 
             return dbr;
         }
+        public DataBaseResult ResetPassword(int employeeId,string password)
+        {
+            string resetQuery = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "RESET";
+                resetQuery = DBConnection.ResetPassword(password,employeeId);
+
+                if (string.IsNullOrEmpty(resetQuery) || string.IsNullOrEmpty(resetQuery))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                    int count = 0;
+                    count = new BasicDBOps().ExceuteCommand(connectionString, resetQuery);
+                    if (count > 0)
+                    {
+
+                        dbr.Status = true;
+                        dbr.Message = "Password Updated Successfully!!!!";
+                    }
+                    else
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "Something went wrong, Please contact Support Team!!";
+
+
+                    }
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+        }
         public DataBaseResult UpdateSession(UserType usr)
         {
             string getupdateInfo = "";
@@ -3221,6 +3304,92 @@ namespace pdstest.DAL
 
         #endregion
 
+        public DataBaseResult GetRegisteredUser(int registerId)
+        {
+            string getRegisteredUser = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            //MySqlDataAdapter sda;
+            try
+            {
+                dbr.CommandType = "Select";
+                getRegisteredUser = DBConnection.GetRegisteredUser(registerId);
+
+                if (string.IsNullOrEmpty(getRegisteredUser) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    //DataTable dt = new DataTable();
+                    //sda = new MySqlDataAdapter(getRegisteredUsers, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, getRegisteredUser);
+                    int count = 0;
+                    count = ds.Tables[0].Rows.Count;
+                    if (ds.Tables.Count > 0 && count > 0)
+                    {
+                        //foreach (DataRow dr in dt.Rows)
+                        //{
+                        //    Console.WriteLine(string.Format("user_id = {0}", dr["user_id"].ToString()));
+                        //}
+                        dbr.ds = ds;
+                        dbr.Message = "Records retreived Successfully!!!";
+                        dbr.Status = true;
+
+                    }
+                    else if (count == 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "No Records Found for this request!!";
+                        dbr.Status = true;
+
+
+                    }
+
+                    //  }
+
+
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+
+        }
         public DataBaseResult GetRegisteredUsers(int stationId)
         {
             string getRegisteredUsers = "";
@@ -3332,7 +3501,7 @@ namespace pdstest.DAL
                 {
                     if(status.ToLower()=="a")
                     {
-                        if(!string.IsNullOrEmpty(empCode)&&pId >0)
+                        if(!string.IsNullOrEmpty(empCode) && pId >0)
                         {
                             string cmdtxt = string.Format("Update register SET EmpCode='{0}',PID={1} WHERE RegisterId={2};",empCode
                                 ,pId,registerId);
@@ -3342,7 +3511,6 @@ namespace pdstest.DAL
                                 int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
                                 if (res > 0)
                                 {
-
                                     dbr.Message = status == "a" ? "User Approved Successfully!!!" : "User Removed Successfully!!";
                                     dbr.Status = true;
 

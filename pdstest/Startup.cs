@@ -131,11 +131,11 @@ namespace pdstest
 
             app.UseAuthorization();
             app.UseMyMiddleware();
-            app.UseDefaultFiles(new DefaultFilesOptions
-            {
-                DefaultFileNames = new
-                List<string> { "home.html" }
-            });
+            //app.UseDefaultFiles(new DefaultFilesOptions
+            //{
+            //    DefaultFileNames = new
+            //    List<string> { "home.html" }
+            //});
             //app.UseMiddleware<JwtMiddleware>();
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>

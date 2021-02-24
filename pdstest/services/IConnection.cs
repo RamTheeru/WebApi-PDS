@@ -14,6 +14,7 @@ namespace pdstest.services
         DataBaseResult CreateCDAEmployee(Employee input);
         DataBaseResult GetConstants();
         DataBaseResult GetRegisteredUsers(int stationId);
+        DataBaseResult GetRegisteredUser(int registerId);
         DataBaseResult GetEmployees(string stationCode = "", bool isEmployee = false);
         DataBaseResult GetLoginUserInfo(string username, string password);
         DataBaseResult GetLoginUserInfo(int usertypeId, int employeeId);
@@ -27,6 +28,7 @@ namespace pdstest.services
         bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
         DataBaseResult UpdateSession(UserType usr);
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
+        DataBaseResult ResetPassword(int employeeId, string password);
         DataBaseResult GetAdminDetails();
         DataBaseResult CreateCommercialConsant(CommercialConstant constant);
         Tuple<string, string> GetStationNameByStationId(int stationId);

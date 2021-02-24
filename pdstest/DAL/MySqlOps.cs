@@ -32,7 +32,10 @@ namespace pdstest.DAL
         {
             return _ops.GetEmployees(stationCode,isEmployee);
         }
-
+        public DataBaseResult GetRegisteredUser(int registerId)
+        {
+            return _ops.GetRegisteredUser(registerId);
+        }
         public DataBaseResult GetRegisteredUsers(int stationId)
         {
             return _ops.GetRegisteredUsers(stationId);
@@ -86,6 +89,10 @@ namespace pdstest.DAL
         public DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId)
         {
             return _ops.DeleteSession(userName,employeeId, userTypeId);
+        }
+        public DataBaseResult ResetPassword(int employeeId, string password)
+        {
+            return _ops.ResetPassword(employeeId, password);
         }
         public DataBaseResult GetAdminDetails()
         {

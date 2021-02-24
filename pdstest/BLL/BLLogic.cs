@@ -193,6 +193,62 @@ namespace pdstest.BLL
             return result;
         }
 
+        public RegisterEmployee GetRegisteredUser(int registerId)
+        {
+            //APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            RegisterEmployee reg = new RegisterEmployee();
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+              //  result.registerEmployee = new RegisterEmployee();
+                dbr = ops.GetRegisteredUser(registerId);
+               
+                int count = 0;
+                count = dbr.ds.Tables[0].Rows.Count;
+                if (count > 0)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        
+                        reg.RegisterId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["RegisterId"]);
+                        reg.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
+                        reg.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
+                        reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
+                        reg.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                        reg.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
+                        reg.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
+                        reg.Email = dbr.ds.Tables[0].Rows[i]["Email"].ToString();
+                        // regs.Add(reg);
+
+                    }
+                    //result.registerEmployee = reg;
+                    //result.Message = dbr.Message;
+                    //result.Status = dbr.Status;
+                    //result.CommandType = dbr.CommandType;
+                }
+                else
+                {
+                    //result.Message = dbr.Message;
+                    //result.Status = dbr.Status;
+                    //result.CommandType = dbr.CommandType;
+
+                    reg = new RegisterEmployee();
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+                reg = new RegisterEmployee();
+               // throw e;
+
+            }
+
+            return reg;
+        }
+
         public APIResult GetPagnationRecords(APIInput input)
         {
             APIResult result = new APIResult();
@@ -948,16 +1004,71 @@ namespace pdstest.BLL
 
             return result;
         }
-        public APIResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
+        public APIResult ResetPassword(int employeeId,string password)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
+                result.userInfo = new UserType();
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.ApproveUser(registerId,status,empCode,pId);
+                dbr = ops.ResetPassword(employeeId,password);
                 result.Status = dbr.Status;
                 result.Message = dbr.Message;
+                result.CommandType = dbr.CommandType;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "RESET";
+                //result.Id = registerId;
+                throw e;
+
+            }
+
+            return result;
+        }
+        public APIResult ApproveUser(int registerId,string status,string empCode="",int pId=0)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            bool verify = false;
+            try
+            {
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.ApproveUser(registerId,status,empCode,pId);
+                result.Message = dbr.Message;
+                if (status == "a" && dbr.Status == true)
+                {
+                    result.registerEmployee = new RegisterEmployee();
+                    result.registerEmployee = this.GetRegisteredUser(registerId);
+                    if(result.registerEmployee != null)
+                    {
+                        if(!string.IsNullOrEmpty(result.registerEmployee.Email) && result.registerEmployee.RegisterId > 0)
+                        {
+                            StreamReader reader = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), "/home.html"));
+                            string readFile = reader.ReadToEnd();
+                            string myString = "";
+                            myString = readFile;
+                            myString = myString.Replace("https://www.kleenandshine.com/ResetPassword/<rid>", "https://www.kleenandshine.com/ResetPassword/"+ result.registerEmployee.RegisterId);
+                            //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
+                            //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
+                            //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
+                            verify =  EMAIL.SendEmail("theeru999@gmail.com",result.registerEmployee.Email,myString,"USER APPROVED");
+
+                        }
+                    }
+                    if (verify)
+                    {
+                        result.Message = result.Message + "; Mail sent to this user.";
+                    }
+                    else
+                    {
+                        result.Message = result.Message + "; Unable to send Email to this user.";
+                    }
+                }
+                result.Status = dbr.Status;
                 result.Id = dbr.Id;
                 result.CommandType = dbr.CommandType;
             }

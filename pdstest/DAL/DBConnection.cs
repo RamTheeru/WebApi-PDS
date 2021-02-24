@@ -92,6 +92,26 @@ namespace pdstest.DAL
             }
             return text;
         }
+
+        public static string GetRegisteredUser(int registerId)
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+   
+                    text = string.Format("select * from register where IsActive = 1 and RegisterId = {0}", registerId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public  static Dictionary<string, string> GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int? page=1, int? pagesize=5, string status="",bool isEmployee=false)
         {
             /*SELECT* FROM Constants
@@ -341,6 +361,27 @@ namespace pdstest.DAL
             try
             {
                 text = string.Format("SELECT EmployeeId,UserTypeId,LoginType,FirstName,UserName,StationId FROM employees where UserTypeId = {0} AND EmployeeId = {1} AND IsActive=1 LIMIT 1;", usertypeId, employeeId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string ResetPassword(string  password,int employeeId)
+        {
+            string text = "";
+
+            try
+            {
+
+                //DateTime StartDate = SessionStartDate.StringtoDateTime();
+                //DateTime EndDate = SessionEndDate.StringtoDateTime();
+
+                text = string.Format("UPDATE employees Set Passwrd='{0}'  where  EmployeeId = {1} AND IsActive=1;", password, employeeId);
 
             }
             catch (Exception e)

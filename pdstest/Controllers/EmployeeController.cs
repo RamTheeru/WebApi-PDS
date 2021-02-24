@@ -288,6 +288,38 @@ namespace pdstest.Controllers
             return Ok(result);
 
         }
+        [HttpGet("ResetPassword")]
+        public IActionResult ResetPassword(int employeeId,string password)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(password))
+                    password = password.CleanString();
+                if (employeeId == 0 || string.IsNullOrEmpty(password))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "RESET";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+                else
+                {
+                    result = logic.ResetPassword(employeeId, password);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "RESET";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+
+
+        }
         [HttpGet("AdminDetails")]
 
         public IActionResult GetAdminDetails()
@@ -630,7 +662,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (!(string.IsNullOrEmpty(obj.FirstName))|| !(string.IsNullOrEmpty(obj.Phone)) || !(string.IsNullOrEmpty(obj.UserName)) || !(string.IsNullOrEmpty(obj.UserType)))
+                if (!(string.IsNullOrEmpty(obj.FirstName)) && !(string.IsNullOrEmpty(obj.Phone)) && !(string.IsNullOrEmpty(obj.UserName))  && !(string.IsNullOrEmpty(obj.Email)) && !(string.IsNullOrEmpty(obj.UserType)))
                 {
                     obj.IsRegister = true;
                     obj.Age = string.IsNullOrEmpty(obj.EmpAge) ? 0 : Convert.ToInt32(obj.EmpAge);
