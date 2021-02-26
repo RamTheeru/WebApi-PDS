@@ -662,7 +662,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (!(string.IsNullOrEmpty(obj.FirstName)) && !(string.IsNullOrEmpty(obj.Phone)) && !(string.IsNullOrEmpty(obj.UserName))  && !(string.IsNullOrEmpty(obj.Email)) && !(string.IsNullOrEmpty(obj.UserType)))
+                if (!(string.IsNullOrEmpty(obj.FirstName)) && !(string.IsNullOrEmpty(obj.Phone)) && !(string.IsNullOrEmpty(obj.UserName))  && !(string.IsNullOrEmpty(obj.Email)))
                 {
                     obj.IsRegister = true;
                     obj.Age = string.IsNullOrEmpty(obj.EmpAge) ? 0 : Convert.ToInt32(obj.EmpAge);

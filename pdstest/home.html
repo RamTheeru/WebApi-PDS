@@ -31,14 +31,14 @@
         }
 
         .hero-image {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.kleenandshine.com/Images/pdslogo_tranparent2.PNG');
+            background-image:  url('https://www.kleenandshine.com/Images/pdslogo_tranparent2.PNG');
             height: 50%;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
             position: relative;
         }
-
+h1,h5{ text-align: center;}
         .hero-text {
             text-align: center;
             position: absolute;
@@ -63,18 +63,24 @@
                     background-color: #555;
                     color: white;
                 }
+.container{border-radius: 3px;
+   background-repeat: no-repeat;
+background-size: cover;
+            border-style: solid; background-image:  url('https://www.kleenandshine.com/Images/pdslogo_tranparent2.PNG');}
     </style>
 
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="hero-image">
-            <div class="hero-text">
-                <h1 style="font-size:50px">YOUR REGISTRATION APPROVED</h1>
-                <p>Your default password is first four digits of your given mobilenumber followed by next four digits of your birth date of year.  Here is the link to change your password</p>
-                <button onclick="location.href='https://www.kleenandshine.com/ResetPassword/<rid>'">Reset Password</button>
-            </div>
-        </div>
+
+ <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+<h1 style="font-size:50px"  class="text-primary" ><u>PENNA DELIVERY SERVICES</u></h1>
+    <h5 class="text-success"><b>Your Registration Approved</b></h5>      
+   <p><b>Your default password is <mark>first four digits</mark> of your given <kbd>mobilenumber</kbd> followed by <mark>next four digits</mark> of your <kbd>birth date of year</kbd>.  Here is the link to change your password</b></p><br>
+<button style="text-align: center;margin-left:450px;" class="btn btn-success" <a href='https://www.kleenandshine.com/ResetPassword/<rid>'" target="_blank" >Reset Password</a></button>
+  </div>
+</div>
+
     </div>
 </body>
 </html>
