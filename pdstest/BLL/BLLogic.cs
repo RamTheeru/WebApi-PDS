@@ -239,7 +239,7 @@ namespace pdstest.BLL
 
 
             }
-            catch (Exception e)
+            catch 
             {
                 reg = new RegisterEmployee();
                // throw e;
@@ -1060,8 +1060,8 @@ namespace pdstest.BLL
                                 //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
                                 //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
                                 //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
-                                verify = EMAIL.SendEmail("theeru999@gmail.com", result.registerEmployee.Email, myString, "USER APPROVED");
-                            }
+                                verify = EMAIL.SendEmail("theeru999@gmail.com", result.registerEmployee.Email, myString, "USER REQUEST APPROVED");
+                            } 
                             catch(Exception e)
                             {
                                 result.Message = result.Message + "; Error occured while collecting data to send mail  due to "+e.Message+"  !!  Unable to send Email to this user.";
