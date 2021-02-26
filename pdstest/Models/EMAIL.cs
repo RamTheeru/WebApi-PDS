@@ -9,9 +9,11 @@ namespace pdstest.Models
     public class EMAIL
     {
 
-        public static bool SendEmail(string senderMAil, string toMAil, string body, string subject)
+        public static Tuple<bool,string> SendEmail(string senderMAil, string toMAil, string body, string subject)
         {
-            bool isSucess = true;
+             bool isSucess = true;
+            string msg = "";
+            Tuple<bool, string> tu = Tuple.Create(isSucess, msg);
             try
             {
                 MailMessage mail = new MailMessage(senderMAil, toMAil);
@@ -29,15 +31,18 @@ namespace pdstest.Models
                 mail.Body = body;
                 mail.IsBodyHtml = true;
                 client.Send(mail);
-        
+                tu = Tuple.Create(isSucess, "Mail Sent Succefully to this user.");
+
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 isSucess = false;
+                string m = "Error occured while sending mail due to " + e.Message;
+                tu = Tuple.Create(isSucess, m);
                 // HandleException(e, "HandleSMS");
-               // throw e;
+                // throw e;
             }
-            return isSucess;
+            return tu;
         }
     }
 }

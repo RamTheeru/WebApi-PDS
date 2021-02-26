@@ -1033,7 +1033,8 @@ namespace pdstest.BLL
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
-            bool verify = false;
+            Tuple<bool, string> verify = Tuple.Create(false, "");
+           // bool verify = false;
             try
             {
                 dbr.ds = new System.Data.DataSet();
@@ -1051,7 +1052,7 @@ namespace pdstest.BLL
                             {
                                 // string p = "C:\Users\Public\home.html");
                                 string mpath = configuration["mailpath"];
-                                StreamReader reader = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), mpath));
+                                StreamReader reader = new StreamReader(mpath);
                                 string readFile = reader.ReadToEnd();
                                 string myString = "";
                                 myString = readFile;
@@ -1061,21 +1062,22 @@ namespace pdstest.BLL
                                 //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
                                 verify = EMAIL.SendEmail("theeru999@gmail.com", result.registerEmployee.Email, myString, "USER APPROVED");
                             }
-                            catch
+                            catch(Exception e)
                             {
-                                result.Message = result.Message + "; Error occured !!  Unable to send Email to this user.";
+                                result.Message = result.Message + "; Error occured while collecting data to send mail  due to "+e.Message+"  !!  Unable to send Email to this user.";
                             }
 
                         }
                     }
-                    if (verify)
-                    {
-                        result.Message = result.Message + "; Mail sent to this user.";
-                    }
-                    else
-                    {
-                        result.Message = result.Message + "; Unable to send Email to this user.";
-                    }
+                    result.Message = result.Message +"; " + verify.Item2;
+                    //if (verify.Item1)
+                    //{
+                    //    result.Message = result.Message + "; Mail sent to this user.";
+                    //}
+                    //else
+                    //{
+                    //    result.Message = result.Message + "; Unable to send Email to this user.";
+                    //}
                 }
                 result.Status = dbr.Status;
                 result.Id = dbr.Id;
