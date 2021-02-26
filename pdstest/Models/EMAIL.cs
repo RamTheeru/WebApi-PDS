@@ -20,7 +20,7 @@ namespace pdstest.Models
                 SmtpClient client = new SmtpClient();
                 //client.Port = 587;
                 //client.Host = "smtp.gmail.com";
-                client.Host = "relay-hosting.secureserver.net";
+                client.Host = "sg2nlvphout-v01.shr.prod.sin2.secureserver.net";
                 client.Port = 25;
                 client.EnableSsl = false;
                 client.Timeout = 10000;
