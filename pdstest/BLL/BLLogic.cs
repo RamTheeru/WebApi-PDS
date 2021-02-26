@@ -1047,15 +1047,24 @@ namespace pdstest.BLL
                     {
                         if(!string.IsNullOrEmpty(result.registerEmployee.Email) && result.registerEmployee.RegisterId > 0)
                         {
-                            StreamReader reader = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), "/home.html"));
-                            string readFile = reader.ReadToEnd();
-                            string myString = "";
-                            myString = readFile;
-                            myString = myString.Replace("https://www.kleenandshine.com/ResetPassword/<rid>", "https://www.kleenandshine.com/ResetPassword/"+ result.registerEmployee.RegisterId);
-                            //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
-                            //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
-                            //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
-                            verify =  EMAIL.SendEmail("theeru999@gmail.com",result.registerEmployee.Email,myString,"USER APPROVED");
+                            try
+                            {
+                                // string p = "C:\Users\Public\home.html");
+                                string mpath = configuration["mailpath"];
+                                StreamReader reader = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), mpath));
+                                string readFile = reader.ReadToEnd();
+                                string myString = "";
+                                myString = readFile;
+                                myString = myString.Replace("https://www.kleenandshine.com/ResetPassword/<rid>", "https://www.kleenandshine.com/ResetPassword/" + result.registerEmployee.RegisterId);
+                                //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
+                                //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
+                                //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
+                                verify = EMAIL.SendEmail("theeru999@gmail.com", result.registerEmployee.Email, myString, "USER APPROVED");
+                            }
+                            catch
+                            {
+                                result.Message = result.Message + "; Error occured !!  Unable to send Email to this user.";
+                            }
 
                         }
                     }
