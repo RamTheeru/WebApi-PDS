@@ -1056,7 +1056,7 @@ namespace pdstest.BLL
                                 string readFile = reader.ReadToEnd();
                                 string myString = "";
                                 myString = readFile;
-                                myString = myString.Replace("https://www.kleenandshine.com/ResetPassword/<rid>", "https://www.kleenandshine.com/ResetPassword/" + result.registerEmployee.RegisterId);
+                                myString = myString.Replace("https://www.kleenandshine.com/#/ResetPassword/<rid>", "https://www.kleenandshine.com/#/ResetPassword/" + result.registerEmployee.RegisterId);
                                 //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
                                 //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
                                 //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
