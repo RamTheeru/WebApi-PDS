@@ -93,11 +93,11 @@ namespace pdstest
                 //    context.Request.Path = context.Request.Host.Host + "/ClientApp";
                 //    await next();
                 //}
-                if (context.Response.StatusCode == 404)
-                {
-                    context.Request.Path = "/ClientApp";
-                    await next();
-                }
+                //if (context.Response.StatusCode == 404)
+                //{
+                //    context.Request.Path = "/ClientApp";
+                //    await next();
+                //}
             });
             //DefaultFilesOptions options = new DefaultFilesOptions();
             //options.DefaultFileNames.Clear();
@@ -112,13 +112,13 @@ namespace pdstest
                 RequestPath = new PathString("/Images"),
                 EnableDirectoryBrowsing = true
             });
-            app.UseFileServer(new FileServerOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-    Path.Combine(Directory.GetCurrentDirectory(), @"ClientApp")),
-                RequestPath = new PathString("/ClientApp"),
-                EnableDirectoryBrowsing = true
-            });
+    //        app.UseFileServer(new FileServerOptions()
+    //        {
+    //            FileProvider = new PhysicalFileProvider(
+    //Path.Combine(Directory.GetCurrentDirectory(), @"ClientApp")),
+    //            RequestPath = new PathString("/ClientApp"),
+    //            EnableDirectoryBrowsing = true
+    //        });
             //Enable directory browsing
             //app.UseDirectoryBrowser(new DirectoryBrowserOptions
             //{
