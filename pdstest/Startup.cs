@@ -140,10 +140,10 @@ namespace pdstest
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+               /// endpoints.MapRazorPages();
                 //endpoints.Map
-                // endpoints.MapControllers();
-                endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action}/{id?}",defaults:new { controller="WeatherForecast",action="Index"});
+                 endpoints.MapControllers();
+               // endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action}/{id?}",defaults:new { controller="WeatherForecast",action="Index"});
 
             });
             //app.UseMvc(routes => {
@@ -153,7 +153,7 @@ namespace pdstest
 
             //app.UseHttpsRedirection();
             app.UseSwagger();
-            app.UseSwaggerUI(sw => sw.SwaggerEndpoint("/swagger/v1/swagger.json", "API for PDS"));
+            app.UseSwaggerUI(sw => sw.SwaggerEndpoint("v1/swagger/v1/swagger.json", "API for PDS"));
             //app.UseMvc();
            
    
