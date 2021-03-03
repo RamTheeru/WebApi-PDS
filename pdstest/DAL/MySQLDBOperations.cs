@@ -994,13 +994,23 @@ namespace pdstest.DAL
                         string cmdT = string.Format("SELECT * FROM Voucher where VoucherNumber = '{0}'",input.VoucherNumber);
                         bool isExists = false;
                         isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
+                        string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber, input.StationId, input.V_Date);
+                        bool otherExists = false;
+                        otherExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, otherVoucher);
                         if (isExists) 
                         {
                             dbr.Id = 0;
                             dbr.VoucherNumber = input.VoucherNumber;
                             dbr.Status = false;
-                            dbr.Message = "This Voucher already exists..Please Create another Voucher!! ";
+                            dbr.Message = "Voucher already exists..Please Create another Voucher!! ";
 
+                        }
+                        else if(otherExists)
+                        {
+                            dbr.Id = 0;
+                            dbr.VoucherNumber = input.VoucherNumber;
+                            dbr.Status = false;
+                            dbr.Message = "Voucher already exists for this month and waiting for approval!! ";
                         }
                         else 
                         {
@@ -1014,7 +1024,7 @@ namespace pdstest.DAL
                             param.Size = 50;
                             cmd.Parameters.Add(param);
 
-                            param = new MySqlParameter("@VoucherDate", input.VoucherDate);
+                            param = new MySqlParameter("@VoucherDate", input.V_Date);
                             param.Direction = ParameterDirection.Input;
                             param.MySqlDbType = MySqlDbType.DateTime;
                             cmd.Parameters.Add(param);

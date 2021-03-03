@@ -267,6 +267,29 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckVoucherExists(string voucherNumber,int stationId=0,string voucherDate="")
+        {
+            string text = "";
+
+            try
+            {
+
+                if(stationId == 0) //AND MONTH(CreditDate) = MONTH(NEW.VoucherDate)
+                    text = string.Format("select COUNT(*) from Voucher where VoucherNumber = '{0}';", voucherNumber);
+                else if (!string.IsNullOrEmpty(voucherDate))
+                {
+                    //DateTime d = voucherDate.StringtoDateTime();
+                    text = string.Format("select COUNT(*) from Voucher where MONTH(VoucherDate) = MONTH('{0}') AND StationId = {1} AND IsApproved = 0;", voucherDate, stationId);
+                }
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string CheckUserNameExists(string username)
         {
             string text = "";
