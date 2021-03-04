@@ -267,6 +267,83 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetTotalDebitamountinPreviousMonthForVoucher(int stationId)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select 0 as c,coalesce(SUM(Debit),0) as DebitAmount from FinanceLedger " +
+                    " WHERE StationId = {0} AND MONTH(VoucherDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)) " +
+                    " AND YEAR(VoucherDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) " +
+                    " AND IsActive = 1 Group BY StationId,VoucherDate; ", stationId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetCreditamountinCurrentMonthForVoucher(int stationId,string voucherDate)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select count(Credit),ifnull(Credit, 0) as CreditAmount from FinanceLedger " +
+                    " WHERE StationId = {0} AND MONTH(CreditDate) = MONTH('{1}') "+
+                    " AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL " +
+                    " AND VoucherNumber = NULL AND IsActive = 1; ", stationId,voucherDate);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string GetTotalDebitamountinCurrentMonthForVoucher(int stationId, string voucherDate)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select 0 as c,coalesce(SUM(Debit),0) as DebitAmount from FinanceLedger " +
+                    " WHERE StationId = {0} AND MONTH(VoucherDate) = MONTH('{1}') " +
+                    " AND YEAR(VoucherDate) = YEAR('{1}') AND VoucherDate <= '{1}' " +
+                    " AND IsActive = 1 Group BY StationId,VoucherDate; ", stationId, voucherDate);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+        public static string CheckforCreditintoStation(int stationId, string date)
+        {
+            string text = "";
+
+            try
+            {
+                text = text = string.Format("select  COUNT(*) from FinanceLedger WHERE StationId = {0} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL AND VoucherNumber = NULL AND IsActive = 1;", stationId, date);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string CheckVoucherExists(string voucherNumber,bool isCreditValidate=false,int stationId=0,string voucherDate="")
         {
             string text = "";

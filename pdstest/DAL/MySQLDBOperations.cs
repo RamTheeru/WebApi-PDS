@@ -991,16 +991,40 @@ namespace pdstest.DAL
                     using (MySqlConnection conn = new MySqlConnection(connectionString))
                     {
                         input.VoucherNumber = input.VoucherNumber.CleanString();
-                        string cmdT = string.Format("SELECT * FROM Voucher where VoucherNumber = '{0}'",input.VoucherNumber);
+                        string cmdT = string.Format("SELECT * FROM Voucher where VoucherNumber = '{0}'", input.VoucherNumber);
                         bool isExists = false;
                         isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
-                        string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber,false, input.StationId, input.V_Date);
+                        string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber, false, input.StationId, input.V_Date);
                         bool otherExists = false;
                         otherExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, otherVoucher);
                         string creditValid = DBConnection.CheckVoucherExists(input.VoucherNumber, true, input.StationId, input.V_Date);
                         bool validateCredit = true;
                         validateCredit = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, creditValid);
-                        if (isExists) 
+                        bool validatebalance = false;
+                        int creditamont = 0;
+                        string creditcmd = DBConnection.GetCreditamountinCurrentMonthForVoucher(input.StationId, input.V_Date);
+                        creditamont = this.GetBalanceAmountForVoucherCreation("", creditcmd, "CreditAmount");
+                        int debitamt = 0;
+                        string debitcmd = DBConnection.GetTotalDebitamountinCurrentMonthForVoucher(input.StationId, input.V_Date);
+                        debitamt = this.GetBalanceAmountForVoucherCreation(debitcmd, "", "DebitAmount");
+                        if (creditamont > debitamt && creditamont > 0)
+                        {
+                            int bal = creditamont - debitamt;
+                            if (bal > 0)
+                            {
+                                validatebalance = true;
+                            }
+                            else
+                            {
+                                validatebalance = false;
+                            }
+
+                        }
+                        else
+                        {
+                            validatebalance = false;
+                        }
+                        if (isExists)
                         {
                             dbr.Id = 0;
                             dbr.VoucherNumber = input.VoucherNumber;
@@ -1008,7 +1032,7 @@ namespace pdstest.DAL
                             dbr.Message = "Voucher already exists..Please Create another Voucher!! ";
 
                         }
-                        else if(otherExists)
+                        else if (otherExists)
                         {
                             dbr.Id = 0;
                             dbr.VoucherNumber = input.VoucherNumber;
@@ -1022,7 +1046,14 @@ namespace pdstest.DAL
                             dbr.Status = false;
                             dbr.Message = "Cannot create voucher!!! Amount is not credited yet for this station in this month.";
                         }
-                        else 
+                        else if (!validatebalance)
+                        {
+                            dbr.Id = 0;
+                            dbr.VoucherNumber = input.VoucherNumber;
+                            dbr.Status = false;
+                            dbr.Message = "Cannot create voucher!!! There is no avaliable balance from credited amount for this station in this month.";
+                        }
+                        else
                         {
                             cmd.CommandText = insertQuery;
                             cmd.CommandType = CommandType.StoredProcedure;
@@ -1108,8 +1139,9 @@ namespace pdstest.DAL
 
                             }
                         }
+                    }
 
-                        }
+                        
 
                 }
 
@@ -1142,7 +1174,71 @@ namespace pdstest.DAL
             }
             return dbr;
         }
+        #region Voucher related
+        public int GetBalanceAmountForVoucherCreation(string  debitCmd,string creditCmd,string col)
+        {
+            int balance = 0;
+            try
+            {
+                if(!string.IsNullOrEmpty(debitCmd))
+                {
+                    balance = this.GetValuefromCommand(debitCmd, col);
+                }
+                if(!string.IsNullOrEmpty(creditCmd))
+                {
+                    balance = this.GetValuefromCommand(creditCmd, col);
+                }
 
+            }
+            catch(Exception e)
+            {
+                balance = 0;
+                throw e;
+            }
+            return balance;
+        }
+        public int GetValuefromCommand(string cmmd,string col)
+        {
+            int val = 0;
+            try
+            {
+                DataSet ds = new DataSet();
+                ds = new BasicDBOps().GetMultipleRecords(connectionString, cmmd);
+                if (ds != null && ds.Tables.Count > 0)
+                {
+                    if(ds.Tables[0].Rows.Count > 0)
+                    {
+                        string v = ds.Tables[0].Rows[0][col].ToString();
+                        val = this.HandleStringtoInt(v);
+                    }
+                    else
+                    {
+                        val = 0;
+                    }
+                }
+                else
+                {
+                    val = 0;
+                }
+            }
+            catch (Exception e)
+            {
+                val = 0;
+                throw e;
+            }
+            return val;
+        }
+        public int HandleStringtoInt(string str)
+        {
+            int result = 0;
+            if (!string.IsNullOrEmpty(str))
+            {
+                bool success = int.TryParse(str, out result);
+                result = (success == true) ? result : 0;
+            }
+            return result;
+        }
+        #endregion
         public DataBaseResult InsertLedger(Ledger input)
         {
             string insertQuery = "";
@@ -1167,54 +1263,69 @@ namespace pdstest.DAL
                 {
                     using (MySqlConnection conn = new MySqlConnection(connectionString))
                     {
-                        cmd.CommandText = insertQuery;
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Connection = conn;
-
-                        param = new MySqlParameter("@CreditDate", input.CreditDate);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.DateTime;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@Credit", input.Credit);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@StationId", input.StationId);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-
-                        MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@CreditId";
-                        output.MySqlDbType = MySqlDbType.Int32;
-                        output.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output);
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-
-                        string lId = output.Value.ToString();
-
-                        conn.Close();
-                        dbr.Id = string.IsNullOrEmpty(lId) ? 0 : Convert.ToInt32(lId);
-                        if (dbr.Id > 0)
+                        string cmdT = DBConnection.CheckforCreditintoStation(input.StationId, input.Cred_Date);
+                        bool isExists = false;
+                        isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
+                        if (isExists)
                         {
-                            dbr.Status = true;
-                            dbr.Message = "Credit Added Successfully!!!";
+                            dbr.Id = 0;
+                        //    dbr.VoucherNumber = input.VoucherNumber;
+                            dbr.Status = false;
+                            dbr.Message = "Amount already credited to this station for this month..Please Check once and edit the existed amount further!! ";
+
                         }
                         else
                         {
-                            dbr.Id = 0;
-                            dbr.EmployeeName = "";
-                            dbr.Status = false;
-                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
+                            cmd.CommandText = insertQuery;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Connection = conn;
 
+                            param = new MySqlParameter("@CreditDate", input.Cred_Date);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.DateTime;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@Credit", input.Credit);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@StationId", input.StationId);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+
+                            MySqlParameter output = new MySqlParameter();
+                            output.ParameterName = "@CreditId";
+                            output.MySqlDbType = MySqlDbType.Int32;
+                            output.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output);
+
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+
+                            string lId = output.Value.ToString();
+
+                            conn.Close();
+                            dbr.Id = string.IsNullOrEmpty(lId) ? 0 : Convert.ToInt32(lId);
+                            if (dbr.Id > 0)
+                            {
+                                dbr.Status = true;
+                                dbr.Message = "Credit Added Successfully!!!";
+                            }
+                            else
+                            {
+                                dbr.Id = 0;
+                                dbr.EmployeeName = "";
+                                dbr.Status = false;
+                                dbr.Message = "Process went well but Something wrong with database Connection!! ";
+
+                            }
                         }
+                    
 
                     }
 
