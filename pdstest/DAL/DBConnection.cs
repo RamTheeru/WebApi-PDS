@@ -267,20 +267,27 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public static string CheckVoucherExists(string voucherNumber,int stationId=0,string voucherDate="")
+        public static string CheckVoucherExists(string voucherNumber,bool isCreditValidate=false,int stationId=0,string voucherDate="")
         {
             string text = "";
 
             try
             {
-
-                if(stationId == 0) //AND MONTH(CreditDate) = MONTH(NEW.VoucherDate)
-                    text = string.Format("select COUNT(*) from Voucher where VoucherNumber = '{0}';", voucherNumber);
-                else if (!string.IsNullOrEmpty(voucherDate))
+                if (isCreditValidate)
                 {
-                    //DateTime d = voucherDate.StringtoDateTime();
-                    text = string.Format("select COUNT(*) from Voucher where MONTH(VoucherDate) = MONTH('{0}') AND StationId = {1} AND IsApproved = 0;", voucherDate, stationId);
+                    text = string.Format("select  COUNT(*) from FinanceLedger WHERE StationId = {0} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL AND VoucherNumber = NULL AND IsActive = 1;", stationId, voucherDate);
                 }
+                else
+                {
+                    if (stationId == 0) //AND MONTH(CreditDate) = MONTH(NEW.VoucherDate)
+                        text = string.Format("select COUNT(*) from Voucher where VoucherNumber = '{0}';", voucherNumber);
+                    else if (!string.IsNullOrEmpty(voucherDate))
+                    {
+                        //DateTime d = voucherDate.StringtoDateTime();
+                        text = string.Format("select COUNT(*) from Voucher where MONTH(VoucherDate) = MONTH('{0}') AND YEAR(VoucherDate) = YEAR('{0}') AND StationId = {1} AND IsApproved = 0;", voucherDate, stationId);
+                    }
+                }
+                        
             }
             catch (Exception e)
             {

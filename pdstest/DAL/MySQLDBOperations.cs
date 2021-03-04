@@ -994,9 +994,12 @@ namespace pdstest.DAL
                         string cmdT = string.Format("SELECT * FROM Voucher where VoucherNumber = '{0}'",input.VoucherNumber);
                         bool isExists = false;
                         isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
-                        string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber, input.StationId, input.V_Date);
+                        string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber,false, input.StationId, input.V_Date);
                         bool otherExists = false;
                         otherExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, otherVoucher);
+                        string creditValid = DBConnection.CheckVoucherExists(input.VoucherNumber, true, input.StationId, input.V_Date);
+                        bool validateCredit = true;
+                        validateCredit = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, creditValid);
                         if (isExists) 
                         {
                             dbr.Id = 0;
@@ -1011,6 +1014,13 @@ namespace pdstest.DAL
                             dbr.VoucherNumber = input.VoucherNumber;
                             dbr.Status = false;
                             dbr.Message = "Voucher already exists for this month and waiting for approval!! ";
+                        }
+                        else if (!validateCredit)
+                        {
+                            dbr.Id = 0;
+                            dbr.VoucherNumber = input.VoucherNumber;
+                            dbr.Status = false;
+                            dbr.Message = "Cannot create voucher!!! Amount is not credited yet for this station in this month.";
                         }
                         else 
                         {
