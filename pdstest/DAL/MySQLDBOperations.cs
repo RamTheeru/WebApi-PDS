@@ -1245,14 +1245,14 @@ namespace pdstest.DAL
 
             return dbr;
         }
-        public DataBaseResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        public DataBaseResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
             DataBaseResult dbr = new DataBaseResult();
             string cmdText = "";
             try
             {
                 dbr.CommandType = "Select";
-                cmdText = DBConnection.GetVoucherDetailsbyVoucherNumberQuery(voucherNumber);
+                cmdText = DBConnection.GetVoucherDetailsbyVoucherNumberQuery(voucherId);
                 dbr.ds = new DataSet();
                 DataSet ds = new DataSet();
                 if (string.IsNullOrEmpty(cmdText) || string.IsNullOrEmpty(connectionString))

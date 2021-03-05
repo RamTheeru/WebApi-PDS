@@ -73,9 +73,9 @@ namespace pdstest.DAL
         {
             return _ops.InsertVoucher(input);
         }
-        public DataBaseResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        public DataBaseResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
-            return _ops.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+            return _ops.GetVoucherDetailsbyVoucherNumber(voucherId);
         }
         public DataBaseResult UpdateVoucher(Voucher input)
         {

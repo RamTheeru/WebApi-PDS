@@ -1316,7 +1316,7 @@ namespace pdstest.BLL
             return result;
 
         }
-        public APIResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        public APIResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -1327,13 +1327,14 @@ namespace pdstest.BLL
                 int c = 0;
 
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+                dbr = ops.GetVoucherDetailsbyVoucherNumber(voucherId);
                 if (dbr.ds.Tables.Count > 0)
                 {
-                    v.VoucherNumber = voucherNumber;
+                    v.VoucherId = voucherId;
                     c = dbr.ds.Tables[0].Rows.Count;
                     if (c > 0)
                     {
+                        string vno = dbr.ds.Tables[0].Rows[0]["VoucherNumber"].ToString();
                         string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
                         string vdate = dbr.ds.Tables[0].Rows[0]["VoucherDate"].ToString();
                         string purpose = dbr.ds.Tables[0].Rows[0]["PurposeOfPayment"].ToString();
@@ -1342,6 +1343,7 @@ namespace pdstest.BLL
                         string totamnt = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
                         string taxamnt = dbr.ds.Tables[0].Rows[0]["TaxAmount"].ToString();
                         string status = dbr.ds.Tables[0].Rows[0]["VoucherStatus"].ToString();
+                        v.VoucherNumber = vno;
                         v.V_Date = vdate.StringDateTimetoStringView();
                         v.PartyName = party;
                         v.PurposeOfPayment = purpose;
@@ -1392,6 +1394,7 @@ namespace pdstest.BLL
                             string d_a = dbr.ds.Tables[0].Rows[0]["DebitAmount"].ToString();
                             ld.Credit = this.HandleStringtoInt(c_a);
                             ld.Debit = this.HandleStringtoInt(d_a);
+                        ld.Id = 0;
                             if (ld.Credit > 0)
                             {
                                 if (ld.Credit > ld.Debit)

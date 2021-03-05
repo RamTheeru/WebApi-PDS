@@ -799,14 +799,14 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public static string GetVoucherDetailsbyVoucherNumberQuery(string  vno)
+        public static string GetVoucherDetailsbyVoucherNumberQuery(int voucherId)
         {
             string text = "";
             //string path = "";
             try
             {
 
-                text = string.Format("Select * from Voucher where VoucherNumber = '{0}' ", vno);
+                text = string.Format("Select * from Voucher where VoucherId = {0} ", voucherId);
 
             }
             catch (Exception e)

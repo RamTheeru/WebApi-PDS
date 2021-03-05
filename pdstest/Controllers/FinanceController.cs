@@ -74,14 +74,14 @@ namespace pdstest.Controllers
         }
         [HttpGet]
         [Route("VoucherDetails")]
-        public IActionResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        public IActionResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
             APIResult result = new APIResult();
             try
             {
-                if (!string.IsNullOrEmpty(voucherNumber))
+                if (voucherId>0)
                 {
-                    result = logic.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+                    result = logic.GetVoucherDetailsbyVoucherNumber(voucherId);
 
                 }
                 else
@@ -188,6 +188,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
+                obj.Cred_Date = DateTime.Now.ToShortDateString();
                 if (obj.StationId > 0 && obj.Credit>0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
                 {
                     result = logic.InsertLedger(obj);
