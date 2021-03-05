@@ -1286,6 +1286,161 @@ namespace pdstest.BLL
             return result;
 
         }
+        public APIResult UpdateVoucher(Voucher input)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                input.VoucherDate = input.V_Date.StringtoDateTime();
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.UpdateVoucher(input);
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+                result.Id = dbr.Id;
+                result.VoucherNumber = dbr.VoucherNumber;
+                result.CommandType = dbr.CommandType;
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "UPDATE";
+                result.Id = 0;
+                result.VoucherNumber = "";
+                throw e;
+
+
+            }
+            return result;
+
+        }
+        public APIResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            Voucher v = new Voucher();
+            try
+            {
+                result.voucher = new Voucher();
+                int c = 0;
+
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+                if (dbr.ds.Tables.Count > 0)
+                {
+                    v.VoucherNumber = voucherNumber;
+                    c = dbr.ds.Tables[0].Rows.Count;
+                    if (c > 0)
+                    {
+                        string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
+                        string vdate = dbr.ds.Tables[0].Rows[0]["VoucherDate"].ToString();
+                        string purpose = dbr.ds.Tables[0].Rows[0]["PurposeOfPayment"].ToString();
+                        string party = dbr.ds.Tables[0].Rows[0]["PartyName"].ToString();
+                        string namnt = dbr.ds.Tables[0].Rows[0]["NetAmount"].ToString();
+                        string totamnt = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
+                        string taxamnt = dbr.ds.Tables[0].Rows[0]["TaxAmount"].ToString();
+                        string status = dbr.ds.Tables[0].Rows[0]["VoucherStatus"].ToString();
+                        v.V_Date = vdate.StringDateTimetoStringView();
+                        v.PartyName = party;
+                        v.PurposeOfPayment = purpose;
+                        v.StationId = this.HandleStringtoInt(sId);
+                        v.TotalAmount = this.HandleStringtoInt(totamnt);
+                        v.TaxAmount = this.HandleStringtoInt(taxamnt);
+                        v.NetAmount = this.HandleStringtoInt(namnt);
+                        // dd.Incentive = this.HandleStringtoInt(inc2);
+                    }
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    
+                }
+                
+                result.voucher = v;
+
+            }
+            catch (Exception e)
+            {
+               
+                result.Status = false;
+                result.Message = e.Message;
+                result.voucher = v;
+                throw e;
+            }
+            return result;
+
+        }
+        public APIResult GetPreviousCreditandDebitDetails(int stationId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            Ledger ld = new Ledger();
+            try
+            {
+                result.ledger = new Ledger();
+                ld.StationId = stationId;
+                dbr.ds = new System.Data.DataSet();
+                dbr = ops.GetPreviousCreditandDebitDetails(stationId);
+                int count = 0;
+                if (dbr.ds.Tables.Count > 0)
+                {
+                    count = dbr.ds.Tables[0].Rows.Count;
+                    if (count > 0)
+                    {
+                           
+                            string c_a = dbr.ds.Tables[0].Rows[0]["CreditAmount"].ToString();
+                            string d_a = dbr.ds.Tables[0].Rows[0]["DebitAmount"].ToString();
+                            ld.Credit = this.HandleStringtoInt(c_a);
+                            ld.Debit = this.HandleStringtoInt(d_a);
+                            if (ld.Credit > 0)
+                            {
+                                if (ld.Credit > ld.Debit)
+                                {
+                                    ld.Balance = ld.Credit - ld.Debit;
+                                }
+                                else
+                                {
+                                    ld.Balance = 0;
+                                }
+                            }
+                            else
+                                ld.Balance = 0;
+                            
+
+                        
+                    }
+                    else
+                    {
+                        ld.Credit = 0;
+                        ld.Debit = 0;
+                        ld.Balance = 0;
+                    }
+                }
+                else
+                {
+                    ld.Credit = 0;
+                    ld.Debit = 0;
+                    ld.Balance = 0;
+                }
+                result.ledger = ld;
+                result.CommandType = dbr.CommandType;
+                result.Status = dbr.Status;
+                result.Message = dbr.Message;
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "SELECT";
+                result.Id = 0;
+                result.VoucherNumber = "";
+                throw e;
+
+
+            }
+            return result;
+        }
 
         public APIResult InsertLedger(Ledger input)
         {

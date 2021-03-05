@@ -31,7 +31,7 @@ namespace pdstest.Models
                 mail.Body = body;
                 mail.IsBodyHtml = true;
                 client.Send(mail);
-                tu = Tuple.Create(isSucess, "Mail Sent Succefully to this user.");
+                tu = Tuple.Create(isSucess, "Mail Sent Succefully to this user.Plese check in INBOX (or) SPAM after ten minutes");
 
             }
             catch(Exception e)

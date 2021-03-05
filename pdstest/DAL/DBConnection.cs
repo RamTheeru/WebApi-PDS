@@ -287,6 +287,26 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetTotalCreditamountinPreviousMonthForVoucher(int stationId)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select count(Credit),ifnull(Credit, 0) as CreditAmount from FinanceLedger " +
+                    " WHERE StationId = {0} AND MONTH(CreditDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)) " +
+                    " AND YEAR(CreditDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) AND Credit IS NOT NULL " +
+                    " AND VoucherNumber = NULL AND IsActive = 1; ", stationId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetCreditamountinCurrentMonthForVoucher(int stationId,string voucherDate)
         {
             string text = "";
@@ -778,6 +798,46 @@ namespace pdstest.DAL
 
             }
             return text;
+        }
+        public static string GetVoucherDetailsbyVoucherNumberQuery(string  vno)
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+
+                text = string.Format("Select * from Voucher where VoucherNumber = '{0}' ", vno);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+
+        }
+        public static string GetVoucherUpdateQuery(Voucher vouch)
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+
+                text = string.Format("UPDATE voucher SET PurposeOfPayment = '{0}',PartyName='{1}',VoucherDate='{2}',NetAmount={3} " +
+                    " , TotalAmount={4},TaxAmount={5},VoucherStatus='P',IsApproved=0  WHERE StationId = {6} AND VoucherNumber = '{7}'; "
+                    ,vouch.PurposeOfPayment,vouch.PartyName,vouch.V_Date,vouch.NetAmount,vouch.TotalAmount,vouch.TaxAmount,vouch.StationId,vouch.VoucherNumber);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+
         }
         public static string GetCreateSessionQuery()
         {

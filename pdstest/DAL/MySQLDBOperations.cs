@@ -966,6 +966,10 @@ namespace pdstest.DAL
             return dbr;
         }
 
+
+
+
+        #region Voucher related
         public DataBaseResult InsertVoucher(Voucher input)
         {
             string insertQuery = "";
@@ -1141,7 +1145,7 @@ namespace pdstest.DAL
                         }
                     }
 
-                        
+
 
                 }
 
@@ -1174,7 +1178,144 @@ namespace pdstest.DAL
             }
             return dbr;
         }
-        #region Voucher related
+        public DataBaseResult UpdateVoucher(Voucher input)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr.CommandType = "UPDATE";
+                string cmdtext = DBConnection.GetVoucherUpdateQuery(input);
+                DataSet ds = new DataSet();
+                dbr.ds = new DataSet();;
+                if (!string.IsNullOrEmpty(cmdtext))
+                {
+                    string otherVoucher = DBConnection.CheckVoucherExists(input.VoucherNumber, false, input.StationId, input.V_Date);
+                    bool otherExists = false;
+                    otherExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, otherVoucher);
+                    if (!otherExists)
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "You have to edit voucher details for current month only, You change any date within current month";
+                    }
+                    else
+                    {
+                        int count = 0;
+                        count = new BasicDBOps().ExceuteCommand(connectionString, cmdtext);
+                        if (count > 0)
+                        {
+
+                            dbr.Status = true;
+                            dbr.Message = "Voucher Updated Successfully and went for approval!!!!";
+                        }
+                        else
+                        {
+                            dbr.Status = false;
+                            dbr.Message = "Something went wrong!!";
+
+
+                        }
+                    }
+
+                }
+                else
+                {
+                    dbr.Status = false;
+                    dbr.Message = "Something went wrong, No Command to Insert!!";
+                }
+
+
+
+
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+
+            return dbr;
+        }
+        public DataBaseResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            string cmdText = "";
+            try
+            {
+                dbr.CommandType = "Select";
+                cmdText = DBConnection.GetVoucherDetailsbyVoucherNumberQuery(voucherNumber);
+                dbr.ds = new DataSet();
+                DataSet ds = new DataSet();
+                if (string.IsNullOrEmpty(cmdText) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, cmdText);
+                    int count = 0;
+                    count = ds.Tables[0].Rows.Count;
+                    if (ds.Tables.Count > 0 && count > 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "Record(s) retreived Successfully!!!";
+                        dbr.Status = true;
+
+                    }
+                    else if (count == 0)
+                    {
+                        dbr.ds = ds;
+                        dbr.Message = "No Records Found for this request!!";
+                        dbr.Status = true;
+
+
+                    }
+                    else
+                    {
+                        dbr.ds = new DataSet();
+                        dbr.Message = "Something went wrong!!!!";
+                        dbr.Status = false;
+                    }
+                }
+
+            }
+            catch (MySqlException e)
+            {
+
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+
+
+
+            }
+            return dbr;
+
+        }
         public int GetBalanceAmountForVoucherCreation(string  debitCmd,string creditCmd,string col)
         {
             int balance = 0;
@@ -1239,6 +1380,73 @@ namespace pdstest.DAL
             return result;
         }
         #endregion
+
+        public DataBaseResult GetPreviousCreditandDebitDetails(int stationId)
+        {
+            string query = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                int creditPrevAmnt = 0;
+                int debitPrevAmnt = 0;
+                dbr.CommandType = "SELECT";
+
+                if (string.IsNullOrEmpty(query) || string.IsNullOrEmpty(connectionString))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+
+                }
+                else
+                {
+                    query = DBConnection.GetTotalCreditamountinPreviousMonthForVoucher(stationId);
+                    creditPrevAmnt = this.GetBalanceAmountForVoucherCreation("", query, "CreditAmount");
+                    query = DBConnection.GetTotalDebitamountinPreviousMonthForVoucher(stationId);
+                    debitPrevAmnt = this.GetBalanceAmountForVoucherCreation(query, "", "DebitAmount");
+                    dbr.dt = new DataTable();
+                    dbr.dt.Clear();
+                    dbr.dt.Columns.Add("CreditAmount");
+                    dbr.dt.Columns.Add("DebitAmount");
+                    DataRow dr = dbr.dt.NewRow();
+                    dr["CreditAmount"] = creditPrevAmnt;
+                    dr["DebitAmount"] = debitPrevAmnt;
+                    dbr.dt.Rows.Add(dr);
+                    dbr.ds.Tables.Add(dbr.dt);
+                    dbr.Status = true;
+                    dbr.Message = "Details retreived";
+
+                }
+            }
+            catch (MySqlException e)
+            {
+                dbr.Id = 0;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Id = 0;
+                dbr.Message = e.Message;
+                dbr.EmployeeName = "";
+                dbr.Status = false;
+                throw e;
+
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+        }
         public DataBaseResult InsertLedger(Ledger input)
         {
             string insertQuery = "";

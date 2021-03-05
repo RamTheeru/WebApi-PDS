@@ -22,6 +22,15 @@ namespace pdstest.Models
         {
             return d.ToString("yyyy-MM-dd HH:mm:ss");
         }
+        public static string StringDateTimetoStringView(this string dt)
+        {
+            DateTime d = DateTime.Now;
+            if (!string.IsNullOrEmpty(dt))
+            {
+                d = dt.StringtoDateTime();
+            }
+            return d.ToString("MM/dd/yyyy");
+        }
         public static string DateTimetoStringShortDate(this DateTime d)
         {
             return d.ToString("yyyy-MM-dd");

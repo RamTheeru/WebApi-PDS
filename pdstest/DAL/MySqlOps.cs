@@ -73,6 +73,18 @@ namespace pdstest.DAL
         {
             return _ops.InsertVoucher(input);
         }
+        public DataBaseResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        {
+            return _ops.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+        }
+        public DataBaseResult UpdateVoucher(Voucher input)
+        {
+            return _ops.UpdateVoucher(input);
+        }
+        public DataBaseResult GetPreviousCreditandDebitDetails(int stationId)
+        {
+            return _ops.GetPreviousCreditandDebitDetails(stationId);
+        }
         public DataBaseResult InsertLedger(Ledger input)
         {
             return _ops.InsertLedger(input);

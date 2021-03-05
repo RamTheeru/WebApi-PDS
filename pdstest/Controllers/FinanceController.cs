@@ -72,6 +72,114 @@ namespace pdstest.Controllers
             //return new CustomResult(result);
 
         }
+        [HttpGet]
+        [Route("VoucherDetails")]
+        public IActionResult GetVoucherDetailsbyVoucherNumber(string voucherNumber)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(voucherNumber))
+                {
+                    result = logic.GetVoucherDetailsbyVoucherNumber(voucherNumber);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpPost]
+        [Route("UpdateVoucher")]
+        public IActionResult UpdateVoucher(Voucher obj)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (obj.StationId > 0 && obj.VoucherId > 0 && !(string.IsNullOrEmpty(obj.VoucherNumber)) && !(string.IsNullOrEmpty(obj.V_Date)))
+                {
+                    result = logic.UpdateVoucher(obj);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "UPDATE";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "UPDATE";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpGet]
+        [Route("PreviousMonthCredit")]
+        public IActionResult GetPreviouMonthCredit(int stationId)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (stationId > 0)
+                {
+                    result = logic.GetPreviousCreditandDebitDetails(stationId);
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Select";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
 
         [HttpPost]
         [Route("InsertCredit")]
