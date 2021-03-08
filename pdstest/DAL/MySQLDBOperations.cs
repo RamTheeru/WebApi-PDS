@@ -2877,7 +2877,7 @@ namespace pdstest.DAL
 
 
         }
-        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false)
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false, int currentMonth = 0)
         {
             Dictionary<string, string> getSelectQuery = new Dictionary<string, string>();
             DataBaseResult dbr = new DataBaseResult();
@@ -2886,7 +2886,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Select";
-                getSelectQuery = DBConnection.GetRecordsforPagination(stationId, table,vstartDate,vEndDate,page,pagesize,status,isEmployee);
+                getSelectQuery = DBConnection.GetRecordsforPagination(stationId, table,vstartDate,vEndDate,page,pagesize,status,isEmployee,currentMonth);
 
                 if (string.IsNullOrEmpty(getSelectQuery["main"]) || string.IsNullOrEmpty(connectionString))
                 {

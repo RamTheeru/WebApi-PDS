@@ -61,9 +61,9 @@ namespace pdstest.DAL
         {
             return _ops.GetLoginUserInfo(usertypeId, employeeId);
         }
-        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false)
+        public DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false, int currentMonth = 0)
         {
-            return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status,isEmployee);
+            return _ops.GetPaginationRecords(stationId, table, vstartDate, vEndDate, page, pagesize, status,isEmployee,currentMonth);
         }
         public bool CheckIfSessionExists(string userName, int employeeId, int userTypeId)
         {

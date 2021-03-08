@@ -112,7 +112,7 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public  static Dictionary<string, string> GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int? page=1, int? pagesize=5, string status="",bool isEmployee=false)
+        public  static Dictionary<string, string> GetRecordsforPagination(int stationId,string table,string vstartDate,string vEndDate="", int? page=1, int? pagesize=5, string status="",bool isEmployee=false,int currentMonth=0)
         {
             /*SELECT* FROM Constants
                         LIMIT 10/*range , 5/*pagesize ;
@@ -168,13 +168,22 @@ namespace pdstest.DAL
                         "<= '{1}');", stationId, vstartDate));
 
                     }
-                    else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vEndDate))
+                    else if (table.ToLower() == "ledger" && currentMonth > 0)
                     {
-                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
-                              "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, ps));
-                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
-                          "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
+                        DateTime dtvalue = new DateTime(DateTime.Now.Year, currentMonth, 1);
+                        string cdat = dtvalue.DateTimetoString();
+                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
                     }
+                    //else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vEndDate))
+                    //{
+                    //    text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
+                    //          "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, ps));
+                    //    text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
+                    //      "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
+                    //}
                     else if (table.ToLower() == "daemployees")
                     {
                         text.Add("main", string.Format("SELECT * FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));

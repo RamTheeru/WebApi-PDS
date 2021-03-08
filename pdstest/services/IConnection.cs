@@ -19,7 +19,7 @@ namespace pdstest.services
         DataBaseResult GetLoginUserInfo(string username, string password);
         DataBaseResult GetLoginUserInfo(int usertypeId, int employeeId);
         DataBaseResult ApproveUser(int registerId,string status,string empCode="",int pId = 0);
-        DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false);
+        DataBaseResult GetPaginationRecords(int stationId, string table, string vstartDate, string vEndDate = "", int? page = 1, int? pagesize = 5, string status = "", bool isEmployee = false, int currentMonth = 0);
         DataBaseResult InsertVoucher(Voucher input);
         DataBaseResult GetVoucherDetailsbyVoucherNumber(int voucherId);
         DataBaseResult UpdateVoucher(Voucher input);

@@ -259,12 +259,18 @@ namespace pdstest.BLL
                 result.userInfo = new UserType();
                 int ps = input.pagesize == null || input.pagesize == 0 ? 5 : Convert.ToInt32(input.pagesize);
                 int p = input.page == null || input.page == 0 ? 1 : Convert.ToInt32(input.page);
+                if(input.table.ToLower()== "ledger")
+                {
+                    dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate, input.page, input.pagesize, input.status,false,input.currentmonth);
+                }
+                else
+                    dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate, input.page, input.pagesize, input.status);
                 //if (input.page == 0)
                 //    input.page = 1;
                 //if (input.pagesize == 0)
                 //    input.pagesize = 5;
-                dbr = ops.GetPaginationRecords(input.stationId, input.table, input.vstartDate, input.vEndDate, input.page, input.pagesize, input.status);
-                
+
+
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)
