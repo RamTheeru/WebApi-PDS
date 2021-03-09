@@ -188,7 +188,8 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                obj.Cred_Date = DateTime.Now.ToShortDateString();
+              //  obj.Cred_Date = DateTime.Now.ToShortDateString();
+                obj.Cred_Date = DateTime.Now.DateTimetoString();
                 if (obj.StationId > 0 && obj.Credit>0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
                 {
                     result = logic.InsertLedger(obj);
