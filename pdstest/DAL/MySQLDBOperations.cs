@@ -1071,7 +1071,8 @@ namespace pdstest.DAL
 
                             param = new MySqlParameter("@VoucherDate", input.V_Date);
                             param.Direction = ParameterDirection.Input;
-                            param.MySqlDbType = MySqlDbType.DateTime;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 30;
                             cmd.Parameters.Add(param);
 
                             param = new MySqlParameter("@PurposeOfPayment", input.PurposeOfPayment);
@@ -1491,7 +1492,8 @@ namespace pdstest.DAL
 
                             param = new MySqlParameter("@CreditDate", input.Cred_Date);
                             param.Direction = ParameterDirection.Input;
-                            param.MySqlDbType = MySqlDbType.DateTime;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 30;
                             cmd.Parameters.Add(param);
 
 
