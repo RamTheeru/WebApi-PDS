@@ -1391,7 +1391,8 @@ namespace pdstest.DAL
                 int creditPrevAmnt = 0;
                 int debitPrevAmnt = 0;
                 dbr.CommandType = "SELECT";
-
+                dbr.ds = new DataSet();
+                query = DBConnection.GetTotalCreditamountinPreviousMonthForVoucher(stationId);
                 if (string.IsNullOrEmpty(query) || string.IsNullOrEmpty(connectionString))
                 {
                     dbr.Id = 0;
@@ -1402,7 +1403,7 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    query = DBConnection.GetTotalCreditamountinPreviousMonthForVoucher(stationId);
+                   
                     creditPrevAmnt = this.GetBalanceAmountForVoucherCreation("", query, "CreditAmount");
                     query = DBConnection.GetTotalDebitamountinPreviousMonthForVoucher(stationId);
                     debitPrevAmnt = this.GetBalanceAmountForVoucherCreation(query, "", "DebitAmount");

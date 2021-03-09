@@ -283,8 +283,8 @@ namespace pdstest.DAL
             try
             {
                 text = string.Format("select 0 as c,coalesce(SUM(Debit),0) as DebitAmount from FinanceLedger " +
-                    " WHERE StationId = {0} AND MONTH(VoucherDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)) " +
-                    " AND YEAR(VoucherDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) " +
+                    " WHERE StationId = {0} AND MONTH(VoucherDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) " +
+                    " AND YEAR(VoucherDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) " +
                     " AND IsActive = 1 Group BY StationId,VoucherDate; ", stationId);
 
             }
@@ -303,8 +303,8 @@ namespace pdstest.DAL
             try
             {
                 text = string.Format("select count(Credit),ifnull(Credit, 0) as CreditAmount from FinanceLedger " +
-                    " WHERE StationId = {0} AND MONTH(CreditDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)) " +
-                    " AND YEAR(CreditDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) AND Credit IS NOT NULL " +
+                    " WHERE StationId = {0} AND MONTH(CreditDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) " +
+                    " AND YEAR(CreditDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND Credit IS NOT NULL " +
                     " AND VoucherNumber = NULL AND IsActive = 1; ", stationId);
 
             }
