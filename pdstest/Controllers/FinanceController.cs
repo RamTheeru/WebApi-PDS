@@ -274,7 +274,7 @@ namespace pdstest.Controllers
                 input.table = "ledger";
                 if (input.status != null)
                     input.status = input.status.CleanString();
-                if (input.stationId == 0 || input.vstartDate == null)
+                if (input.stationId == 0)
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;
