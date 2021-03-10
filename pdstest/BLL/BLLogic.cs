@@ -318,29 +318,40 @@ namespace pdstest.BLL
                         for (int i = 0; i < count; i++)
                         {
                             Ledger ledg = new Ledger();
-                            ledg.IsApproved = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsApproved"]);
-                            int stationid = 0;
+                           // ledg.IsApproved = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsApproved"]);
+                           // int stationid = 0;
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
-                            bool success = int.TryParse(sId, out stationid);
-                            ledg.StationId = (success == true) ? stationid : 0;
-                            int debit = 0;
+                            //bool success = int.TryParse(sId, out stationid);
+                            //ledg.StationId = (success == true) ? stationid : 0;
+                            ledg.StationId = this.HandleStringtoInt(sId);
+
+                          //  int debit = 0;
                             string deb = dbr.ds.Tables[0].Rows[i]["Debit"].ToString();
-                            success = int.TryParse(deb, out debit);
-                            ledg.Debit = (success == true) ? debit : 0;
-                            int credit = 0;
+                            //success = int.TryParse(deb, out debit);
+                            //ledg.Debit = (success == true) ? debit : 0;
+                            ledg.Debit = this.HandleStringtoInt(deb);
+                           // int credit = 0;
                             string cred = dbr.ds.Tables[0].Rows[i]["Credit"].ToString();
-                            success = int.TryParse(cred, out credit);
-                            ledg.Credit = (success == true) ? credit : 0;
+                            //success = int.TryParse(cred, out credit);
+                            //ledg.Credit = (success == true) ? credit : 0;
+                            ledg.Credit = this.HandleStringtoInt(cred);
                             ledg.VoucherNumber = dbr.ds.Tables[0].Rows[i]["VoucherNumber"].ToString();
                             ledg.VoucherStatus = dbr.ds.Tables[0].Rows[i]["VoucherStatus"].ToString();
-                            int ledgerid = 0;
+                            //int ledgerid = 0;
                             string lId = dbr.ds.Tables[0].Rows[i]["Id"].ToString();
-                            success = int.TryParse(lId, out ledgerid);
-                            ledg.Id = (success == true) ? ledgerid : 0;
+                            //success = int.TryParse(lId, out ledgerid);
+                            //ledg.Id = (success == true) ? ledgerid : 0;
+                            ledg.Id = this.HandleStringtoInt(lId);
                             DateTime vouch_Date;
                             string vDate = dbr.ds.Tables[0].Rows[i]["VoucherDate"].ToString();
-                            success = DateTime.TryParse(vDate, out vouch_Date);
+                            bool success = DateTime.TryParse(vDate, out vouch_Date);
                             ledg.VoucherDate = (success == true) ? vouch_Date : new DateTime();
+                            ledg.V_Date = (success == true) ? ledg.VoucherDate.DateTimetoStringforView():"--";
+                            DateTime cred_Date;
+                            string cDate = dbr.ds.Tables[0].Rows[i]["VoucherDate"].ToString();
+                             success = DateTime.TryParse(cDate, out cred_Date);
+                            ledg.CreditDate = (success == true) ? cred_Date : new DateTime();                       
+                            ledg.Cred_Date = (success == true) ? ledg.CreditDate.DateTimetoStringforView():"--";
                             ledg.IsActive = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsActive"]);
                             ledg.Particulars = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
                             ledgs.Add(ledg);
@@ -535,8 +546,11 @@ namespace pdstest.BLL
         public int HandleStringtoInt(string str)
         {
             int result = 0;
-            bool success = int.TryParse(str, out result);
-            result = (success == true) ? result : 0;
+            if (!string.IsNullOrEmpty(str))
+            {
+                bool success = int.TryParse(str, out result);
+                result = (success == true) ? result : 0;
+            }
             return result;
         }
         public APIResult GetCDADeliveryDetailsbyStation(int stationId)
