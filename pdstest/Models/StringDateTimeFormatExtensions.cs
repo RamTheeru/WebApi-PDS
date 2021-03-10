@@ -24,7 +24,7 @@ namespace pdstest.Models
         }
         public static string DateTimetoStringforView(this DateTime d)
         {
-            return d.ToString("yyyy-MM-dd");
+            return d.ToString("MM/dd/yyyy");
         }
         public static string StringDateTimetoStringView(this string dt)
         {
