@@ -348,7 +348,7 @@ namespace pdstest.BLL
                             ledg.VoucherDate = (success == true) ? vouch_Date : new DateTime();
                             ledg.V_Date = (success == true) ? ledg.VoucherDate.DateTimetoStringforView():"--";
                             DateTime cred_Date;
-                            string cDate = dbr.ds.Tables[0].Rows[i]["VoucherDate"].ToString();
+                            string cDate = dbr.ds.Tables[0].Rows[i]["CreditDate"].ToString();
                              success = DateTime.TryParse(cDate, out cred_Date);
                             ledg.CreditDate = (success == true) ? cred_Date : new DateTime();                       
                             ledg.Cred_Date = (success == true) ? ledg.CreditDate.DateTimetoStringforView():"--";
