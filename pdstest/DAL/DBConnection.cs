@@ -381,7 +381,7 @@ namespace pdstest.DAL
             {
                 if (isCreditValidate)
                 {
-                    text = string.Format("select  COUNT(*) from FinanceLedger WHERE StationId = {0} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL AND VoucherNumber = NULL AND IsActive = 1;", stationId, voucherDate);
+                    text = string.Format("select  COUNT(*) from FinanceLedger WHERE StationId = {0} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL AND CreditDate IS NOT NULL AND IsActive = 1;", stationId, voucherDate);
                 }
                 else
                 {
