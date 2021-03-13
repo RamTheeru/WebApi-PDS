@@ -9,6 +9,7 @@ namespace pdstest.services
    public interface IWorker
     {
          Task DoWork(CancellationToken token);
-        Task SheduleBackUp(CancellationToken token);
+        void SheduleBackUp(CancellationToken token);
+            // Task SheduleBackUp(CancellationToken token);
     }
 }

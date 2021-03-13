@@ -21,12 +21,12 @@ namespace pdstest.Models
             this.logger = logger;
             this.configuration = config;
         }
-        public async Task SheduleBackUp(CancellationToken token)
+        public  void SheduleBackUp(CancellationToken token)
         {
           
             string pathbackup = configuration["backuppath"];
-            while (!token.IsCancellationRequested)
-            {
+            //while (!token.IsCancellationRequested)
+            //{
                 this.WriteToFile("=================================MYSQL BACUP SERVICE STARTED==================================", true);
                 this.WriteToFile("Started taking backup.......", true);
                 bool isError = false;
@@ -77,8 +77,8 @@ namespace pdstest.Models
                 this.WriteToFile("===============================================END=================================================",true);
                 //// await Task.Delay((((1000 * 60) * 60 )* 24 )* 7);
                // TimeSpan span = new TimeSpan(7, 0, 0, 0);
-               await Task.Delay(TimeSpan.FromDays(7));
-            }
+              // await Task.Delay(TimeSpan.FromDays(7));
+            //}
         }
         public async Task DoWork(CancellationToken token)
         {
