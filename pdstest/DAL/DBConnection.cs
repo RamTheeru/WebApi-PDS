@@ -226,9 +226,11 @@ namespace pdstest.DAL
         public static string ClearInactiveSessions()
         {
             string text = "";
+            DateTime dt = DateTime.Now;
             try
             {
-                text = "Select COUNT(*) from UserSessions where  Now()  not between StartDate and EndDate;";
+               string d = dt.GetIndianDateTimeNow().DateTimetoString();
+                text = string.Format("Select COUNT(*) from UserSessions where  '{0}'  not between StartDate and EndDate;",d);
 
             }
             catch (Exception e)

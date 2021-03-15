@@ -2985,7 +2985,9 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    string query = "DELETE from UserSessions where  Now()  not between StartDate and EndDate;";
+                    DateTime dt = DateTime.Now;
+                    string d = dt.GetIndianDateTimeNow().DateTimetoString();
+                    string query = string.Format("DELETE from UserSessions where '{0}'  not between StartDate and EndDate;", d);
                     count = new BasicDBOps().ExceuteCommand(connectionString, query);
                 }
 
