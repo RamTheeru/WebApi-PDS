@@ -1617,8 +1617,8 @@ namespace pdstest.DAL
                             param.MySqlDbType = MySqlDbType.Int32;
                             cmd.Parameters.Add(param);
 
-                            input.SessionStartDate = DateTime.Now.DateTimetoString();
-                            input.SessionEndDate = DateTime.Now.AddMinutes(20).DateTimetoString();
+                            input.SessionStartDate = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
+                            input.SessionEndDate = DateTime.Now.GetIndianDateTimeNow().AddMinutes(20).DateTimetoString();
 
                             input.StartDate = input.SessionStartDate.StringtoDateTime();
                             input.EndDate = input.SessionEndDate.StringtoDateTime();

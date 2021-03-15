@@ -189,7 +189,7 @@ namespace pdstest.Controllers
             try
             {
               //  obj.Cred_Date = DateTime.Now.ToShortDateString();
-                obj.Cred_Date = DateTime.Now.DateTimetoString();
+                obj.Cred_Date = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
                 if (obj.StationId > 0 && obj.Credit>0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
                 {
                     result = logic.InsertLedger(obj);

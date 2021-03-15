@@ -251,7 +251,7 @@ namespace pdstest.Controllers
                     issuer: configuration["Jwt:Issuer"],
                     audience: configuration["Jwt:Issuer"],
                     claims,
-                    expires: DateTime.Now.AddMinutes(20),
+                    expires: DateTime.Now.GetIndianDateTimeNow().AddMinutes(20),
                     signingCredentials: credentials);
 
                 var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);

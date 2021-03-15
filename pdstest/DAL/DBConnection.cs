@@ -117,8 +117,8 @@ namespace pdstest.DAL
             /*SELECT* FROM Constants
                         LIMIT 10/*range , 5/*pagesize ;
             event_date BETWEEN '2018-01-01 12:00:00' AND '2018-01-01 23:30:00';*/
-            DateTime dt = DateTime.Now;
-            DateTime dt2 = DateTime.Now;
+            DateTime dt = DateTime.Now.GetIndianDateTimeNow();
+            DateTime dt2 = DateTime.Now.GetIndianDateTimeNow();
             Dictionary<string, string> text = new Dictionary<string, string>();
             int range = 0;
             int ps = pagesize == null || pagesize==0 ? 5 :Convert.ToInt32(pagesize);
@@ -170,7 +170,7 @@ namespace pdstest.DAL
                     }
                     else if (table.ToLower() == "ledger" && currentMonth > 0)
                     {
-                        DateTime dtvalue = new DateTime(DateTime.Now.Year, currentMonth, 1);
+                        DateTime dtvalue = new DateTime(DateTime.Now.GetIndianDateTimeNow().Year, currentMonth, 1);
                         string cdat = dtvalue.DateTimetoString();
                         text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
                     " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
@@ -245,7 +245,7 @@ namespace pdstest.DAL
 
             try
             {
-                string currentDate = DateTime.Now.DateTimetoString();
+                string currentDate = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
                 ///DateTime nw = currentDate.StringtoDateTime();
                 text = string.Format("SELECT EmployeeId,UserTypeId,UserName,Token FROM UserSessions where UserName = '{0}' AND UserTypeId = {1} AND IsActive=1" +
                     " AND EmployeeId = {2}  AND StartDate <= '{3}' AND  EndDate >= '{3}' LIMIT 1;", info.User, info.UserTypeId,info.EmployeeId,currentDate);
@@ -534,8 +534,8 @@ namespace pdstest.DAL
 
             try
             {
-                string SessionStartDate = DateTime.Now.DateTimetoString();
-                string SessionEndDate = DateTime.Now.AddMinutes(20).DateTimetoString();
+                string SessionStartDate = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
+                string SessionEndDate = DateTime.Now.GetIndianDateTimeNow().AddMinutes(20).DateTimetoString();
 
                 //DateTime StartDate = SessionStartDate.StringtoDateTime();
                 //DateTime EndDate = SessionEndDate.StringtoDateTime();
@@ -695,9 +695,9 @@ namespace pdstest.DAL
             string cmdText = "";
             try
             {
-                DateTime d = DateTime.Now;
+                DateTime d = DateTime.Now.GetIndianDateTimeNow();
                 StringBuilder insertCmd = new StringBuilder();
-                insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,TotalAmount,IsActive) ");
+                insertCmd.Append("Insert into CDADelivery(StationId,CurrentMonth,DeliveryCount,DeliveryRate,PetrolAllowanceRate,EmployeeId,Incentives,TotalAmount,CreatedDate,IsActive) ");
                 insertCmd.AppendLine(" VALUES(");
                 insertCmd.Append(cdd.StationId.ToString() + ",");
                 insertCmd.Append(cdd.CurrentMonth.ToString() + ",");
@@ -706,7 +706,8 @@ namespace pdstest.DAL
                 insertCmd.Append(cdd.PetrolAllowance.ToString() + ",");
                 insertCmd.Append(cdd.EmployeeId.ToString() + ",");
                 insertCmd.Append(cdd.Incentive.ToString() + ",");
-                insertCmd.Append(cdd.TotalAmount.ToString() + ",");
+                insertCmd.Append(cdd.TotalAmount.ToString() + ","); 
+                insertCmd.Append(DateTime.Now.GetIndianDateTimeNow().DateTimetoString() + ",");
                 insertCmd.Append("1 )");
                 cmdText = insertCmd.ToString();
 

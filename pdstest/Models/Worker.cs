@@ -30,7 +30,7 @@ namespace pdstest.Models
                 this.WriteToFile("=================================MYSQL BACUP SERVICE STARTED==================================", true);
                 this.WriteToFile("Started taking backup.......", true);
                 bool isError = false;
-                DateTime d = DateTime.Now;
+                DateTime d = DateTime.Now.GetIndianDateTimeNow();
                 string dateString = d.ToString("yyyyMMddhhmmss");
                 string filename = "Backup_" + dateString + ".sql";
                 string fullpath = Path.Combine(pathbackup, filename);
@@ -52,7 +52,7 @@ namespace pdstest.Models
                 else
                 {
                     this.WriteToFile("File already existed...unable to take backup...trying again.", true);
-                    DateTime d2 = DateTime.Now;
+                    DateTime d2 = DateTime.Now.GetIndianDateTimeNow();
                     string dateString2 = d2.ToString("yyyyMMddhhmmss");
                     string filename2 = "Backup_" + dateString2 + ".sql";
                     string fullpath2 = Path.Combine(pathbackup, filename2);
@@ -164,7 +164,7 @@ namespace pdstest.Models
                 if (forBackup)
                 {
                     if (!text.StartsWith("="))
-                        writer.WriteLine(string.Format(text + " at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
+                        writer.WriteLine(string.Format(text + " at {0}", DateTime.Now.GetIndianDateTimeNow().ToString("dd/MM/yyyy hh:mm:ss tt")));
                     else
                         writer.WriteLine(text);
                     writer.Close();
@@ -172,7 +172,7 @@ namespace pdstest.Models
                 else
                 {
                     if (!text.StartsWith("="))
-                        writer.WriteLine(string.Format(text + " at {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")));
+                        writer.WriteLine(string.Format(text + " at {0}", DateTime.Now.GetIndianDateTimeNow().ToString("dd/MM/yyyy hh:mm:ss tt")));
                     else
                         writer.WriteLine(text);
                     writer.Close();

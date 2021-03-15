@@ -8,10 +8,16 @@ namespace pdstest.Models
 {
     public static class StringDateTimeFormatExtensions
     {
+        private static TimeZoneInfo India_Standard_Time = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         public static DateTime ParseMyFormatDateTime(this string s)
         {
             var culture = System.Globalization.CultureInfo.CurrentCulture;
             return DateTime.ParseExact(s, "MM/dd/yyyy hh:mm:ss", culture);
+        }
+        public static DateTime GetIndianDateTimeNow(this DateTime dt)
+        {
+            dt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, India_Standard_Time);
+            return dt;
         }
         public static DateTime StringtoDateTime(this string s)
         {
@@ -28,7 +34,7 @@ namespace pdstest.Models
         }
         public static string StringDateTimetoStringView(this string dt)
         {
-            DateTime d = DateTime.Now;
+            DateTime d = DateTime.Now.GetIndianDateTimeNow();
             if (!string.IsNullOrEmpty(dt))
             {
                 d = dt.StringtoDateTime();
