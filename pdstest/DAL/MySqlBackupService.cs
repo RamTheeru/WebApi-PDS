@@ -29,7 +29,7 @@ namespace pdstest.DAL
         public  Task StartAsync(CancellationToken cancellationToken)
         {
             // throw new NotImplementedException();
-            timer = new Timer(x=>this.DoWork(cancellationToken), null, TimeSpan.Zero, TimeSpan.FromDays(6));
+            timer = new Timer(x=>this.DoWork(cancellationToken), null, TimeSpan.Zero, TimeSpan.FromDays(1));
             return Task.CompletedTask;
         }
 
