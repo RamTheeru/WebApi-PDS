@@ -232,7 +232,7 @@ namespace pdstest.Controllers
                     input.status = input.status.CleanString();
                 if (input.vEndDate == "string")
                     input.vEndDate = null;
-                if (input.stationId == 0 || string.IsNullOrEmpty(input.vstartDate) || string.IsNullOrEmpty(input.status))
+                if (input.stationId == 0 || string.IsNullOrEmpty(input.vEndDate) || string.IsNullOrEmpty(input.status))
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;
@@ -241,15 +241,15 @@ namespace pdstest.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, result);
 
                 }
-                else if (input.status == "string" || input.vstartDate == "string")
-                {
-                    result.Message = "Invalid Input!!!";
-                    result.Status = false;
-                    result.CommandType = "SELECT";
-                    result.EmployeeName = "";
-                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                //else if (input.status == "string" || input.vstartDate == "string")
+                //{
+                //    result.Message = "Invalid Input!!!";
+                //    result.Status = false;
+                //    result.CommandType = "SELECT";
+                //    result.EmployeeName = "";
+                //    return StatusCode(StatusCodes.Status400BadRequest, result);
 
-                }
+                //}
                 result = logic.GetPagnationRecords(input);
 
             }
