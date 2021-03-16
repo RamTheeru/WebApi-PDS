@@ -232,7 +232,7 @@ namespace pdstest.Controllers
                     input.status = input.status.CleanString();
                 if (input.vEndDate == "string")
                     input.vEndDate = null;
-                if (input.stationId == 0 || string.IsNullOrEmpty(input.vEndDate) || string.IsNullOrEmpty(input.status))
+                if (input.stationId == 0 || string.IsNullOrEmpty(input.vEndDate))
                 {
                     result.Message = "Invalid Input!!!";
                     result.Status = false;
