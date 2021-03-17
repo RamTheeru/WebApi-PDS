@@ -93,7 +93,7 @@ namespace pdstest.DAL
             return text;
         }
 
-        public static string GetRegisteredUser(int registerId)
+        public static string GetRegisteredUser(int empId)
         {
             string text = "";
 
@@ -101,7 +101,7 @@ namespace pdstest.DAL
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
    
-                    text = string.Format("select * from register where IsActive = 1 and RegisterId = {0}", registerId);
+                    text = string.Format("select * from Employees where IsActive = 1 and EmployeeId = {0}", empId);
 
             }
             catch (Exception e)

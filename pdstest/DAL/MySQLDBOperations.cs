@@ -3648,7 +3648,7 @@ namespace pdstest.DAL
 
         #endregion
 
-        public DataBaseResult GetRegisteredUser(int registerId)
+        public DataBaseResult GetRegisteredUser(int empId)
         {
             string getRegisteredUser = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -3657,7 +3657,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "Select";
-                getRegisteredUser = DBConnection.GetRegisteredUser(registerId);
+                getRegisteredUser = DBConnection.GetRegisteredUser(empId);
 
                 if (string.IsNullOrEmpty(getRegisteredUser) || string.IsNullOrEmpty(connectionString))
                 {
@@ -3828,10 +3828,10 @@ namespace pdstest.DAL
            // MySqlCommand cmd = new MySqlCommand();
             try
             {
-                dbr.Id = registerId;
+              //  dbr.Id = registerId;
                 dbr.CommandType = status=="a"?"UPDATE":"DELETE";
                 getApproveUser = DBConnection.ApproveUser(registerId,status);
-
+                dbr.Id = 0;
                 if (string.IsNullOrEmpty(getApproveUser) || string.IsNullOrEmpty(connectionString))
                 {
                     dbr.Id = 0;
@@ -3855,6 +3855,23 @@ namespace pdstest.DAL
                                 int res = new BasicDBOps().ExceuteCommand(connectionString, getApproveUser);
                                 if (res > 0)
                                 {
+                                    if(status == "a")
+                                    {
+                                        string txtCmd = string.Format("select EmployeeId from employees WHERE EmpCode='{0}' AND IsActive=1;", empCode);
+                                        DataSet d = new DataSet();
+                                        d = new BasicDBOps().GetMultipleRecords(connectionString, txtCmd);
+                                        if(d.Tables.Count > 0)
+                                        {
+                                            if(d.Tables[0].Rows.Count > 0)
+                                            {
+                                                int r = 0;
+                                                string eID = d.Tables[0].Rows[0]["EmployeeId"].ToString();
+                                                bool success = int.TryParse(eID, out r);
+                                                dbr.Id = (success == true) ? r : 0;
+                                    
+                                            }
+                                        }
+                                    }
                                     dbr.Message = status == "a" ? "User Approved Successfully!!!" : "User Removed Successfully!!";
                                     dbr.Status = true;
 

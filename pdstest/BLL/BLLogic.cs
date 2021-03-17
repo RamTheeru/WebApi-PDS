@@ -193,16 +193,16 @@ namespace pdstest.BLL
             return result;
         }
 
-        public RegisterEmployee GetRegisteredUser(int registerId)
+        public Employee GetRegisteredUser(int empId)
         {
             //APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
-            RegisterEmployee reg = new RegisterEmployee();
+            Employee reg = new Employee();
             try
             {
                 dbr.ds = new System.Data.DataSet();
               //  result.registerEmployee = new RegisterEmployee();
-                dbr = ops.GetRegisteredUser(registerId);
+                dbr = ops.GetRegisteredUser(empId);
                
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -210,12 +210,12 @@ namespace pdstest.BLL
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        
-                        reg.RegisterId = Convert.ToInt32(dbr.ds.Tables[0].Rows[i]["RegisterId"]);
+                        string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
+                        reg.RegisterId = this.HandleStringtoInt(eId);
                         reg.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                         reg.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                         reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
-                        reg.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
+                        //reg.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
                         reg.State = dbr.ds.Tables[0].Rows[i]["StateCode"].ToString();
                         reg.LocationName = dbr.ds.Tables[0].Rows[i]["LocationName"].ToString();
                         reg.Email = dbr.ds.Tables[0].Rows[i]["Email"].ToString();
@@ -233,7 +233,7 @@ namespace pdstest.BLL
                     //result.Status = dbr.Status;
                     //result.CommandType = dbr.CommandType;
 
-                    reg = new RegisterEmployee();
+                    reg = new Employee();
                 }
 
 
@@ -241,7 +241,7 @@ namespace pdstest.BLL
             }
             catch 
             {
-                reg = new RegisterEmployee();
+                reg = new Employee();
                // throw e;
 
             }
@@ -1060,13 +1060,13 @@ namespace pdstest.BLL
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.ApproveUser(registerId,status,empCode,pId);
                 result.Message = dbr.Message;
-                if (status == "a" && dbr.Status == true)
+                if (status == "a" && dbr.Status == true && dbr.Id > 0)
                 {
-                    result.registerEmployee = new RegisterEmployee();
-                    result.registerEmployee = this.GetRegisteredUser(registerId);
-                    if(result.registerEmployee != null)
+                    result.employee = new Employee();
+                    result.employee = this.GetRegisteredUser(dbr.Id);
+                    if(result.employee != null)
                     {
-                        if(!string.IsNullOrEmpty(result.registerEmployee.Email) && result.registerEmployee.RegisterId > 0)
+                        if(!string.IsNullOrEmpty(result.employee.Email) && result.employee.RegisterId > 0)
                         {
                             try
                             {
@@ -1076,11 +1076,11 @@ namespace pdstest.BLL
                                 string readFile = reader.ReadToEnd();
                                 string myString = "";
                                 myString = readFile;
-                                myString = myString.Replace("https://www.kleenandshine.com/#/ResetPassword/<rid>", "https://www.kleenandshine.com/#/ResetPassword/" + result.registerEmployee.RegisterId);
+                                myString = myString.Replace("https://www.kleenandshine.com/#/ResetPassword/<rid>", "https://www.kleenandshine.com/#/ResetPassword/" + result.employee.EmployeeId);
                                 //myString = myString.Replace("$$CompanyName$$", "Dasari Group");
                                 //myString = myString.Replace("$$Email$$", "suresh@gmail.com");
                                 //myString = myString.Replace("$$Website$$", "http://www.aspdotnet-suresh.com");
-                                verify = EMAIL.SendEmail("theeru999@gmail.com", result.registerEmployee.Email, myString, "USER REQUEST APPROVED");
+                                verify = EMAIL.SendEmail("theeru999@gmail.com", result.employee.Email, myString, "USER REQUEST APPROVED");
                             } 
                             catch(Exception e)
                             {
