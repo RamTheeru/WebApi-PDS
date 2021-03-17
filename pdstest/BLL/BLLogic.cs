@@ -1336,6 +1336,33 @@ namespace pdstest.BLL
             return result;
 
         }
+        public APIResult ApproveVoucher(int voucherId)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.ApproveVoucher(voucherId);
+                result.Message = dbr.Message;
+                result.Status = dbr.Status;
+                result.CommandType = dbr.CommandType;
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "UPDATE";
+                result.Id = 0;
+                result.VoucherNumber = "";
+                throw e;
+
+
+            }
+            return result;
+
+        }
+
         public APIResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
             APIResult result = new APIResult();

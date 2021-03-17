@@ -1179,6 +1179,83 @@ namespace pdstest.DAL
             }
             return dbr;
         }
+        public DataBaseResult ApproveVoucher(int voucherId)
+        {
+            string getupdateInfo = "";
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                dbr.CommandType = "UPDATE";
+                getupdateInfo = DBConnection.ApproveVoucher(voucherId);
+
+                if (string.IsNullOrEmpty(getupdateInfo) || string.IsNullOrEmpty(getupdateInfo))
+                {
+                    dbr.Id = 0;
+                    dbr.Message = "Something Wrong with getting DB Commands!!";
+                    dbr.EmployeeName = "";
+                    dbr.Status = false;
+                    dbr.dt = new DataTable();
+                    dbr.ds = new DataSet();
+                }
+                else
+                {
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
+                    dbr.ds = new DataSet();
+                    // sda = new MySqlDataAdapter(getUserInfo, conn);
+                    //sda.SelectCommand.CommandType = CommandType.Text;
+                    //sda.Fill(ds);
+                    //cmd = new MySqlCommand(getUserInfo, conn);
+                    //DataTable temp = new DataTable();
+                    //MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    //adapter.Fill(ds);
+
+                    //ds.Tables.Add(temp);
+                    int count = 0;
+                    count = new BasicDBOps().ExceuteCommand(connectionString, getupdateInfo);
+                    if (count > 0)
+                    {
+
+                        dbr.Status = true;
+                        dbr.Message = "Voucher Approved Successfully!!!!";
+                    }
+                    else
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "Something went wrong!!";
+
+
+                    }
+
+
+                }
+
+
+            }
+            catch (MySqlException e)
+            {
+                dbr.Status = false;
+                dbr.Message = "Something wrong with database : " + e.Message;
+                throw e;
+
+            }
+            catch (Exception e)
+            {
+                dbr.Message = e.Message;
+                dbr.Status = false;
+                throw e;
+            }
+            finally
+            {
+                cmd.Dispose();
+
+
+            }
+            return dbr;
+
+        }
         public DataBaseResult UpdateVoucher(Voucher input)
         {
             DataBaseResult dbr = new DataBaseResult();

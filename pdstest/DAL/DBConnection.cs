@@ -278,6 +278,25 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string ApproveVoucher(int voucherId)
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+                text = string.Format("update  Voucher SET IsApproved=1 ,VoucherStatus='A' where  VoucherId = {0}", voucherId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetTotalDebitamountinPreviousMonthForVoucher(int stationId)
         {
             string text = "";
