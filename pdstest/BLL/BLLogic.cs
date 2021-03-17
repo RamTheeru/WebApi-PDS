@@ -302,8 +302,10 @@ namespace pdstest.BLL
                             success = DateTime.TryParse(vDate, out vouch_Date);
                             vouch.VoucherDate = (success == true) ? vouch_Date : new DateTime();
                             vouch.V_Date = vouch.VoucherDate.DateTimetoString();
-                            vouch.PartyName = dbr.ds.Tables[0].Rows[i]["PartyName"].ToString();
-                            vouch.PurposeOfPayment = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
+                            string part = dbr.ds.Tables[0].Rows[i]["PartyName"].ToString();
+                            vouch.PartyName = string.IsNullOrEmpty(part) ? "" : part;
+                            string pur = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
+                            vouch.PurposeOfPayment = string.IsNullOrEmpty(pur) ? "" : pur;
                             vouchs.Add(vouch);
 
                         }
@@ -335,8 +337,12 @@ namespace pdstest.BLL
                             //success = int.TryParse(cred, out credit);
                             //ledg.Credit = (success == true) ? credit : 0;
                             ledg.Credit = this.HandleStringtoInt(cred);
-                            ledg.VoucherNumber = dbr.ds.Tables[0].Rows[i]["VoucherNumber"].ToString();
-                            ledg.VoucherStatus = dbr.ds.Tables[0].Rows[i]["VoucherStatus"].ToString();
+                            string vn = dbr.ds.Tables[0].Rows[i]["VoucherNumber"].ToString();
+                            ledg.VoucherNumber = string.IsNullOrEmpty(vn) ? "--" : vn;
+                            string vs = dbr.ds.Tables[0].Rows[i]["VoucherStatus"].ToString();
+                            ledg.VoucherStatus = string.IsNullOrEmpty(vs) ? "--" : vs;
+                            string par = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
+                            ledg.Particulars = string.IsNullOrEmpty(par) ? "--" : par;
                             //int ledgerid = 0;
                             string lId = dbr.ds.Tables[0].Rows[i]["Id"].ToString();
                             //success = int.TryParse(lId, out ledgerid);
@@ -352,8 +358,8 @@ namespace pdstest.BLL
                              success = DateTime.TryParse(cDate, out cred_Date);
                             ledg.CreditDate = (success == true) ? cred_Date : new DateTime();                       
                             ledg.Cred_Date = (success == true) ? ledg.CreditDate.DateTimetoStringforView():"--";
-                            ledg.IsActive = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["IsActive"]);
-                            ledg.Particulars = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
+                            string isac = dbr.ds.Tables[0].Rows[i]["IsActive"].ToString();
+                            ledg.IsActive = isac == "1";                           
                             ledgs.Add(ledg);
 
                         }
