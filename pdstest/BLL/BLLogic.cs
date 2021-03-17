@@ -211,7 +211,7 @@ namespace pdstest.BLL
                     for (int i = 0; i < count; i++)
                     {
                         string eId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
-                        reg.RegisterId = this.HandleStringtoInt(eId);
+                        reg.EmployeeId = this.HandleStringtoInt(eId);
                         reg.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
                         reg.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
                         reg.LoginType = dbr.ds.Tables[0].Rows[i]["LoginType"].ToString();
@@ -1066,7 +1066,7 @@ namespace pdstest.BLL
                     result.employee = this.GetRegisteredUser(dbr.Id);
                     if(result.employee != null)
                     {
-                        if(!string.IsNullOrEmpty(result.employee.Email) && result.employee.RegisterId > 0)
+                        if(!string.IsNullOrEmpty(result.employee.Email) && result.employee.EmployeeId > 0)
                         {
                             try
                             {
