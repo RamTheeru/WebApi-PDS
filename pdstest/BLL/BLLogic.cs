@@ -1389,17 +1389,22 @@ namespace pdstest.BLL
                     {
                         string vno = dbr.ds.Tables[0].Rows[0]["VoucherNumber"].ToString();
                         string sId = dbr.ds.Tables[0].Rows[0]["StationId"].ToString();
-                        string vdate = dbr.ds.Tables[0].Rows[0]["VoucherDate"].ToString();
+                       // string vdate = dbr.ds.Tables[0].Rows[0]["VoucherDate"].ToString();
                         string purpose = dbr.ds.Tables[0].Rows[0]["PurposeOfPayment"].ToString();
                         string party = dbr.ds.Tables[0].Rows[0]["PartyName"].ToString();
                         string namnt = dbr.ds.Tables[0].Rows[0]["NetAmount"].ToString();
                         string totamnt = dbr.ds.Tables[0].Rows[0]["TotalAmount"].ToString();
                         string taxamnt = dbr.ds.Tables[0].Rows[0]["TaxAmount"].ToString();
                         string status = dbr.ds.Tables[0].Rows[0]["VoucherStatus"].ToString();
-                        v.VoucherNumber = vno;
-                        v.V_Date = vdate.StringDateTimetoStringView();
-                        v.PartyName = party;
-                        v.PurposeOfPayment = purpose;
+                        DateTime vouch_Date;
+                        string vDate = dbr.ds.Tables[0].Rows[0]["VoucherDate"].ToString();
+                        bool success = DateTime.TryParse(vDate, out vouch_Date);
+                        v.VoucherDate = (success == true) ? vouch_Date : new DateTime();
+                        v.V_Date = (success == true) ? v.VoucherDate.DateTimetoStringforView() : "";
+                        v.VoucherNumber = string.IsNullOrEmpty(vno) ? "" : vno;
+                      //  v.V_Date = vdate.StringDateTimetoStringView();
+                        v.PartyName = string.IsNullOrEmpty(party) ? "" : party; 
+                        v.PurposeOfPayment = string.IsNullOrEmpty(purpose) ? "" : purpose;
                         v.StationId = this.HandleStringtoInt(sId);
                         v.TotalAmount = this.HandleStringtoInt(totamnt);
                         v.TaxAmount = this.HandleStringtoInt(taxamnt);
