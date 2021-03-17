@@ -1529,7 +1529,10 @@ namespace pdstest.BLL
             try
             {
                 if (currentmonth == 0)
-                    currentmonth = DateTime.Now.GetIndianDateTimeNow().Month;
+                {
+                    DateTime dtt = DateTime.Now;
+                    currentmonth = dtt.GetIndianDateTimeNow().Month;
+                }
                 dbr.ds = new System.Data.DataSet();
                 dbr = ops.GetAllEmpsDeliveryDetailsforPDF(currentmonth, stationId);
                 int count = 0;
@@ -1560,7 +1563,10 @@ namespace pdstest.BLL
             {
                 Employee emp = new Employee();
                 if (currentMonth == 0)
-                    currentMonth = DateTime.Now.GetIndianDateTimeNow().Month;
+                {
+                    DateTime dtt = DateTime.Now;
+                    currentMonth = dtt.GetIndianDateTimeNow().Month;
+                }
                 dbr.ds = new System.Data.DataSet();
                 result.employee = new Employee();
                 result.pdfLayout = new PDFLayout();
@@ -1660,7 +1666,9 @@ namespace pdstest.BLL
                 pdfC.MobileNumber = emp.Phone;
                 pdfC.BillingPeriod = this.GetMonth(emp.delivery.CurrentMonth)+"-"+emp.delivery.CreateDt.Year.ToString();//"JAN-2021";
                 pdfC.VendorCode = emp.EmpCode;
-                pdfC.InvoiceDate = DateTime.Now.GetIndianDateTimeNow().ToShortDateString();
+                DateTime dtt = DateTime.Now;
+                dtt = dtt.GetIndianDateTimeNow();
+                pdfC.InvoiceDate = dtt.ToShortDateString();
                 pdfC.PANDetails = emp.PANNumber;
                 pdfC.BillTo = "Penna Delivery Services";
                 pdfC.WorkPerformed = "Deliveries did till "+pdfC.BillingPeriod;

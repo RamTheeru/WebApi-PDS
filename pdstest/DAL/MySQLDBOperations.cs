@@ -1693,9 +1693,10 @@ namespace pdstest.DAL
                             param.Direction = ParameterDirection.Input;
                             param.MySqlDbType = MySqlDbType.Int32;
                             cmd.Parameters.Add(param);
-
-                            input.SessionStartDate = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
-                            input.SessionEndDate = DateTime.Now.GetIndianDateTimeNow().AddMinutes(20).DateTimetoString();
+                            DateTime dtt = DateTime.Now;
+                            dtt = dtt.GetIndianDateTimeNow();
+                            input.SessionStartDate = dtt.DateTimetoString();
+                            input.SessionEndDate = dtt.AddMinutes(20).DateTimetoString();
 
                             input.StartDate = input.SessionStartDate.StringtoDateTime();
                             input.EndDate = input.SessionEndDate.StringtoDateTime();
@@ -3063,7 +3064,8 @@ namespace pdstest.DAL
                 else
                 {
                     DateTime dt = DateTime.Now;
-                    string d = dt.GetIndianDateTimeNow().DateTimetoString();
+                    dt = dt.GetIndianDateTimeNow();
+                    string d = dt.DateTimetoString();
                     string query = string.Format("DELETE from UserSessions where '{0}'  not between StartDate and EndDate;", d);
                     count = new BasicDBOps().ExceuteCommand(connectionString, query);
                 }

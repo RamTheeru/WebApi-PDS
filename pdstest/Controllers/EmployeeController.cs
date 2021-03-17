@@ -247,11 +247,13 @@ namespace pdstest.Controllers
                  new Claim(JwtRegisteredClaimNames.Typ,user.UserTypeId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
              };
+                DateTime dtt = DateTime.Now;
+                dtt = dtt.GetIndianDateTimeNow();
                 var token = new JwtSecurityToken(
                     issuer: configuration["Jwt:Issuer"],
                     audience: configuration["Jwt:Issuer"],
                     claims,
-                    expires: DateTime.Now.GetIndianDateTimeNow().AddMinutes(20),
+                    expires: dtt.AddMinutes(20),
                     signingCredentials: credentials);
 
                 var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);

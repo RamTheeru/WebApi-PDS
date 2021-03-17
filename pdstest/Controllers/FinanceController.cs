@@ -224,8 +224,9 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-              //  obj.Cred_Date = DateTime.Now.ToShortDateString();
-                obj.Cred_Date = DateTime.Now.GetIndianDateTimeNow().DateTimetoString();
+                //  obj.Cred_Date = DateTime.Now.ToShortDateString();
+                DateTime dtt = DateTime.Now.GetIndianDateTimeNow();
+                obj.Cred_Date = dtt.DateTimetoString();
                 if (obj.StationId > 0 && obj.Credit>0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
                 {
                     result = logic.InsertLedger(obj);
