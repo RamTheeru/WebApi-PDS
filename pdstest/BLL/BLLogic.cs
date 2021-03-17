@@ -1409,6 +1409,7 @@ namespace pdstest.BLL
                         v.TotalAmount = this.HandleStringtoInt(totamnt);
                         v.TaxAmount = this.HandleStringtoInt(taxamnt);
                         v.NetAmount = this.HandleStringtoInt(namnt);
+                        v.VoucherStatus = status;
                         // dd.Incentive = this.HandleStringtoInt(inc2);
                     }
                     result.Message = dbr.Message;
