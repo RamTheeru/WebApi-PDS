@@ -225,6 +225,23 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckUserforRegistration(RegisterEmployee emp)
+        {
+            string text = "";
+
+            try
+            {
+                text = text = string.Format("select COUNT(*) from register where FirstName='{0}' and Phone = '{1}' and StationId = {2} and UserTypeId = {3};", emp.FirstName,emp.Phone,emp.StationId, emp.UserTypeId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string ClearInactiveSessions()
         {
             string text = "";

@@ -39,246 +39,261 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                    using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    string cmdtxt = "";
+                    cmdtxt = DBConnection.CheckUserforRegistration(input);
+                    bool isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdtxt);
+                    if(isExists)
                     {
-                        cmd.CommandText = insertQuery;
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Connection = conn;
-
-                        param = new MySqlParameter("@FirstName", input.FirstName);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@MiddleName", input.MiddleName);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param); 
-
-                        param = new MySqlParameter("@Email", input.Email);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@LastName", input.LastName);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Usr", input.UserName);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Passwrd", input.Password);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@DOB", input.DOB);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 30;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Age", input.Age);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@BloodGroup", input.BloodGroup);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 5;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Gender", input.Gender);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 5;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@MaritalStatus", input.MaritalStatus);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Bit;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Phone", input.Phone);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 12;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Address1", input.Address1);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.LongText;
-                        param.Size = -1;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Address2", input.Address2);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.LongText;
-                        param.Size = -1;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@Place", input.Place);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@StateName", input.State);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 100;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@PostalCode", input.PostalCode);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 10;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@AadharNumber", input.AadharNumber);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 20;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@PAN", input.PANNumber);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 20;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@IsPermanent", input.IsPermanent);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Bit;
-                        cmd.Parameters.Add(param);
-                        input.EmployeeType = (input.IsPermanent == true) ? "Permanent" : "Contract";
-                        param = new MySqlParameter("@EmployeeType", input.EmployeeType);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@Gaurd_firstname", input.Gaurd_firstname);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@Gaurd_lastname", input.Gaurd_lastname);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-
-                        param = new MySqlParameter("@Gaurd_middlename", input.Gaurd_middlename);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Gaurd_Phone", input.Gaurd_PhoneNumber);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 12;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@DOJ", input.DOJ);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 30;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@LoginType", input.LoginType);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@Designation", input.Designation);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@StateCode", input.StationCode);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 30;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@LocationName", input.LocationName);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.VarChar;
-                        param.Size = 50;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@IsActive", false);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Bit;
-                        cmd.Parameters.Add(param);
-
-                        param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param); 
-
-                        param = new MySqlParameter("@StationId", input.StationId);
-                        param.Direction = ParameterDirection.Input;
-                        param.MySqlDbType = MySqlDbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        MySqlParameter output = new MySqlParameter();
-                        output.ParameterName = "@OutRegisterId";
-                        output.MySqlDbType = MySqlDbType.Int32;
-                        output.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output);
-
-                        MySqlParameter output2 = new MySqlParameter();
-                        output2.ParameterName = "@EmpName";
-                        output2.MySqlDbType = MySqlDbType.VarChar;
-                        output2.Size = 50;
-                        output2.Direction = ParameterDirection.Output;
-                        cmd.Parameters.Add(output2);
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-
-                        string registerId = output.Value.ToString();
-
-                        string empName = output2.Value.ToString();
-                        conn.Close();
-                        dbr.Id = string.IsNullOrEmpty(registerId) ? 0 : Convert.ToInt32(registerId);
-                        if (dbr.Id > 0)
+                        dbr.Id = 0;
+                        dbr.EmployeeName = "";
+                        dbr.Status = false;
+                        dbr.Message = "Already register with this details for this station.";
+                    }
+                    else
+                    {
+                        using (MySqlConnection conn = new MySqlConnection(connectionString))
                         {
-                            dbr.EmployeeName = empName;
-                            dbr.Status = true;
-                            dbr.Message = "Employee Registered Successfully!!!";
-                        }
-                        else
-                        {
-                            dbr.Id = 0;
-                            dbr.EmployeeName = "";
-                            dbr.Status = false;
-                            dbr.Message = "Process went well but Something wrong with database Connection!! ";
+                            cmd.CommandText = insertQuery;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Connection = conn;
+
+                            param = new MySqlParameter("@FirstName", input.FirstName);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@MiddleName", input.MiddleName);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Email", input.Email);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@LastName", input.LastName);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Usr", input.UserName);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Passwrd", input.Password);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@DOB", input.DOB);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 30;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Age", input.Age);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@BloodGroup", input.BloodGroup);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 5;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Gender", input.Gender);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 5;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@MaritalStatus", input.MaritalStatus);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Bit;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Phone", input.Phone);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 12;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Address1", input.Address1);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.LongText;
+                            param.Size = -1;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Address2", input.Address2);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.LongText;
+                            param.Size = -1;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@Place", input.Place);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@StateName", input.State);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 100;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@PostalCode", input.PostalCode);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 10;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@AadharNumber", input.AadharNumber);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 20;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@PAN", input.PANNumber);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 20;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@IsPermanent", input.IsPermanent);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Bit;
+                            cmd.Parameters.Add(param);
+                            input.EmployeeType = (input.IsPermanent == true) ? "Permanent" : "Contract";
+                            param = new MySqlParameter("@EmployeeType", input.EmployeeType);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@Gaurd_firstname", input.Gaurd_firstname);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@Gaurd_lastname", input.Gaurd_lastname);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+
+                            param = new MySqlParameter("@Gaurd_middlename", input.Gaurd_middlename);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Gaurd_Phone", input.Gaurd_PhoneNumber);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 12;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@DOJ", input.DOJ);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 30;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@LoginType", input.LoginType);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@Designation", input.Designation);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@StateCode", input.StationCode);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 30;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@LocationName", input.LocationName);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.VarChar;
+                            param.Size = 50;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@IsActive", false);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Bit;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+                            param = new MySqlParameter("@StationId", input.StationId);
+                            param.Direction = ParameterDirection.Input;
+                            param.MySqlDbType = MySqlDbType.Int32;
+                            cmd.Parameters.Add(param);
+
+                            MySqlParameter output = new MySqlParameter();
+                            output.ParameterName = "@OutRegisterId";
+                            output.MySqlDbType = MySqlDbType.Int32;
+                            output.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output);
+
+                            MySqlParameter output2 = new MySqlParameter();
+                            output2.ParameterName = "@EmpName";
+                            output2.MySqlDbType = MySqlDbType.VarChar;
+                            output2.Size = 50;
+                            output2.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(output2);
+
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+
+                            string registerId = output.Value.ToString();
+
+                            string empName = output2.Value.ToString();
+                            conn.Close();
+                            dbr.Id = string.IsNullOrEmpty(registerId) ? 0 : Convert.ToInt32(registerId);
+                            if (dbr.Id > 0)
+                            {
+                                dbr.EmployeeName = empName;
+                                dbr.Status = true;
+                                dbr.Message = "Employee Registered Successfully!!!";
+                            }
+                            else
+                            {
+                                dbr.Id = 0;
+                                dbr.EmployeeName = "";
+                                dbr.Status = false;
+                                dbr.Message = "Process went well but Something wrong with database Connection!! ";
+
+                            }
 
                         }
 
                     }
+
 
                 }
 
