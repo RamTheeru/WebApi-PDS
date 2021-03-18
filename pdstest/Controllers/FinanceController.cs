@@ -117,7 +117,43 @@ namespace pdstest.Controllers
             {
                 if (voucherId > 0)
                 {
-                    result = logic.ApproveVoucher(voucherId);
+                    result = logic.ApproveVoucher(voucherId,"A");
+
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "UPDATE";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "UPDATE";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpGet]
+        [Route("RejectVoucher")]
+        public IActionResult RejectVoucher(int voucherId)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (voucherId > 0)
+                {
+                    result = logic.ApproveVoucher(voucherId,"R");
 
                 }
                 else

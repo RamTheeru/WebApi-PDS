@@ -1194,7 +1194,7 @@ namespace pdstest.DAL
             }
             return dbr;
         }
-        public DataBaseResult ApproveVoucher(int voucherId)
+        public DataBaseResult ApproveVoucher(int voucherId, string status)
         {
             string getupdateInfo = "";
             DataBaseResult dbr = new DataBaseResult();
@@ -1202,7 +1202,7 @@ namespace pdstest.DAL
             try
             {
                 dbr.CommandType = "UPDATE";
-                getupdateInfo = DBConnection.ApproveVoucher(voucherId);
+                getupdateInfo = DBConnection.ApproveVoucher(voucherId,status);
 
                 if (string.IsNullOrEmpty(getupdateInfo) || string.IsNullOrEmpty(getupdateInfo))
                 {
@@ -1234,7 +1234,7 @@ namespace pdstest.DAL
                     {
 
                         dbr.Status = true;
-                        dbr.Message = "Voucher Approved Successfully!!!!";
+                        dbr.Message = status.ToLower() == "r"? "Voucher Rejected Successfully!!!!" : "Voucher Approved Successfully!!!!";
                     }
                     else
                     {

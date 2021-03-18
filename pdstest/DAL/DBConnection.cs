@@ -300,15 +300,17 @@ namespace pdstest.DAL
             }
             return text;
         }
-        public static string ApproveVoucher(int voucherId)
+        public static string ApproveVoucher(int voucherId, string status)
         {
             string text = "";
 
             try
             {
                 //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-                text = string.Format("update  Voucher SET IsApproved=1 ,VoucherStatus='A' where  VoucherId = {0}", voucherId);
+                if(status.ToLower() == "r")
+                    text = string.Format("update  Voucher SET IsApproved=0 ,VoucherStatus='R' where  VoucherId = {0}", voucherId);
+                else
+                    text = string.Format("update  Voucher SET IsApproved=1 ,VoucherStatus='A' where  VoucherId = {0}", voucherId);
 
             }
             catch (Exception e)

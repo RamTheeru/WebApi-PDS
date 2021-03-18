@@ -1342,13 +1342,13 @@ namespace pdstest.BLL
             return result;
 
         }
-        public APIResult ApproveVoucher(int voucherId)
+        public APIResult ApproveVoucher(int voucherId,string status)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
-                dbr = ops.ApproveVoucher(voucherId);
+                dbr = ops.ApproveVoucher(voucherId,status);
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;
                 result.CommandType = dbr.CommandType;
