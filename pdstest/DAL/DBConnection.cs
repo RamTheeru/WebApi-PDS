@@ -179,7 +179,7 @@ namespace pdstest.DAL
                         text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
                     " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
                         text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
-                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat));
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, cdat));
                     }
                     else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vstartDate) && !string.IsNullOrEmpty(vEndDate))
                     {
@@ -956,11 +956,11 @@ namespace pdstest.DAL
                 StringBuilder insertCmd = new StringBuilder();
                 insertCmd.Append("Insert into ErrorLog(ServiceName,MethodName,Reason,CommandType,CreatedDate) ");
                 insertCmd.AppendLine(" VALUES(");
-                insertCmd.Append(err.ServiceName.ToString() + ",");
-                insertCmd.Append(err.MethodName.ToString() + ",");
-                insertCmd.Append(err.Reason.ToString() + ",");
-                insertCmd.Append(err.CommandType.ToString() + ",");
-                insertCmd.Append(idate + ")");
+                insertCmd.Append("'" + err.ServiceName.ToString() + "',");
+                insertCmd.Append("'" + err.MethodName.ToString() + "',");
+                insertCmd.Append("'" + err.Reason.ToString() + "',");
+                insertCmd.Append("'" + err.CommandType.ToString() + "',");
+                insertCmd.Append("'" + idate + "')");
                 cmdText = insertCmd.ToString();
 
             }
