@@ -26,7 +26,7 @@ namespace pdstest.Models
         }
         public static string DateTimetoString(this DateTime d)
         {
-            return d.ToString("yyyy-MM-dd HH:mm:ss");
+            return d.ToString("yyyy-MM-dd hh:mm:ss");
         }
         public static string DateTimetoStringforView(this DateTime d)
         {

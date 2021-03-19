@@ -150,6 +150,10 @@ namespace pdstest.DAL
         {
             return _ops.GetAllEmpsDeliveryDetailsforPDF(stationId, currentMonth);
         }
+        public int TraceError(ErrorLogTrack log)
+        {
+           return  _ops.TraceError(log);
+        }
         public DataBaseResult RestoreDB(string file)
         {
             return _ops.RestoreDB(file);

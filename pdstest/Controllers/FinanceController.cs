@@ -66,6 +66,9 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("InsertVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -102,6 +105,9 @@ namespace pdstest.Controllers
                 result.CommandType = "Select";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("VoucherDetails", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -138,6 +144,9 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("ApproveVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -174,6 +183,9 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("RejectVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -210,6 +222,9 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("UpdateVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -246,6 +261,9 @@ namespace pdstest.Controllers
                 result.CommandType = "Select";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("PreviousMonthCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -286,6 +304,9 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("InsertCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -331,6 +352,9 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
+                ErrorLogTrack err = new ErrorLogTrack("Vouchers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);
@@ -364,6 +388,9 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
+                ErrorLogTrack err = new ErrorLogTrack("Ledgers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             return Ok(result);

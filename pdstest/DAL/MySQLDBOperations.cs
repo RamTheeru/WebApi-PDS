@@ -4302,7 +4302,23 @@ namespace pdstest.DAL
             }
             return station;
         }
-
+        public int TraceError(ErrorLogTrack log)
+        {
+            int changes = 0;
+            try
+            {
+                string cmdText = DBConnection.GetErrorLogInsertQuery(log);
+                if(!string.IsNullOrEmpty(cmdText))
+                {
+                    changes = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                }
+            }
+            catch
+            {
+                changes = 0;
+            }
+            return changes;
+        }
         public void CreateBackup(string file)
         {
             try

@@ -2025,6 +2025,25 @@ namespace pdstest.BLL
 
             return FinalString;
         }
+
+        public string TraceError(ErrorLogTrack log)
+        {
+            string result = "";
+            try
+            {
+                int changes = 0;
+                changes = ops.TraceError(log);
+                if(changes > 0)
+                {
+                    result = "Error Traced Successfully!!";
+                }
+            }
+            catch
+            {
+                result = "";
+            }
+            return result;
+        }
         public APIResult RestoreDatabase(string file)
         {
             APIResult result = new APIResult();

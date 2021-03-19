@@ -937,7 +937,31 @@ namespace pdstest.DAL
         }
 
 
+        public static string GetErrorLogInsertQuery(ErrorLogTrack err)
+        {
+            string cmdText = "";
+            try
+            {
+                DateTime d = DateTime.Now;
+                d = d.GetIndianDateTimeNow();
+                string idate = d.DateTimetoString();
+                StringBuilder insertCmd = new StringBuilder();
+                insertCmd.Append("Insert into ErrorLog(ServiceName,MethodName,Reason,CommandType,CreatedDate) ");
+                insertCmd.AppendLine(" VALUES(");
+                insertCmd.Append(err.ServiceName + ",");
+                insertCmd.Append(err.MethodName + ",");
+                insertCmd.Append(err.Reason + ",");
+                insertCmd.Append(err.CommandType + ",");
+                insertCmd.Append(idate + ");");
+                cmdText = insertCmd.ToString();
 
+            }
+            catch
+            {
+                cmdText = "";
+            }
+            return cmdText;
+        }
 
     }
 }
