@@ -170,6 +170,8 @@ namespace pdstest.DAL
                     }
                     else if (table.ToLower() == "ledger" && currentMonth > 0)
                     {
+   //                     text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+   //" AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
                         DateTime dtt = DateTime.Now;
                         dtt = dtt.GetIndianDateTimeNow();
                         DateTime dtvalue = new DateTime(dtt.Year, currentMonth, 1);
@@ -177,15 +179,15 @@ namespace pdstest.DAL
                         text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
                     " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
                         text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
-                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat));
                     }
-                    //else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vEndDate))
-                    //{
-                    //    text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
-                    //          "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, ps));
-                    //    text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND (VoucherDate " +
-                    //      "BETWEEN '{1}' AND '{2}') AND Credit IS NOT NULL AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
-                    //}
+                    else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vstartDate) && !string.IsNullOrEmpty(vEndDate))
+                    {
+                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((VoucherDate " +
+                              "BETWEEN '{1}' AND '{2}') OR ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((VoucherDate " +
+                          "BETWEEN '{1}' AND '{2}') OR ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
+                    }
                     else if (table.ToLower() == "daemployees")
                     {
                         text.Add("main", string.Format("SELECT * FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
@@ -952,7 +954,7 @@ namespace pdstest.DAL
                 insertCmd.Append(err.MethodName + ",");
                 insertCmd.Append(err.Reason + ",");
                 insertCmd.Append(err.CommandType + ",");
-                insertCmd.Append(idate + ");");
+                insertCmd.Append(idate + ")");
                 cmdText = insertCmd.ToString();
 
             }
