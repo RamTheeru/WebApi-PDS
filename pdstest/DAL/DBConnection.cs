@@ -183,10 +183,16 @@ namespace pdstest.DAL
                     }
                     else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vstartDate) && !string.IsNullOrEmpty(vEndDate))
                     {
-                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((VoucherDate " +
-                              "BETWEEN '{1}' AND '{2}') OR ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {3},{4};", stationId, vstartDate, vEndDate, range, ps));
-                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((VoucherDate " +
-                          "BETWEEN '{1}' AND '{2}') OR ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, vstartDate, vEndDate));
+                        string cdtxt = string.Format("select * FROM FinanceLedger where StationId = {0} " +
+                    "AND( (VoucherDate BETWEEN '{1}' AND '{2}') OR " +
+                    " (MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') ) " +
+                    " ) AND IsActive = 1 LIMIT {3},{4}; ", stationId,vstartDate,vEndDate,range, ps);
+                        string countText = string.Format("select COUNT(*) FROM FinanceLedger where StationId = {0} " +
+                  "AND( (VoucherDate BETWEEN '{1}' AND '{2}') OR " +
+                  " (MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') ) " +
+                  " ) AND IsActive = 1; ", stationId, vstartDate, vEndDate);
+                        text.Add("main",cdtxt);
+                        text.Add("count",countText);
                     }
                     else if (table.ToLower() == "daemployees")
                     {
@@ -950,10 +956,10 @@ namespace pdstest.DAL
                 StringBuilder insertCmd = new StringBuilder();
                 insertCmd.Append("Insert into ErrorLog(ServiceName,MethodName,Reason,CommandType,CreatedDate) ");
                 insertCmd.AppendLine(" VALUES(");
-                insertCmd.Append(err.ServiceName + ",");
-                insertCmd.Append(err.MethodName + ",");
-                insertCmd.Append(err.Reason + ",");
-                insertCmd.Append(err.CommandType + ",");
+                insertCmd.Append(err.ServiceName.ToString() + ",");
+                insertCmd.Append(err.MethodName.ToString() + ",");
+                insertCmd.Append(err.Reason.ToString() + ",");
+                insertCmd.Append(err.CommandType.ToString() + ",");
                 insertCmd.Append(idate + ")");
                 cmdText = insertCmd.ToString();
 
