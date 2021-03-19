@@ -4313,9 +4313,10 @@ namespace pdstest.DAL
                     changes = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
                 }
             }
-            catch
+            catch(Exception e)
             {
                 changes = 0;
+                throw e;
             }
             return changes;
         }

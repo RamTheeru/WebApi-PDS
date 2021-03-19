@@ -2038,9 +2038,9 @@ namespace pdstest.BLL
                     result = "Error Traced Successfully!!";
                 }
             }
-            catch
+            catch(Exception e)
             {
-                result = "";
+                result = "Error not traced for reason : "  +e.Message+" !!!";
             }
             return result;
         }
