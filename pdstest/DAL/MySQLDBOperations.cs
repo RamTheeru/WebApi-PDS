@@ -2455,10 +2455,10 @@ namespace pdstest.DAL
                 StringBuilder insertCmd = new StringBuilder();
                 insertCmd.Append("Insert into CommercialConstants(StationId,DeliveryRate,PetrolAllowance,Incentives,IsActive) ");
                 insertCmd.AppendLine(" VALUES(");
-                insertCmd.Append(constant.StationId.ToString() + ",");
-                insertCmd.Append(constant.DeliveryRate.ToString() + ",");
-                insertCmd.Append(constant.PetrolAllowance.ToString() + ",");
-                insertCmd.Append(constant.Incentives.ToString() + ",");
+                insertCmd.Append(constant.StationId + ",");
+                insertCmd.Append(constant.DeliveryRate + ",");
+                insertCmd.Append(constant.PetrolAllowance + ",");
+                insertCmd.Append(constant.Incentives + ",");
                 insertCmd.Append("1 )");
 
                 string cmdtext = insertCmd.ToString();
