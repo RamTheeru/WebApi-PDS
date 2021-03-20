@@ -473,6 +473,23 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckConstantforStation(int stationId)
+        {
+            string text = "";
+
+            try
+            {
+                text = string.Format("select COUNT(*) from commercialconstants where StationId = {0};", stationId);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string CheckEmpCodeExists(string empCode,bool isEmployee)
         {
             string text = "";

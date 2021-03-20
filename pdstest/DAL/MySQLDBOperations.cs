@@ -2450,21 +2450,45 @@ namespace pdstest.DAL
             DataBaseResult dbr = new DataBaseResult();
             try
             {
-                dbr.CommandType = "Insert";
+                string cmdTextCC = "";
+                cmdTextCC = DBConnection.CheckConstantforStation(constant.StationId);
+                bool isExists = false;
+                isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdTextCC);
+                if(isExists)
+                {
+                    dbr.CommandType = "Update";
+                    string updateCC = "";
+                    updateCC = string.Format("update CommercialConstants set DeliveryRate = {0},PetrolAllowance={1} WHERE StationId = {2};",constant.DeliveryRate,constant.PetrolAllowance,constant.StationId);
+                    int changes = 0;
+                    changes = new BasicDBOps().ExceuteCommand(connectionString, updateCC);
+                    if(changes > 0)
+                    {
+                        dbr.Status = true;
+                        dbr.Message = "Rates updated for this Station Successfully!!!!";
+                    }
+                    else
+                    {
+                        dbr.Status = false;
+                        dbr.Message = "Something went wrong, rates unable to update  for this Station!!!!";
+                    }
+                }
+                else
+                {
+                    dbr.CommandType = "Insert";
 
-                StringBuilder insertCmd = new StringBuilder();
-                insertCmd.Append("Insert into CommercialConstants(StationId,DeliveryRate,PetrolAllowance,Incentives,IsActive) ");
-                insertCmd.AppendLine(" VALUES(");
-                insertCmd.Append(constant.StationId + ",");
-                insertCmd.Append(constant.DeliveryRate + ",");
-                insertCmd.Append(constant.PetrolAllowance + ",");
-                insertCmd.Append(constant.Incentives + ",");
-                insertCmd.Append("1 )");
+                    StringBuilder insertCmd = new StringBuilder();
+                    insertCmd.Append("Insert into CommercialConstants(StationId,DeliveryRate,PetrolAllowance,Incentives,IsActive) ");
+                    insertCmd.AppendLine(" VALUES(");
+                    insertCmd.Append(constant.StationId + ",");
+                    insertCmd.Append(constant.DeliveryRate + ",");
+                    insertCmd.Append(constant.PetrolAllowance + ",");
+                    insertCmd.Append(constant.Incentives + ",");
+                    insertCmd.Append("1 )");
 
-                string cmdtext = insertCmd.ToString();
-                //using (MySqlConnection conn = new MySqlConnection(connectionString))
-                //{
-                DataSet ds = new DataSet();
+                    string cmdtext = insertCmd.ToString();
+                    //using (MySqlConnection conn = new MySqlConnection(connectionString))
+                    //{
+                    DataSet ds = new DataSet();
                     dbr.ds = new DataSet();
                     // sda = new MySqlDataAdapter(getUserInfo, conn);
                     //sda.SelectCommand.CommandType = CommandType.Text;
@@ -2475,30 +2499,33 @@ namespace pdstest.DAL
                     //adapter.Fill(ds);
 
                     //ds.Tables.Add(temp);
-                if(!string.IsNullOrEmpty(cmdtext))
-                {
-                    int count = 0;
-                    count = new BasicDBOps().ExceuteCommand(connectionString, cmdtext);
-                    if (count > 0)
+                    if (!string.IsNullOrEmpty(cmdtext))
                     {
+                        int count = 0;
+                        count = new BasicDBOps().ExceuteCommand(connectionString, cmdtext);
+                        if (count > 0)
+                        {
 
-                        dbr.Status = true;
-                        dbr.Message = "Rates fixed for this Station Successfully!!!!";
+                            dbr.Status = true;
+                            dbr.Message = "Rates fixed for this Station Successfully!!!!";
+                        }
+                        else
+                        {
+                            dbr.Status = false;
+                            dbr.Message = "Something went wrong, rates unable to fix for this station!!";
+
+
+                        }
+
                     }
                     else
                     {
                         dbr.Status = false;
-                        dbr.Message = "Something went wrong!!";
-
-
+                        dbr.Message = "Something went wrong, No Command to Insert!!";
                     }
 
                 }
-                else
-                {
-                    dbr.Status = false;
-                    dbr.Message = "Something went wrong, No Command to Insert!!";
-                }
+
                    
 
 
