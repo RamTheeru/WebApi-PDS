@@ -117,14 +117,14 @@ namespace pdstest.Controllers
         }
         [HttpPost]
         [Route("ApproveVoucher")]
-        public IActionResult ApproveVoucher(List<int> voucherIds)
+        public IActionResult ApproveVoucher(List<Voucher> vouchers)
         {
             APIResult result = new APIResult();
             try
             {
-                if (voucherIds.Count > 0)
+                if (vouchers.Count > 0)
                 {
-                    result = logic.UpdateVoucherDetails(voucherIds, "A");
+                    result = logic.UpdateVoucherDetails(vouchers, "A");
 
                 }
                 else
@@ -156,14 +156,14 @@ namespace pdstest.Controllers
         }
         [HttpPost]
         [Route("RejectVoucher")]
-        public IActionResult RejectVoucher(List<int> voucherIds)
+        public IActionResult RejectVoucher(List<Voucher> vouchers)
         {
             APIResult result = new APIResult();
             try
             {
-                if (voucherIds.Count > 0)
+                if (vouchers.Count > 0)
                 {
-                    result = logic.UpdateVoucherDetails(voucherIds, "R");
+                    result = logic.UpdateVoucherDetails(vouchers, "R");
 
                 }
                 else

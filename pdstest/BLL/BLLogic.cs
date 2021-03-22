@@ -1376,7 +1376,7 @@ namespace pdstest.BLL
             return result;
 
         }
-        public APIResult UpdateVoucherDetails(List<int> VIds,string status)
+        public APIResult UpdateVoucherDetails(List<Voucher> VIds,string status)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -1386,8 +1386,9 @@ namespace pdstest.BLL
                 if (VIds.Count > 0)
                 {
                    
-                    foreach (int i in VIds)
+                    foreach (var item in VIds)
                     {
+                        int i = item.VoucherId;
                         Voucher v = new Voucher();
                         if (i > 0)
                         {
