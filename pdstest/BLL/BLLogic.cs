@@ -1368,7 +1368,71 @@ namespace pdstest.BLL
             return result;
 
         }
+        public APIResult UpdateVoucherDetails(List<int> VIds,string status)
+        {
+            APIResult result = new APIResult();
+            DataBaseResult dbr = new DataBaseResult();
+            List<Voucher> vouchers = new List<Voucher>();
+            try
+            {
+                if (VIds.Count > 0)
+                {
+                   
+                    foreach (int i in VIds)
+                    {
+                        Voucher v = new Voucher();
+                        if (i > 0)
+                        {
+                            result.voucher = new Voucher();
+                            result = GetVoucherDetailsbyVoucherNumber(i);
+                            if(result.voucher != null)
+                            {
+                                v = result.voucher;
+                                vouchers.Add(v);
+                            }
+                        }
+                        else
+                        {
+                            result.Status = false;
+                            result.Message = "Unable to get details,no Input data to process";
+                            break;
+                        }
 
+                    }
+                    if(vouchers.Count > 0)
+                    {
+                        dbr = ops.UpdateVoucherDetails(vouchers,status);
+                        result = new APIResult();
+                        result.CommandType = dbr.CommandType;
+                        result.Status = dbr.Status;
+                        result.Message = dbr.Message;
+                    }
+                    else
+                    {
+                        result.Status = false;
+                        result.Message = "No Input data to process";
+
+                    }
+
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "No Input data to process";
+
+                }
+
+            }
+            catch (Exception e)
+            {
+
+                result.Status = false;
+                result.Message = e.Message;
+                dbr.CommandType = "Update";
+                throw e;
+            }
+            return result;
+        }
         public APIResult GetVoucherDetailsbyVoucherNumber(int voucherId)
         {
             APIResult result = new APIResult();

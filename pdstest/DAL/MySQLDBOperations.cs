@@ -1194,6 +1194,92 @@ namespace pdstest.DAL
             }
             return dbr;
         }
+        public DataBaseResult UpdateVoucherDetails(List<Voucher> vIds,string status)
+        {
+            DataBaseResult dbr = new DataBaseResult();
+            MySqlConnection con = new MySqlConnection(connectionString);
+            int i = 0;
+            con.Open();
+            MySqlTransaction transaction = con.BeginTransaction();
+            try
+            {
+                dbr.CommandType = "Update";
+                if (vIds.Count > 0)
+                {
+                    var valid = vIds.Any(x => x.VoucherNumber == string.Empty || x.VoucherNumber == null || x.StationId == 0);
+                    if (!valid)
+                    {
+                        List<Voucher> vouchs = new List<Voucher>();
+                        vouchs = vIds.Where(x => x.VoucherStatus == status).ToList();
+                        //bool isExists = false;
+                        if (vouchs.Count > 0)
+                        {
+                            foreach (var item in vouchs)
+                            {
+                                string approvText = "";
+                                approvText = DBConnection.ApproveVoucher(item.VoucherId, status);
+                                MySqlCommand command = new MySqlCommand(approvText, con, transaction);
+                                //command.Connection = con;
+                                //command.Transaction = transaction;
+                                transaction = command.Transaction;
+                                i = command.ExecuteNonQuery();
+                                if (i == 0)
+                                    throw new Exception("Something went wrong!!,Unable to update Voucher Status");
+                                command.Dispose();
+                                //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                            }
+                            transaction.Commit();
+                        }
+                        else
+                        {
+                            i = 0;
+                            dbr.Status = false;
+                            dbr.Message = "Invalid Data to update with provided status, Please try again";
+                        }
+                    }
+                    else
+                    {
+                        i = 0;
+                        dbr.Status = false;
+                        dbr.Message = "Invalid Data to update, Please try again";
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    i = 0;
+                    transaction.Rollback();
+                    dbr.Status = false;
+                    dbr.Message = "Cannot Complete the operation Please try again. Reason : " + e.Message;
+                }
+                catch (Exception ex2)
+                {
+                    i = 0;
+                    dbr.Status = false;
+                    dbr.Message = "Rollback Operation failed while updating details. Reason : " + ex2.Message + ". Please contact support team";
+                    // throw ex2;
+                    // This catch block will handle any errors that may have occurred 
+                    // on the server that would cause the rollback to fail, such as 
+                    // a closed connection.
+
+                }
+                throw e;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+                if (i > 0)
+                {
+                    dbr.Status = true;
+                    dbr.Message = "Updated voucher status for all Successfully!!!";
+                }
+            }
+            return dbr;
+        }
         public DataBaseResult ApproveVoucher(int voucherId, string status)
         {
             string getupdateInfo = "";
@@ -2202,7 +2288,7 @@ namespace pdstest.DAL
                 {
                     i = 0;
                     dbr.Status = false;
-                    dbr.Message = "Operation failed while updating details. Reason : "+ex2.Message + ". Please contact support team";
+                    dbr.Message = "Rollback Operation failed while updating details. Reason : "+ex2.Message + ". Please contact support team";
                    // throw ex2;
                     // This catch block will handle any errors that may have occurred 
                     // on the server that would cause the rollback to fail, such as 

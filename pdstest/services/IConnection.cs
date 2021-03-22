@@ -24,6 +24,7 @@ namespace pdstest.services
         DataBaseResult GetVoucherDetailsbyVoucherNumber(int voucherId);
         DataBaseResult UpdateVoucher(Voucher input);
         DataBaseResult ApproveVoucher(int voucherId, string status);
+        DataBaseResult UpdateVoucherDetails(List<Voucher> vIds,string status);
         DataBaseResult GetPreviousCreditandDebitDetails(int stationId);
         DataBaseResult InsertLedger(Ledger input);
         DataBaseResult CreateSession(UserType input);

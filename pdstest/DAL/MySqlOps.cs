@@ -85,6 +85,10 @@ namespace pdstest.DAL
         {
             return _ops.ApproveVoucher(voucherId,status);
         }
+        public DataBaseResult UpdateVoucherDetails(List<Voucher> vIds,string status)
+        {
+            return _ops.UpdateVoucherDetails(vIds,status);
+        }
         public DataBaseResult GetPreviousCreditandDebitDetails(int stationId)
         {
             return _ops.GetPreviousCreditandDebitDetails(stationId);
