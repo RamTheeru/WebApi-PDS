@@ -322,6 +322,7 @@ namespace pdstest.Controllers
 
 
         }
+
         [HttpGet("AdminDetails")]
         [CustomAuthorization]
         public IActionResult GetAdminDetails()
@@ -344,6 +345,7 @@ namespace pdstest.Controllers
             return Ok(result);
 
         }
+
         [HttpGet("DeleteSession")]
 
         public IActionResult DeleteSession(string userName,int employeeId,int userTypeId)
