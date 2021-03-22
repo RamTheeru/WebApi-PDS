@@ -19,6 +19,7 @@ namespace pdstest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [CustomAuthorization]
     public class FinanceController : ControllerBase
     {
         private readonly IConfiguration configuration;
@@ -114,7 +115,7 @@ namespace pdstest.Controllers
             //return new CustomResult(result);
 
         }
-        [HttpGet]
+        [HttpPost]
         [Route("ApproveVoucher")]
         public IActionResult ApproveVoucher(List<int> voucherIds)
         {
@@ -153,7 +154,7 @@ namespace pdstest.Controllers
             //return new CustomResult(result);
 
         }
-        [HttpGet]
+        [HttpPost]
         [Route("RejectVoucher")]
         public IActionResult RejectVoucher(List<int> voucherIds)
         {

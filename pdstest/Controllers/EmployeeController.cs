@@ -323,7 +323,7 @@ namespace pdstest.Controllers
 
         }
         [HttpGet("AdminDetails")]
-
+        [CustomAuthorization]
         public IActionResult GetAdminDetails()
         {
             APIResult result = new APIResult();
@@ -504,7 +504,7 @@ namespace pdstest.Controllers
         }
 
         [HttpPost("Employees")]
-
+        [CustomAuthorization]
         public IActionResult GetEmployees(APIInput input)
         {
             APIResult result = new APIResult();
@@ -737,6 +737,7 @@ namespace pdstest.Controllers
 
         [HttpPost]
         [Route("CreateDAEmployee")]
+        [CustomAuthorization]
         public IActionResult CreateDAEmployee(Employee obj)
         {
             APIResult result = new APIResult();
@@ -814,6 +815,7 @@ namespace pdstest.Controllers
         }
         [HttpGet]
         [Route("CDAStationDeiveryDetails")]
+        [CustomAuthorization]
         public IActionResult GetCDAStationDeliveryDetails(int stationId)
         {
             APIResult result = new APIResult();
@@ -852,6 +854,7 @@ namespace pdstest.Controllers
         }
         [HttpPost]
         [Route("CDAGetDeiveryDetails")]
+        [CustomAuthorization]
         public IActionResult GetCDADeliveryDetails(APIInput input)
         {
             APIResult result = new APIResult();
@@ -891,6 +894,7 @@ namespace pdstest.Controllers
 
         [HttpPost]
         [Route("CDAUpdateDeiveryDetails")]
+        [CustomAuthorization]
         public IActionResult CDAUpdateDeliveryDetails(List<DeliveryDetails> cdds)
         {
             APIResult result = new APIResult();
@@ -940,6 +944,7 @@ namespace pdstest.Controllers
 
         [HttpPost]
         [Route("DownloadCDADeiveryDetails")]
+        [CustomAuthorization]
         public async Task<IActionResult> CDADownloadDeliveryDetails(PDFInput input)
         {
             APIResult result = new APIResult();
