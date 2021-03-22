@@ -291,6 +291,14 @@ namespace pdstest.BLL
                             string tot = dbr.ds.Tables[0].Rows[i]["TotalAmount"].ToString();
                             success = int.TryParse(tot, out total);
                             vouch.TotalAmount = (success == true) ? total : 0;
+                            int tax = 0;
+                            string tx = dbr.ds.Tables[0].Rows[i]["TaxAmount"].ToString();
+                            success = int.TryParse(tx, out tax);
+                            vouch.TaxAmount = (success == true) ? tax : 0;
+                            int net = 0;
+                            string nt = dbr.ds.Tables[0].Rows[i]["NetAmount"].ToString();
+                            success = int.TryParse(nt, out net);
+                            vouch.NetAmount = (success == true) ? net : 0;
                             vouch.VoucherNumber = dbr.ds.Tables[0].Rows[i]["VoucherNumber"].ToString();
                             vouch.VoucherStatus = dbr.ds.Tables[0].Rows[i]["VoucherStatus"].ToString();
                             int voucherid = 0;
@@ -301,7 +309,7 @@ namespace pdstest.BLL
                             string vDate = dbr.ds.Tables[0].Rows[i]["VoucherDate"].ToString();
                             success = DateTime.TryParse(vDate, out vouch_Date);
                             vouch.VoucherDate = (success == true) ? vouch_Date : new DateTime();
-                            vouch.V_Date = vouch.VoucherDate.DateTimetoString();
+                            vouch.V_Date = vouch.VoucherDate.DateTimetoStringforView();
                             string part = dbr.ds.Tables[0].Rows[i]["PartyName"].ToString();
                             vouch.PartyName = string.IsNullOrEmpty(part) ? "" : part;
                             string pur = dbr.ds.Tables[0].Rows[i]["PurposeOfPayment"].ToString();
