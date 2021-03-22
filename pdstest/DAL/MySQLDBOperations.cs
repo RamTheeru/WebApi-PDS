@@ -1210,7 +1210,7 @@ namespace pdstest.DAL
                     if (!valid)
                     {
                         List<Voucher> vouchs = new List<Voucher>();
-                        vouchs = vIds.Where(x => x.VoucherStatus == status).ToList();
+                        vouchs = vIds.Where(x => x.VoucherStatus.ToLower() == "p").ToList();
                         //bool isExists = false;
                         if (vouchs.Count > 0)
                         {
