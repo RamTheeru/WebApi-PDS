@@ -345,6 +345,8 @@ namespace pdstest.BLL
                             //success = int.TryParse(cred, out credit);
                             //ledg.Credit = (success == true) ? credit : 0;
                             ledg.Credit = this.HandleStringtoInt(cred);
+                            string bal = dbr.ds.Tables[0].Rows[i]["Balance"].ToString();
+                            ledg.Balance = this.HandleStringtoInt(bal);
                             string vn = dbr.ds.Tables[0].Rows[i]["VoucherNumber"].ToString();
                             ledg.VoucherNumber = string.IsNullOrEmpty(vn) ? "--" : vn;
                             string vs = dbr.ds.Tables[0].Rows[i]["VoucherStatus"].ToString();

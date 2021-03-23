@@ -397,8 +397,8 @@ namespace pdstest.DAL
             {
                 text = string.Format("select 0 as c,coalesce(SUM(Debit),0) as DebitAmount from FinanceLedger " +
                     " WHERE StationId = {0} AND MONTH(VoucherDate) = MONTH('{1}') " +
-                    " AND YEAR(VoucherDate) = YEAR('{1}') AND VoucherDate <= '{1}' AND Debit IS NOT NULL " +
-                    " AND VoucherDate IS NOT NULL AND IsActive = 1 Group BY StationId,VoucherDate; ", stationId, voucherDate);
+                    " AND YEAR(VoucherDate) = YEAR('{1}') AND VoucherDate <= '{1}' AND Debit IS NOT NULL AND IsApproved = 1 " +
+                    " AND VoucherDate IS NOT NULL AND IsActive = 1 Group BY StationId,VoucherDate,IsApproved; ", stationId, voucherDate);
 
             }
             catch (Exception e)
