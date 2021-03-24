@@ -1584,19 +1584,36 @@ namespace pdstest.DAL
                 {
                     DateTime dn = DateTime.Now.GetIndianDateTimeNow();
                     string currDate = dn.DateTimetoString();
-                    string currentCreditAmount = string.Format("select Credit as CurrentCreditAmount from financeledger Where StationId = {0} and Credit IS NOT NULL " +
-                      " and ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))); ", stationId, currDate);
-                    DataSet ds = new DataSet();
-                    int c_amount = 0;
-                    ds = new BasicDBOps().GetMultipleRecords(connectionString, currentCreditAmount);
-                    if(ds.Tables.Count > 0)
+                    //string currentCreditAmount = string.Format("select Credit as CurrentCreditAmount from financeledger Where StationId = {0} and Credit IS NOT NULL " +
+                    //  " and ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))); ", stationId, currDate);
+                    string cmdT = DBConnection.CheckforCreditintoStation(stationId, currDate);
+                    bool isExists = false;
+                    isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
+                    int curentcreditamont = 0;
+                    int currentdebitamt = 0;
+                    int currentBalance = 0;
+                    if (isExists)
                     {
-                        if(ds.Tables[0].Rows.Count>0)
-                        {
-                            string cAmmnt = ds.Tables[0].Rows[0]["CurrentCreditAmount"].ToString();
-                            c_amount = this.HandleStringtoInt(cAmmnt);
-                        }
+                        string creditcmd = DBConnection.GetCreditamountinCurrentMonthForVoucher(stationId, currDate);
+                        curentcreditamont = this.GetBalanceAmountForVoucherCreation("", creditcmd, "CreditAmount");
+                        string debitcmd = DBConnection.GetTotalDebitamountinCurrentMonthForVoucher(stationId, currDate);
+                        currentdebitamt = this.GetBalanceAmountForVoucherCreation(debitcmd, "", "DebitAmount");
                     }
+                    if (curentcreditamont > currentdebitamt && curentcreditamont > 0)
+                    {
+                        currentBalance = curentcreditamont - currentdebitamt;
+                    }
+                    // DataSet ds = new DataSet();
+                    // int c_amount = 0;
+                    //ds = new BasicDBOps().GetMultipleRecords(connectionString, currentCreditAmount);
+                    //if(ds.Tables.Count > 0)
+                    //{
+                    //    if(ds.Tables[0].Rows.Count>0)
+                    //    {
+                    //        string cAmmnt = ds.Tables[0].Rows[0]["CurrentCreditAmount"].ToString();
+                    //        c_amount = this.HandleStringtoInt(cAmmnt);
+                    //    }
+                    //}
                     creditPrevAmnt = this.GetBalanceAmountForVoucherCreation("", query, "CreditAmount");
                     query = DBConnection.GetTotalDebitamountinPreviousMonthForVoucher(stationId);
                     debitPrevAmnt = this.GetBalanceAmountForVoucherCreation(query, "", "DebitAmount");
@@ -1605,10 +1622,14 @@ namespace pdstest.DAL
                     dbr.dt.Columns.Add("CreditAmount");
                     dbr.dt.Columns.Add("DebitAmount");
                     dbr.dt.Columns.Add("CurrentCreditAmount");
+                    dbr.dt.Columns.Add("CurrentDebitAmount");
+                    dbr.dt.Columns.Add("CurrentBalanceAmount");
                     DataRow dr = dbr.dt.NewRow();
                     dr["CreditAmount"] = creditPrevAmnt;
                     dr["DebitAmount"] = debitPrevAmnt;
-                    dr["CurrentCreditAmount"] = c_amount;
+                    dr["CurrentCreditAmount"] = curentcreditamont;
+                    dr["CurrentDebitAmount"] = currentdebitamt;
+                    dr["CurrentBalanceAmount"] = currentBalance;
                     dbr.dt.Rows.Add(dr);
                     dbr.ds.Tables.Add(dbr.dt);
                     dbr.Status = true;
@@ -1670,40 +1691,45 @@ namespace pdstest.DAL
                         string cmdT = DBConnection.CheckforCreditintoStation(input.StationId, input.Cred_Date);
                         bool isExists = false;
                         isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, cmdT);
-                        //bool validatebalance = false;
-                        //int creditamont = 0;
-                        //string creditcmd = DBConnection.GetCreditamountinCurrentMonthForVoucher(input.StationId, input.Cred_Date);
-                        //creditamont = this.GetBalanceAmountForVoucherCreation("", creditcmd, "CreditAmount");
-                        //int debitamt = 0;
-                        //string debitcmd = DBConnection.GetTotalDebitamountinCurrentMonthForVoucher(input.StationId, input.Cred_Date);
-                        //debitamt = this.GetBalanceAmountForVoucherCreation(debitcmd, "", "DebitAmount");
-                        //if (creditamont > debitamt && creditamont > 0)
-                        //{
-                        //    int bal = creditamont - debitamt;
-                        //    if (bal > 0)
-                        //    {
-                        //        validatebalance = true;
-                        //    }
-                        //    else
-                        //    {
-                        //        validatebalance = false;
-                        //    }
-
-                        //}
+                        bool validatebalance = false;
+                        int creditamont = 0;
+                        int debitamt = 0;
                         if (isExists)
                         {
-                          string cmTxt =  string.Format("update FinanceLedger SET Credit={0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;",input.Credit,input.Cred_Date,input.StationId);
-                            int ch = new BasicDBOps().ExceuteCommand(connectionString, cmTxt);
-                            if(ch > 0)
+                            string creditcmd = DBConnection.GetCreditamountinCurrentMonthForVoucher(input.StationId, input.Cred_Date);
+                            creditamont = this.GetBalanceAmountForVoucherCreation("", creditcmd, "CreditAmount");
+                            string debitcmd = DBConnection.GetTotalDebitamountinCurrentMonthForVoucher(input.StationId, input.Cred_Date);
+                            debitamt = this.GetBalanceAmountForVoucherCreation(debitcmd, "", "DebitAmount");
+                        }
+                        if (creditamont > debitamt && creditamont > 0)
+                        {
+                            int bal = creditamont - debitamt;
+                            if (bal > 0)
                             {
-                                dbr.Status = true;
-                                dbr.Message = "Credit amount updated for this station successfully";
+                                validatebalance = true;
                             }
                             else
                             {
-                                dbr.Status = false;
-                                dbr.Message = "Something wrong, Credit amount  is not updated for this station";
+                                validatebalance = false;
                             }
+
+                        }
+                        if (isExists && validatebalance)
+                        {
+                             dbr.Status = false;
+                             dbr.Message = "Amount already credited for this station in this month";
+                            //string cmTxt =  string.Format("update FinanceLedger SET Credit={0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;",input.Credit,input.Cred_Date,input.StationId);
+                            //  int ch = new BasicDBOps().ExceuteCommand(connectionString, cmTxt);
+                            //  if(ch > 0)
+                            //  {
+                            //      dbr.Status = true;
+                            //      dbr.Message = "Credit amount updated for this station successfully";
+                            //  }
+                            //  else
+                            //  {
+                            //      dbr.Status = false;
+                            //      dbr.Message = "Something wrong, Credit amount  is not updated for this station";
+                            //  }
                             //    dbr.Id = 0;
                             ////    dbr.VoucherNumber = input.VoucherNumber;
                             //    dbr.Status = false;
