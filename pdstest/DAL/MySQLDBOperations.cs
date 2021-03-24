@@ -1582,7 +1582,21 @@ namespace pdstest.DAL
                 }
                 else
                 {
-                   
+                    DateTime dn = DateTime.Now.GetIndianDateTimeNow();
+                    string currDate = dn.DateTimetoString();
+                    string currentCreditAmount = string.Format("select Credit as CurrentCreditAmount from financeledger Where StationId = {0} and Credit IS NOT NULL " +
+                      " and ((MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}'))); ", stationId, currDate);
+                    DataSet ds = new DataSet();
+                    int c_amount = 0;
+                    ds = new BasicDBOps().GetMultipleRecords(connectionString, currentCreditAmount);
+                    if(ds.Tables.Count > 0)
+                    {
+                        if(ds.Tables[0].Rows.Count>0)
+                        {
+                            string cAmmnt = ds.Tables[0].Rows[0]["CurrentCreditAmount"].ToString();
+                            c_amount = this.HandleStringtoInt(cAmmnt);
+                        }
+                    }
                     creditPrevAmnt = this.GetBalanceAmountForVoucherCreation("", query, "CreditAmount");
                     query = DBConnection.GetTotalDebitamountinPreviousMonthForVoucher(stationId);
                     debitPrevAmnt = this.GetBalanceAmountForVoucherCreation(query, "", "DebitAmount");
@@ -1590,9 +1604,11 @@ namespace pdstest.DAL
                     dbr.dt.Clear();
                     dbr.dt.Columns.Add("CreditAmount");
                     dbr.dt.Columns.Add("DebitAmount");
+                    dbr.dt.Columns.Add("CurrentCreditAmount");
                     DataRow dr = dbr.dt.NewRow();
                     dr["CreditAmount"] = creditPrevAmnt;
                     dr["DebitAmount"] = debitPrevAmnt;
+                    dr["CurrentCreditAmount"] = c_amount;
                     dbr.dt.Rows.Add(dr);
                     dbr.ds.Tables.Add(dbr.dt);
                     dbr.Status = true;

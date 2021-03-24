@@ -8,6 +8,7 @@ namespace pdstest.Models
     public class Ledger : Voucher
     {
         public int Id { get; set; }
+        public int CurrentCreditAmount { get; set; }
         public int Credit { get; set; }
         public int Debit { get; set; }
         public int Balance { get; set; }

@@ -1526,9 +1526,11 @@ namespace pdstest.BLL
                            
                             string c_a = dbr.ds.Tables[0].Rows[0]["CreditAmount"].ToString();
                             string d_a = dbr.ds.Tables[0].Rows[0]["DebitAmount"].ToString();
-                            ld.Credit = this.HandleStringtoInt(c_a);
+                        string curr_a = dbr.ds.Tables[0].Rows[0]["CurrentCreditAmount"].ToString();
+                        ld.Credit = this.HandleStringtoInt(c_a);
                             ld.Debit = this.HandleStringtoInt(d_a);
                         ld.Id = 0;
+                        ld.CurrentCreditAmount = this.HandleStringtoInt(curr_a);
                             if (ld.Credit > 0)
                             {
                                 if (ld.Credit > ld.Debit)
