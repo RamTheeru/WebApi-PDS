@@ -1718,7 +1718,7 @@ namespace pdstest.DAL
                         {
                             //dbr.Status = false;
                             //dbr.Message = "Amount already credited for this station in this month";
-                            string cmTxt = string.Format("update FinanceLedger SET Credit={0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;", input.Credit, input.Cred_Date, input.StationId);
+                            string cmTxt = string.Format("update FinanceLedger SET Credit= Credit + {0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;", input.Credit, input.Cred_Date, input.StationId);
                             int ch = new BasicDBOps().ExceuteCommand(connectionString, cmTxt);
                             if (ch > 0)
                             {
