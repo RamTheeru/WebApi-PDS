@@ -1395,7 +1395,7 @@ namespace pdstest.BLL
                         if (i > 0)
                         {
                             result.voucher = new Voucher();
-                            result = GetVoucherDetailsbyVoucherNumber(i);
+                            result = this.GetVoucherDetailsbyVoucherNumber(i);
                             if(result.voucher != null)
                             {
                                 v = result.voucher;

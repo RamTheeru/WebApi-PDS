@@ -890,7 +890,7 @@ namespace pdstest.DAL
             try
             {
 
-                text = string.Format("Select * from Voucher where VoucherId = {0} ", voucherId);
+                text = string.Format("Select * from Voucher where VoucherId = {0}; ", voucherId);
 
             }
             catch (Exception e)
@@ -971,12 +971,13 @@ namespace pdstest.DAL
                 d = d.GetIndianDateTimeNow();
                 string idate = d.DateTimetoString();
                 StringBuilder insertCmd = new StringBuilder();
-                insertCmd.Append("Insert into ErrorLog(ServiceName,MethodName,Reason,CommandType,CreatedDate) ");
+                insertCmd.Append("Insert into ErrorLog(ServiceName,MethodName,Reason,CommandType,Zone,CreatedDate) ");
                 insertCmd.AppendLine(" VALUES(");
                 insertCmd.Append("'" + err.ServiceName.ToString() + "',");
                 insertCmd.Append("'" + err.MethodName.ToString() + "',");
                 insertCmd.Append("'" + err.Reason.ToString() + "',");
                 insertCmd.Append("'" + err.CommandType.ToString() + "',");
+                insertCmd.Append("'" + err.Zone.ToString() + "',");
                 insertCmd.Append("'" + idate + "')");
                 cmdText = insertCmd.ToString();
 
