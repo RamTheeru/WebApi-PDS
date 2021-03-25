@@ -1724,6 +1724,20 @@ namespace pdstest.DAL
                             {
                                 dbr.Status = true;
                                 dbr.Message = "Credit amount updated for this station successfully";
+                                string c = string.Format("UPDATE FinanceLedger SET Balance = Balance + {0} " +
+                                   " WHERE StationId = {1} AND MONTH(VoucherDate) = MONTH('{2}') AND " +
+                                   " YEAR(VoucherDate) = YEAR('{2}') AND IsActive = 1 AND VoucherStatus = 'A' AND Debit IS NOT NULL;", input.Credit, input.StationId, input.Cred_Date);
+                                ch = new BasicDBOps().ExceuteCommand(connectionString, c);
+                                if(ch > 0)
+                                {
+                                    dbr.Status = true;
+                                    dbr.Message = dbr.Message + "and also Ledger table debits updated accordingly";
+                                }
+                                else
+                                {
+                                    dbr.Status = false;
+                                    dbr.Message = dbr.Message + "but  Ledger table debits are unable to update accordingly, please contact support team.";
+                                }
                             }
                             else
                             {
