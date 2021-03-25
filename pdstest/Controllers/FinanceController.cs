@@ -19,7 +19,7 @@ namespace pdstest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[CustomAuthorization]
+    [CustomAuthorization]
     public class FinanceController : ControllerBase
     {
         private readonly IConfiguration configuration;

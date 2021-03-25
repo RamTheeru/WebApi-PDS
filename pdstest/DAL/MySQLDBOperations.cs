@@ -1714,22 +1714,22 @@ namespace pdstest.DAL
                             }
 
                         }
-                        if (isExists && validatebalance)
+                        if (isExists)
                         {
-                             dbr.Status = false;
-                             dbr.Message = "Amount already credited for this station in this month";
-                            //string cmTxt =  string.Format("update FinanceLedger SET Credit={0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;",input.Credit,input.Cred_Date,input.StationId);
-                            //  int ch = new BasicDBOps().ExceuteCommand(connectionString, cmTxt);
-                            //  if(ch > 0)
-                            //  {
-                            //      dbr.Status = true;
-                            //      dbr.Message = "Credit amount updated for this station successfully";
-                            //  }
-                            //  else
-                            //  {
-                            //      dbr.Status = false;
-                            //      dbr.Message = "Something wrong, Credit amount  is not updated for this station";
-                            //  }
+                            //dbr.Status = false;
+                            //dbr.Message = "Amount already credited for this station in this month";
+                            string cmTxt = string.Format("update FinanceLedger SET Credit={0},CreditDate = '{1}' WHERE StationId = {2} AND MONTH(CreditDate) = MONTH('{1}') AND YEAR(CreditDate) = YEAR('{1}') AND Credit IS NOT NULL  AND IsActive = 1;", input.Credit, input.Cred_Date, input.StationId);
+                            int ch = new BasicDBOps().ExceuteCommand(connectionString, cmTxt);
+                            if (ch > 0)
+                            {
+                                dbr.Status = true;
+                                dbr.Message = "Credit amount updated for this station successfully";
+                            }
+                            else
+                            {
+                                dbr.Status = false;
+                                dbr.Message = "Something wrong, Credit amount  is not updated for this station";
+                            }
                             //    dbr.Id = 0;
                             ////    dbr.VoucherNumber = input.VoucherNumber;
                             //    dbr.Status = false;
