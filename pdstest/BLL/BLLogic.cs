@@ -1627,7 +1627,7 @@ namespace pdstest.BLL
                     currentmonth = dtt.GetIndianDateTimeNow().Month;
                 }
                 dbr.ds = new System.Data.DataSet();
-                dbr = ops.GetAllEmpsDeliveryDetailsforPDF(currentmonth, stationId);
+                dbr = ops.GetAllEmpsDeliveryDetailsforPDF(stationId,currentmonth);
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
                 if (count > 0)

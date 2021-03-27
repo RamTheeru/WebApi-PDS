@@ -702,7 +702,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("DELETE from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1", dd.StationId,dd.CurrentMonth,dd.EmployeeId);
+                text = string.Format("DELETE from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1;", dd.StationId,dd.CurrentMonth,dd.EmployeeId);
             }
             catch
             {
@@ -715,7 +715,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("SELECT COUNT(*) from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1", dd.StationId, dd.CurrentMonth, dd.EmployeeId);
+                text = string.Format("SELECT COUNT(*) from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId={2} AND IsActive=1;", dd.StationId, dd.CurrentMonth, dd.EmployeeId);
             }
             catch
             {
@@ -728,7 +728,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("SELECT * from CDADelivery WHERE CurrentMonth={0} AND StationId={1}", currentMonth, stationId);
+                text = string.Format("SELECT * from CDADelivery WHERE CurrentMonth={0} AND StationId={1};", currentMonth, stationId);
             }
             catch
             {
@@ -741,7 +741,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("SELECT StationId,EmployeeId,FirstName,LastName,Phone,Address1,Address2,CDACode,PAN from CDAEmployees WHERE EmployeeId={0}", employeeId);
+                text = string.Format("SELECT StationId,EmployeeId,FirstName,LastName,Phone,Address1,Address2,CDACode,PAN from CDAEmployees WHERE EmployeeId={0};", employeeId);
             }
             catch
             {
@@ -754,7 +754,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("SELECT * from CDADelivery WHERE EmployeeId={0} AND CurrentMonth={1} AND StationId={2}", employeeId,currentMonth,stationId);
+                text = string.Format("SELECT * from CDADelivery WHERE EmployeeId={0} AND CurrentMonth={1} AND StationId={2};", employeeId,currentMonth,stationId);
             }
             catch
             {
@@ -797,7 +797,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("Select * from CommercialConstants Where StationId = {0} AND IsActive=1", StationId);
+                text = string.Format("Select * from CommercialConstants Where StationId = {0} AND IsActive=1;", StationId);
             }
             catch 
             {
@@ -810,7 +810,7 @@ namespace pdstest.DAL
             string text = "";
             try
             {
-                text = string.Format("Select * from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId ={2} AND IsActive=1", StationId, currentMonth, employeeId);
+                text = string.Format("Select * from CDADelivery Where StationId = {0} AND CurrentMonth = {1} AND EmployeeId ={2} AND IsActive=1;", StationId, currentMonth, employeeId);
             }
             catch 
             {
