@@ -2383,7 +2383,7 @@ namespace pdstest.DAL
                     // a closed connection.
 
                 }
-                throw e;
+               // throw e;
             }
             finally
             {
