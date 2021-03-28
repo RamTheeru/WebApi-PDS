@@ -470,9 +470,9 @@ namespace pdstest.BLL
                             emp.EmployeeId = (success2 == true) ? empid : 0;
                             emp.EmpCode = dbr.ds.Tables[0].Rows[i]["CDACode"].ToString();
                             emp.FirstName = dbr.ds.Tables[0].Rows[i]["FirstName"].ToString();
-                            if(input.currentmonth > 0)
+                            emp.delivery = new DeliveryDetails();
+                            if (input.currentmonth > 0)
                             {
-                                emp.delivery = new DeliveryDetails();
                                 DeliveryDetails dd = new DeliveryDetails();
                                 dd.CurrentMonth = input.currentmonth;
                                 dd.EmployeeId = emp.EmployeeId;
@@ -486,6 +486,8 @@ namespace pdstest.BLL
                             }
                             emps.Add(emp);
                         }
+                        if(string.IsNullOrEmpty(input.status))
+                            emps = emps.Where(x => x.delivery.DeliveryRate > 0).ToList();
                         result.employees = emps;
                         result.QueryTotalCount = dbr.QueryTotalCount;
                     }
