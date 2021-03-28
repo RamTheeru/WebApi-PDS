@@ -2318,6 +2318,7 @@ namespace pdstest.DAL
             MySqlConnection con = new MySqlConnection(connectionString);
             int i = 0;
             con.Open();
+            MySqlCommand command = new MySqlCommand();
             MySqlTransaction transaction = con.BeginTransaction();
             try
             {
@@ -2334,24 +2335,39 @@ namespace pdstest.DAL
                             isExists = new BasicDBOps().CheckRecordCountExistsOrNot(connectionString, checkText);
                             if (isExists)
                             {
-                                string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
-                                i = new BasicDBOps().ExceuteCommand(connectionString, delText);
-                                if (i == 0)
-                                    throw new Exception("Something went wrong!!,Unable to Delete Existing Delivery Details");
+                                i = 0;
+                                item.TotalAmount = this.GetDeliveryAmountTotal(item);
+                                string updateText = string.Format("Update CDADelivery SET DeliveryCount = {0} ,Incentives = {1}, " +
+                                        " TotalAmount={2} WHERE StationId = {3} AND CurrentMonth = {4} AND EmployeeId={5} AND IsActive=1;", item.DeliveryCount, item.Incentive, item.TotalAmount, item.StationId, item.CurrentMonth, item.EmployeeId);
+                                //string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
+                                command = new MySqlCommand(updateText, con, transaction);
+                                //command.Connection = con;
+                                //command.Transaction = transaction;
+                                transaction = command.Transaction;
+                                i = command.ExecuteNonQuery();
+                                command.Dispose();
+                                //if (i == 0)
+                                //{
+                                //    throw new Exception("Something went wrong!!,Unable to Delete Existing Delivery Details,please re-enter all details");
+                                //    break;
+                                //}
                             }
-                            //int deliveryRate = item.DeliveryRate;
-                            //int deliveryCount = item.DeliveryCount;
-                            //int petrolAllowance = item.PetrolAllowance;
-                            i = 0;
-                            item.TotalAmount = this.GetDeliveryAmountTotal(item);
-                            string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
-                            MySqlCommand command = new MySqlCommand(cmdText, con, transaction);
-                            //command.Connection = con;
-                            //command.Transaction = transaction;
-                            transaction = command.Transaction;
-                            i = command.ExecuteNonQuery();
-                            command.Dispose();
-                            //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                            else
+                            {
+                                //int deliveryRate = item.DeliveryRate;
+                                //int deliveryCount = item.DeliveryCount;
+                                //int petrolAllowance = item.PetrolAllowance;
+                                i = 0;
+                                item.TotalAmount = this.GetDeliveryAmountTotal(item);
+                                string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
+                                command = new MySqlCommand(cmdText, con, transaction);
+                                //command.Connection = con;
+                                //command.Transaction = transaction;
+                                transaction = command.Transaction;
+                                i = command.ExecuteNonQuery();
+                                command.Dispose();
+                                //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
+                            }
                         }
                         transaction.Commit();
                     }
