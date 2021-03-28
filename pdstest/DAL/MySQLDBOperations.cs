@@ -2342,6 +2342,7 @@ namespace pdstest.DAL
                             //int deliveryRate = item.DeliveryRate;
                             //int deliveryCount = item.DeliveryCount;
                             //int petrolAllowance = item.PetrolAllowance;
+                            i = 0;
                             item.TotalAmount = this.GetDeliveryAmountTotal(item);
                             string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
                             MySqlCommand command = new MySqlCommand(cmdText, con, transaction);
