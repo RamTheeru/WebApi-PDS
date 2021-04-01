@@ -2318,14 +2318,16 @@ namespace pdstest.DAL
             MySqlConnection con = new MySqlConnection(connectionString);
             int i = 0;
             con.Open();
-            MySqlCommand command = new MySqlCommand();
+            MySqlCommand command = con.CreateCommand();
             MySqlTransaction transaction = con.BeginTransaction();
             try
             {
+                command.Connection = con;
+                command.Transaction = transaction;
                 dbr.CommandType = "Insert";            
                 if (cdds.Count>0)
                 {
-                    var valid = cdds.Any(x => x.EmployeeId == 0 || x.StationId == 0);
+                    var valid = cdds.Any(x => x.EmployeeId == 0 || x.StationId == 0 || x.DeliveryRate == 0);
                     if (!valid)
                     {
                         bool isExists = false;
@@ -2340,12 +2342,18 @@ namespace pdstest.DAL
                                 string updateText = string.Format("Update CDADelivery SET DeliveryCount = {0} ,Incentives = {1}, " +
                                         " TotalAmount={2} WHERE StationId = {3} AND CurrentMonth = {4} AND EmployeeId={5} AND IsActive=1;", item.DeliveryCount, item.Incentive, item.TotalAmount, item.StationId, item.CurrentMonth, item.EmployeeId);
                                 //string delText = DBConnection.GetDeleteDeliveryDetailCDAforEmployeeCurrentMonth(item);
-                                command = new MySqlCommand(updateText, con, transaction);
+                                //command = new MySqlCommand(updateText, con, transaction);
                                 //command.Connection = con;
                                 //command.Transaction = transaction;
-                                transaction = command.Transaction;
+                                //  transaction = command.Transaction;
+                                command.CommandText = updateText;
                                 i = command.ExecuteNonQuery();
-                                command.Dispose();
+                                if(i == 0)
+                                {
+                                    throw new Exception("Operation error");
+                                }
+
+                                //command.Dispose();
                                 //if (i == 0)
                                 //{
                                 //    throw new Exception("Something went wrong!!,Unable to Delete Existing Delivery Details,please re-enter all details");
@@ -2360,12 +2368,17 @@ namespace pdstest.DAL
                                 i = 0;
                                 item.TotalAmount = this.GetDeliveryAmountTotal(item);
                                 string cmdText = DBConnection.GetUpdateDeiverydetailInsertQuery(item);
-                                command = new MySqlCommand(cmdText, con, transaction);
+                                // command = new MySqlCommand(cmdText, con, transaction);
                                 //command.Connection = con;
                                 //command.Transaction = transaction;
-                                transaction = command.Transaction;
+                                // transaction = command.Transaction;
+                                command.CommandText = cmdText;
                                 i = command.ExecuteNonQuery();
-                                command.Dispose();
+                                if (i == 0)
+                                {
+                                    throw new Exception("Operation error");
+                                }
+                                //command.Dispose();
                                 //i = new BasicDBOps().ExceuteCommand(connectionString, cmdText);
                             }
                         }
@@ -2411,6 +2424,7 @@ namespace pdstest.DAL
                     dbr.Status = true;
                     dbr.Message = "Updated delivery details for all Successfully!!!";
                 }
+                command.Dispose();
             }
             return dbr;
         }
