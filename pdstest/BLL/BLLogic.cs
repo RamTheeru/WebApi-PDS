@@ -1935,10 +1935,17 @@ namespace pdstest.BLL
                         dbr = ops.CreateCDAEmployee(input);
                         result.Id = dbr.Id;
                         result.EmployeeName = dbr.EmployeeName;
+                        result.Message = dbr.Message;
+                        result.Status = dbr.Status;
+                        
                     }
-                    result.Message = dbr.Message;
-                    result.Status = dbr.Status;
+                    else
+                    {
+                        result.Message = dbr.Message;
+                        result.Status = false;
+                    }
                     result.CommandType = "INSERT";
+
                 }
 
             
