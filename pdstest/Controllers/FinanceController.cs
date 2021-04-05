@@ -13,7 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
-
+using Wkhtmltopdf.NetCore;
+using Wkhtmltopdf.NetCore.Options;
 
 namespace pdstest.Controllers
 {
@@ -23,19 +24,21 @@ namespace pdstest.Controllers
     public class FinanceController : ControllerBase
     {
         private readonly IConfiguration configuration;
-        public  static string Zone = "Finance Controller";
+        private readonly IGeneratePdf _generatePdf;
+        public static string Zone = "Finance Controller";
         //public EmployeeController(IConfiguration config) {
         //    this.configuration = config;
 
         //}
         private static IConnection conn;
         private BLLogic logic;
-        public FinanceController(IConnection con, IConfiguration config)
+        public FinanceController(IConnection con, IConfiguration config, IGeneratePdf generatePdf)
         {
 
             conn = con;
             configuration = config;
-            logic = new BLLogic(conn,configuration);
+            logic = new BLLogic(conn, configuration);
+            _generatePdf = generatePdf;
         }
 
         [HttpPost]
@@ -45,7 +48,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (obj.StationId>0 && !(string.IsNullOrEmpty(obj.VoucherNumber)) && !(string.IsNullOrEmpty(obj.V_Date)))
+                if (obj.StationId > 0 && !(string.IsNullOrEmpty(obj.VoucherNumber)) && !(string.IsNullOrEmpty(obj.V_Date)))
                 {
                     result = logic.InsertVoucher(obj);
 
@@ -68,7 +71,7 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("InsertVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("InsertVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -84,7 +87,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
-                if (voucherId>0)
+                if (voucherId > 0)
                 {
                     result = logic.GetVoucherDetailsbyVoucherNumber(voucherId);
 
@@ -107,7 +110,7 @@ namespace pdstest.Controllers
                 result.CommandType = "Select";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("VoucherDetails", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("VoucherDetails", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -146,7 +149,7 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("ApproveVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("ApproveVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -185,7 +188,7 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("RejectVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("RejectVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -224,7 +227,7 @@ namespace pdstest.Controllers
                 result.CommandType = "UPDATE";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("UpdateVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("UpdateVoucher", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -263,7 +266,7 @@ namespace pdstest.Controllers
                 result.CommandType = "Select";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("PreviousMonthCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("PreviousMonthCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -283,7 +286,7 @@ namespace pdstest.Controllers
                 //  obj.Cred_Date = DateTime.Now.ToShortDateString();
                 DateTime dtt = DateTime.Now.GetIndianDateTimeNow();
                 obj.Cred_Date = dtt.DateTimetoString();
-                if (obj.StationId > 0 && obj.Credit>0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
+                if (obj.StationId > 0 && obj.Credit > 0 && !(string.IsNullOrEmpty(obj.Cred_Date)))
                 {
                     result = logic.InsertLedger(obj);
 
@@ -306,7 +309,7 @@ namespace pdstest.Controllers
                 result.CommandType = "INSERT";
                 result.Id = 0;
                 result.EmployeeName = "";
-                ErrorLogTrack err = new ErrorLogTrack("InsertCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("InsertCredit", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -354,7 +357,7 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
-                ErrorLogTrack err = new ErrorLogTrack("Vouchers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("Vouchers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -390,7 +393,7 @@ namespace pdstest.Controllers
                 result.Message = e.Message;
                 result.Status = false;
                 result.CommandType = "Select";
-                ErrorLogTrack err = new ErrorLogTrack("Ledgers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message,Zone);
+                ErrorLogTrack err = new ErrorLogTrack("Ledgers", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
                 string r = logic.TraceError(err);
                 result.Message = result.Message + " and " + r ?? "";
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -398,6 +401,92 @@ namespace pdstest.Controllers
             return Ok(result);
             //return new CustomResult(result);
 
+        }
+
+        [HttpPost]
+        [Route("DownloadLedgerDetails")]
+        [CustomAuthorization]
+        public async Task<IActionResult> DownloadLedgerDetails(APIInput input)
+        {
+            APIResult result = new APIResult();
+            List<InMemoryFile> files = new List<InMemoryFile>();
+            string contentType = "application/pdf";
+            string fileName = "";
+            try
+            {
+                input.table = "ledgerreport";
+                if (input.status != null)
+                    input.status = input.status.CleanString();
+                if (input.stationId == 0 || string.IsNullOrEmpty(input.vEndDate))
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                string[] dtcontents = input.vEndDate.Split("-");
+                if (dtcontents.Length > 0)
+                {
+                    string cmonth = dtcontents[1];
+                    input.currentmonth = logic.HandleStringtoInt(cmonth);
+                    result.ledgers = new List<Ledger>();
+                    result = logic.GetPagnationRecords(input);
+                    if (result.ledgers.Count > 0)
+                    {
+                        string stationname = "";
+                        string currentYear = "";
+                        Ledger ledg = result.ledgers.FirstOrDefault(x => x.StationId == input.stationId);
+                        if (ledg != null)
+                        {
+                            stationname = ledg.StationName;
+                            currentYear = DateTime.Now.GetIndianDateTimeNow().Year.ToString();
+                        }
+
+                        ConvertOptions opts = new ConvertOptions();
+                        //opts.PageWidth = 800;
+                        //opts.PageHeight = 508;
+                        opts.PageSize = Size.A4;
+                        opts.PageMargins = new Margins();
+                        ///opts.PageOrientation = Wkhtmltopdf.NetCore.Options.Orientation.Portrait;
+                        Margins mrgns = new Margins();
+                        mrgns.Left = 0;
+                        mrgns.Right = 0;
+                        opts.PageMargins = mrgns;
+                        _generatePdf.SetConvertOptions(opts);
+                        byte[] ct = await _generatePdf.GetByteArray("pdflayout/LedgerLayout.cshtml", result);
+                        //var pdfStream = new System.IO.MemoryStream();
+                        //pdfStream.Write(ct, 0, ct.Length);
+                        //pdfStream.Position = 0;
+                        fileName = "LedgerBalance-" + logic.GetMonth(input.currentmonth) + "-" + currentYear + ".pdf";
+                        return File(ct, contentType, fileName);
+                    }
+                    result.Status = false;
+                    result.Message = "No data to create file";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "Invalid Input dates to pickup data";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+                //  return File(zipFileContent, contentType, "CDAInvoice" + result.employee.StationCode + result.pdfLayout.BillingPeriod);
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Download";
+                result.Id = 0;
+                result.EmployeeName = "";
+                ErrorLogTrack err = new ErrorLogTrack("DownloadLedgerDetails", e.TargetSite.ReflectedType.FullName, result.CommandType, e.Message, Zone);
+                string r = logic.TraceError(err);
+                result.Message = result.Message + " and " + r ?? "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
         }
     }
 }

@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+@model pdstest.Models.APIResult
+<html>
+<head>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>Ledger Details</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        #main {
+            /*          border-radius: 3px;
+            border-style: solid;*/
+            width: 100%;
+            height: 100%;
+        }
+
+        #th {
+            border-style: solid;
+            border-width: medium;
+        }
+
+        h4 {
+            text-align: center;
+            margin-left: 450px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .bilto {
+            border-style: solid;
+            height: 120px;
+            width: 300px;
+        }
+
+        .col {
+            width: 100%;
+        }
+
+        .row {
+            min-width: 100%;
+            min-height: 100%;
+            padding-top: .2em;
+            padding-bottom: .2em;
+        }
+
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-gap: 120px;
+        }
+
+        .grid-container2 {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-gap: 260px;
+        }
+
+        .grid-container-fluid > div {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 10px;
+        }
+
+        .grid-container2-fluid > div {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1><u><b>Ledger Details for Current Month</b></u></h1>
+
+    <div class="container-fluid" id="main">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Debit Date</th>
+                    <th>Credit Date</th>
+
+                    <th>Voucher Number</th>
+                    <th>Particulars</th>
+                    <th>Credit</th>
+                    <th>Debit</th>
+                    <th>Balance</th>
+                    <!-- <div *ngIf="isLe">
+                <th>
+
+                    <ng-container>Status</ng-container>
+
+                </th>
+            </div> -->
+                </tr>
+            </thead>
+            <tbody>
+                @{ 
+                int i = 0;
+                int c = @Model.ledgers.Count;
+                var list = @Model.ledgers;
+                    foreach (var item in list)
+                    {
+                    i = i + 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.V_Date</td>
+                                    <td>@item.Cred_Date</td>
+                                    <td>@item.VoucherNumber</td>
+                                    <td>@item.Particulars</td>
+                                    <td>@item.Credit</td>
+                                    <td>@item.Debit</td>
+                                    <td>@item.Balance</td>
+                                </tr>
+
+                    }
+                    }
+                
+            </tbody>
+        </table>
+
+        </div>
+    </div>
+
+    @*<div>
+          @Model.BodyText
+        </div>*@
+</body>
+</html>

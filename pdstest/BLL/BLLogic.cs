@@ -321,7 +321,7 @@ namespace pdstest.BLL
                         result.QueryTotalCount = dbr.QueryTotalCount;
  
                     }
-                    else if (input.table.ToLower() == "ledger")
+                    else if (input.table.ToLower() == "ledger" || input.table.ToLower() == "ledgerreport")
                     {
                         result.ledgers = new List<Ledger>();
                         List<Ledger> ledgs = new List<Ledger>();
@@ -333,8 +333,17 @@ namespace pdstest.BLL
                             string sId = dbr.ds.Tables[0].Rows[i]["StationId"].ToString();
                             //bool success = int.TryParse(sId, out stationid);
                             //ledg.StationId = (success == true) ? stationid : 0;
-                            ledg.StationId = this.HandleStringtoInt(sId);
-
+                            ledg.StationId = this.HandleStringtoInt(sId);                           
+                            if(ledg.StationId > 0)
+                            {
+                                Tuple<string, string> st = Tuple.Create("", "");
+                                st = ops.GetStationNameByStationId(ledg.StationId);
+                                ledg.StationName = st.Item1;
+                            }
+                            else
+                            {
+                                ledg.StationName = "";
+                            }
                           //  int debit = 0;
                             string deb = dbr.ds.Tables[0].Rows[i]["Debit"].ToString();
                             //success = int.TryParse(deb, out debit);
