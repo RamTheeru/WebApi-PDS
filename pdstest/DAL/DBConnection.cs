@@ -181,19 +181,6 @@ namespace pdstest.DAL
                         text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
                     " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, cdat));
                     }
-                    else if (table.ToLower() == "ledgerreport" && currentMonth > 0)
-                    {
-                        //                     text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
-                        //" AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
-                        DateTime dtt = DateTime.Now;
-                        dtt = dtt.GetIndianDateTimeNow();
-                        DateTime dtvalue = new DateTime(dtt.Year, currentMonth, 1);
-                        string cdat = dtvalue.DateTimetoString();
-                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
-                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1;", stationId, cdat));
-                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
-                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, cdat));
-                    }
                     else if (table.ToLower() == "ledgerreport")
                     {
                         //                     text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
@@ -208,6 +195,19 @@ namespace pdstest.DAL
                   " ) AND IsActive = 1; ", stationId, vstartDate, vEndDate);
                         text.Add("main", cdtxt);
                         text.Add("count", countText);
+                    }
+                    else if (table.ToLower() == "ledgerreport" && currentMonth > 0)
+                    {
+                        //                     text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+                        //" AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 LIMIT {2},{3};", stationId, cdat, range, ps));
+                        DateTime dtt = DateTime.Now;
+                        dtt = dtt.GetIndianDateTimeNow();
+                        DateTime dtvalue = new DateTime(dtt.Year, currentMonth, 1);
+                        string cdat = dtvalue.DateTimetoString();
+                        text.Add("main", string.Format("SELECT * FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1;", stationId, cdat));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM FinanceLedger where StationId = {0} AND ((MONTH(CreditDate) = MONTH('{1}') " +
+                    " AND YEAR(CreditDate) = YEAR('{1}')) OR (MONTH(VoucherDate) = MONTH('{1}') AND YEAR(VoucherDate) = YEAR('{1}'))) AND IsActive = 1 ;", stationId, cdat));
                     }
                     else if (table.ToLower() == "ledger" && !string.IsNullOrEmpty(vstartDate) && !string.IsNullOrEmpty(vEndDate))
                     {
