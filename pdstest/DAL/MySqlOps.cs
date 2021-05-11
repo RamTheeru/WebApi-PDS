@@ -23,6 +23,10 @@ namespace pdstest.DAL
         {
             return _ops.CreateCDAEmployee(input);
         }
+        public DataBaseResult CreateMainEmployee(PDSEmployee input)
+        {
+            return _ops.CreateMainEmployee(input);
+        }
         public DataBaseResult GetConstants()
         {
             return _ops.GetConstants();
@@ -68,6 +72,10 @@ namespace pdstest.DAL
         public bool CheckIfSessionExists(string userName, int employeeId, int userTypeId)
         {
             return _ops.CheckIfSessionExists(userName, employeeId, userTypeId);
+        }
+        public DataBaseResult CheckMainEmpCodeExists(string empCode)
+        {
+            return _ops.CheckMainEmpCodeExists(empCode);
         }
         public DataBaseResult InsertVoucher(Voucher input)
         {

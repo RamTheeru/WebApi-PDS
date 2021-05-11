@@ -596,6 +596,38 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpGet("CheckMainEmpCode")]
+
+        public IActionResult CheckMainEmpCode(string empCode)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!string.IsNullOrEmpty(empCode))
+                    empCode = empCode.CleanString();
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "SELECT";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+                result = logic.CheckMainEmpCodeExists(empCode);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+
         [HttpGet("CheckEmpCode")]
 
         public IActionResult CheckEmpCode(string empCode)
@@ -697,7 +729,43 @@ namespace pdstest.Controllers
             //return new CustomResult(result);
 
         }
+        [HttpPost]
+        [Route("CreatePDSEmployee")]
+        public IActionResult CreatePDSEmployee(PDSEmployee obj)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.EmpCode)) || obj.StationId > 0 || obj.Pid > 0)
+                {
+                    result = logic.CreateMainEmployee(obj);
 
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "INSERT";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "INSERT";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            return Ok(result);
+            // return new CustomResult(result);
+
+        }
         [HttpPost]
         [Route("CreateEmployee")]
         public IActionResult CreateEmployee(Employee obj)

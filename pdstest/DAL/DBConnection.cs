@@ -24,6 +24,7 @@ namespace pdstest.DAL
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["InsertCDAEmpStoredProc"] = "usp_InsertCDAEmployee";
+            sqllib["InsertMainEmpStoredProc"] = "usp_InsertMainEmployee";
             sqllib["RegisterEmpStoredProc"] = "usp_RegisterEmployee";
             sqllib["VoucherInsertProc"] = "usp_InsertVoucher";
             sqllib["LedgerInsertProc"] = "usp_InsertLedger";
@@ -537,6 +538,22 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string CheckMainEmpCodeExists(string empCode)
+        {
+            string text = "";
+
+            try
+            {
+                    text = string.Format("select COUNT(*) from PDSEmployees where EmpCode = '{0}';", empCode);
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetSessionDetails(string userName,int employeeId, int userTypeId)
         {
             string text = "";
@@ -892,7 +909,29 @@ namespace pdstest.DAL
             }
             return text;
         }
+        
+        public static string GetMainEmployeeInsertQuery()
+        {
+            string text = "";
+            //string path = "";
+            try
+            {
+                //path = Directory.GetCurrentDirectory();
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                //text = builder.Build().GetSection("SQLProcs").GetSection("StoredProc").Value;
 
+                text = _dbQueries["InsertMainEmpStoredProc"];
+
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetVoucherInsertQuery()
         {
             string text = "";
@@ -989,6 +1028,92 @@ namespace pdstest.DAL
             return text;
         }
 
+        public static List<Tuple<string,string>> GetProcParameters()
+        {
+            List<Tuple<string, string>> procparams = new List<Tuple<string, string>>();
+            try
+            {
+                Tuple<string, string> tup = Tuple.Create("@ReportingManager", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ReportingManagerEmpCode", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PfFundName", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PfMembershipNumber", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PfDOJFund", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("UAN", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ESICFundId", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ESICMemberShipNumber", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ESICDOJFund", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("EmployeeCategory", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ShiftDetails", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("LeavePolicy", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("AttendancePolicy", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("OverTimeLogic", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("OverTimeLogicPayout", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("LateInEarlyOut", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("WeeklyOff", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("DayOff", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("HolidayList", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("AttendanceCycle", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ApprovalHierarchy", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ClosingLeaveBalances", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("DAPeopleSoftId", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PSC", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("FromDate", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ToDate", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("EmployeeStatus", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ICPaymentMethod", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PaymentPerUnit", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PayFrequency", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("RegularPayRateDesc", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("BlockARate", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("BlockBRate", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("PackagesDelivered", "50");
+                procparams.Add(tup);
+                tup = Tuple.Create("ApplicablePayRate", "50");
+                procparams.Add(tup);
+            }
+            catch 
+            {
+               // string msg = e.Message;
+               // text = "";
+
+            }
+            return procparams;
+
+
+        }
 
         public static string GetErrorLogInsertQuery(ErrorLogTrack err)
         {

@@ -12,6 +12,7 @@ namespace pdstest.services
         DataBaseResult RegisterEmployee(RegisterEmployee input);
         DataBaseResult CreateEmployee(Employee input,bool isEmployee=false);
         DataBaseResult CreateCDAEmployee(Employee input);
+        DataBaseResult CreateMainEmployee(PDSEmployee input);
         DataBaseResult GetConstants();
         DataBaseResult GetRegisteredUsers(int stationId);
         DataBaseResult GetRegisteredUser(int registerId);
@@ -30,6 +31,7 @@ namespace pdstest.services
         DataBaseResult CreateSession(UserType input);
         DataBaseResult CheckUserExists(string userName);
         DataBaseResult CheckEmpCodeExists(string empCode,bool isEmployee);
+        DataBaseResult CheckMainEmpCodeExists(string empCode);
         bool CheckIfSessionExists(string userName, int employeeId, int userTypeId);
         DataBaseResult UpdateSession(UserType usr);
         DataBaseResult DeleteSession(string userName,  int employeeId, int userTypeId);
