@@ -17,5 +17,6 @@ namespace pdstest.Models
         public int? pagesize { get; set; }
         public string status { get; set; }
         public int currentmonth { get; set; }
+        public int currentYear { get; set; }
     }
 }

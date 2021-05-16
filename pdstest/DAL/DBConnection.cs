@@ -228,6 +228,18 @@ namespace pdstest.DAL
                         text.Add("main", string.Format("SELECT * FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 LIMIT {2},{3};", stationId, 3, range, ps));
                         text.Add("count", string.Format("SELECT COUNT(*) FROM CDAEmployees where StationId = {0} AND PID = {1} AND IsActive = 1 ;", stationId, 3));
 
+                    }                   
+                    else if (table.ToLower() == "pdsemployees")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM PDSEmployees where StationId = {0}  AND IsActive = 1 LIMIT {1},{2};", stationId, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM PDSEmployees where StationId = {0}  AND IsActive = 1 ;", stationId));
+
+                    }
+                    else if (table.ToLower() == "pdsunemployees")
+                    {
+                        text.Add("main", string.Format("SELECT * FROM PDSEmployees where StationId = {0}  AND IsActive = 0 LIMIT {1},{2};", stationId, range, ps));
+                        text.Add("count", string.Format("SELECT COUNT(*) FROM PDSEmployees where StationId = {0}  AND IsActive = 0 ;", stationId));
+
                     }
                     else if (table.ToLower() == "getcdadel")
                     {

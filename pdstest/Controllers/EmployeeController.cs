@@ -529,7 +529,54 @@ namespace pdstest.Controllers
 
         }
 
+        [HttpPost("PDSEmployees")]
+        [CustomAuthorization]
+        public IActionResult GetPDSEmployees(APIInput input)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                input.table = "pdsemployees";
+                //if(stationCode != null)
+                //    stationCode = stationCode.Replace(@"\", "");
+                result = result = logic.GetEmployees(input,false);
 
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
+        [HttpPost("PDSUnApprovedEmployees")]
+        [CustomAuthorization]
+        public IActionResult GetUnApprovedPDSEmployees(APIInput input)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                input.table = "pdsunemployees";
+                //if(stationCode != null)
+                //    stationCode = stationCode.Replace(@"\", "");
+                result = result = logic.GetEmployees(input, false);
+
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            return Ok(result);
+            //return new CustomResult(result);
+
+        }
         [HttpPost("DAEmployees")]
         [CustomAuthorization]
 
@@ -1142,95 +1189,214 @@ namespace pdstest.Controllers
 
 
         #endregion
+        #region AttendanceFILEDownload
 
-        #region FILEUPLOAD
-        ////[HttpPost("upload", Name = "upload")]
-        ////[ProducesResponseType(StatusCodes.Status200OK)]
-        ////[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        ////public async Task<IActionResult> UploadFile(IFormFile file)
-        ////{
-        ////    APIResult result = new APIResult();
-        ////    try
-        ////    {
-        ////        result.CommandType = "file upload";
-        ////        if (CheckIfExcelFile(file))
-        ////        {
-        ////            Tuple<bool,string> t = await WriteFile(file);
-        ////            bool isSuccess = t.Item1;
+        [HttpPost]
+        [Route("DownloadAttendance")]
+        [CustomAuthorization]
+        public async Task<IActionResult> DownloadAttendance(APIInput input)
+        {
+            APIResult result = new APIResult();
+            string contentType = "application/vnd.ms-excel";
+            string fileName = "";
+            try
+            {
+                if (input.currentYear == 0)
+                    input.currentYear = DateTime.Now.Year;
+                if (input.stationId > 0 && input.currentmonth > 0)
+                {
+                    result = logic.GetConstants();
+                    var stations = result.stations;
+                    var dt = new DateTime(input.currentYear, input.currentmonth, 1);
+                    var month = dt.getMonthAbbreviatedName();
+                    var station = stations.FirstOrDefault(s => s.StationId == input.stationId);
+                    var extension = ".xlsx";
+                    if (station != null)
+                    {
+                        var pathBuilt = configuration["attendancepath"];
+                        var stationCode = station.StationCode;
+                        fileName = stationCode + "-" + month + "-" + input.currentYear + extension;
+                        var path = Path.Combine(pathBuilt, fileName);
+                        if (System.IO.File.Exists(path))
+                        {
+                            using (StreamReader sr = System.IO.File.OpenText(path))
+                            {
+                                return File(sr.BaseStream, contentType, fileName);
+                            }
+                        }
+                        extension = ".xls";
+                        fileName = stationCode + "-" + month + "-" + input.currentYear + extension;
+                        path = Path.Combine(pathBuilt, fileName);
+                        if (System.IO.File.Exists(path))
+                        {
+                            using (StreamReader sr = System.IO.File.OpenText(path))
+                            {
+                                Stream str = null;
+                                await sr.BaseStream.CopyToAsync(str);
+                                return File(str, contentType, fileName);
+                            }
+                        }
+                        else
+                        {
+                            result.Message = "No file uploaded yet for this Station!!!";
+                            result.Status = true;
+                            result.CommandType = "Download";
+                            result.Id = 0;
+                            result.EmployeeName = "";
+                            return StatusCode(StatusCodes.Status200OK, result);
+                        }
+                    }
+                    else
+                    {
+                        result.Message = "Invalid Input,No file found for this Station!!!";
+                        result.Status = false;
+                        result.CommandType = "Download";
+                        result.Id = 0;
+                        result.EmployeeName = "";
+                        return StatusCode(StatusCodes.Status400BadRequest, result);
+                    }
+                }
+                else
+                {
+                    result.Message = "Invalid Input!!!";
+                    result.Status = false;
+                    result.CommandType = "Download";
+                    result.Id = 0;
+                    result.EmployeeName = "";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Download";
+                result.Id = 0;
+                result.EmployeeName = "";
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
 
-        ////            if (isSuccess)
-        ////            {
-        ////                result.Status = true;
+            }
+        }
+            #endregion
+            #region AttendanceFILEUPLOAD
+            [HttpPost("upload", Name = "upload")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                result.CommandType = "file upload";
+                if (CheckIfExcelFile(file))
+                {
+                    Tuple<bool, string> t = await WriteFile(file);
+                    bool isSuccess = t.Item1;
 
-        ////            }
-        ////            else 
-        ////            {
-        ////                result.Status = false;
+                    if (isSuccess)
+                    {
+                        result.Status = true;
 
-        ////            }
-        ////            result.Message = t.Item2;
-        ////            return Ok(result);
-        ////        }
-        ////        else
-        ////        {
-        ////            result.Status = false;
-        ////            result.Message = "Invalid file extension";
-        ////            return StatusCode(StatusCodes.Status400BadRequest, result);
-        ////        }
-        ////    }
-        ////    catch (Exception e)
-        ////    {
-        ////        result.Message = e.Message;
-        ////        result.Status = false;
-        ////        result.Id = 0;
-        ////        return StatusCode(StatusCodes.Status500InternalServerError, result);
-        ////    }
+                    }
+                    else
+                    {
+                        result.Status = false;
 
-        ////}
-        ////private bool CheckIfExcelFile(IFormFile file)
-        ////{
-        ////    var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-        ////    return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
-        ////}
+                    }
+                    result.Message = t.Item2;
+                    return Ok(result);
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "Invalid file extension";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.Id = 0;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
 
-        ////private async Task<Tuple<bool,string>> WriteFile(IFormFile file)
-        ////{
-        ////    Tuple<bool, string> t;
-        ////    bool isSaveSuccess = false;
-        ////    string fileName;
-        ////    try
-        ////    {
-        ////        var month = DateTime.Now.getMonthAbbreviatedName();
-        ////        var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-        ////        fileName = month+"-"+ DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons.
+        }
+        private bool CheckIfExcelFile(IFormFile file)
+        {
+            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+            return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
+        }
 
-        ////        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+        private async Task<Tuple<bool, string>> WriteFile(IFormFile file)
+        {
+            Tuple<bool, string> t;
+            bool isSaveSuccess = false;
+            string fileName;
+            try
+            {
+                var month = DateTime.Now.getMonthAbbreviatedName();
+                string[] fileprefix = file.FileName.Split('.');
+                if (fileprefix[0].Contains("-"))
+                {
+                    string[] filepre = fileprefix[0].Split('-');
+                    string station = filepre[0];
+                    if (!string.IsNullOrEmpty(station))
+                    {
+                        APIResult resstat = new APIResult();
+                        resstat = logic.GetConstants();
+                        var stations = resstat.stations;
+                        var validate = stations.FirstOrDefault(x => x.StationCode == station);
+                        if (validate != null)
+                        {
+                            var statCode = validate.StationCode;
+                            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+                            fileName = statCode + "-" + month + "-" + DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons.
 
-        ////        if (!Directory.Exists(pathBuilt))
-        ////        {
-        ////            Directory.CreateDirectory(pathBuilt);
-        ////        }
+                            var pathBuilt = configuration["attendancepath"];//Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
 
-        ////        var path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files",
-        ////           fileName);
+                            if (!Directory.Exists(pathBuilt))
+                            {
+                                Directory.CreateDirectory(pathBuilt);
+                            }
 
-        ////        using (var stream = new FileStream(path, FileMode.Create))
-        ////        {
-        ////            await file.CopyToAsync(stream);
-        ////        }
+                            var path = Path.Combine(pathBuilt, fileName);
 
-        ////        isSaveSuccess = true;
-        ////        t = Tuple.Create(isSaveSuccess, "file uploaded successfully");
-        ////    }
-        ////    catch(Exception e)
-        ////    {
-        ////        isSaveSuccess = false;
-        ////        t = Tuple.Create(isSaveSuccess, e.Message);
+                            using (var stream = new FileStream(path, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
 
-        ////    }
+                            isSaveSuccess = true;
+                            t = Tuple.Create(isSaveSuccess, "file uploaded successfully");
+                        }
+                        else
+                        {
+                            isSaveSuccess = false;
+                            t = Tuple.Create(isSaveSuccess, "StationCode mentioned in FileName is not in correct format.Please check and upload again.");
+                        }
+                    }
+                    else
+                    {
+                        isSaveSuccess = false;
+                        t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.");
+                    }
+                }
+                else
+                {
+                    isSaveSuccess = false;
+                    t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.");
+                }
+            }
+            catch (Exception e)
+            {
+                isSaveSuccess = false;
+                t = Tuple.Create(isSaveSuccess, e.Message);
 
-        ////    return t;
-        ////}
+            }
+
+            return t;
+        }
         #endregion
         [HttpGet("Backups")]
         [CustomAuthorization]
