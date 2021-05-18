@@ -1193,7 +1193,7 @@ namespace pdstest.Controllers
 
         [HttpPost]
         [Route("DownloadAttendance")]
-        [CustomAuthorization]
+        ///[CustomAuthorization]
         public async Task<IActionResult> DownloadAttendance(APIInput input)
         {
             APIResult result = new APIResult();
@@ -1201,8 +1201,10 @@ namespace pdstest.Controllers
             string fileName = "";
             try
             {
-                if (input.currentYear == 0)
+                if (input.currentYear == 0 || input.currentYear == 2)
                     input.currentYear = DateTime.Now.Year;
+                else if (input.currentYear == 1)
+                    input.currentYear = DateTime.Now.AddYears(-1).Year;
                 if (input.stationId > 0 && input.currentmonth > 0)
                 {
                     result = logic.GetConstants();
@@ -1373,19 +1375,19 @@ namespace pdstest.Controllers
                         else
                         {
                             isSaveSuccess = false;
-                            t = Tuple.Create(isSaveSuccess, "StationCode mentioned in FileName is not in correct format.Please check and upload again.");
+                            t = Tuple.Create(isSaveSuccess, "StationCode mentioned in FileName is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                         }
                     }
                     else
                     {
                         isSaveSuccess = false;
-                        t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.");
+                        t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                     }
                 }
                 else
                 {
                     isSaveSuccess = false;
-                    t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.");
+                    t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                 }
             }
             catch (Exception e)
