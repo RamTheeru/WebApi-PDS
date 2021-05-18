@@ -1221,7 +1221,7 @@ namespace pdstest.Controllers
                         var path = Path.Combine(pathBuilt, fileName);
                         if (System.IO.File.Exists(path))
                         {
-                            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+                            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
 
                             return File(fileBytes,contentType, fileName);
                             //using (StreamReader sr = System.IO.File.OpenText(path)) "application/force-download"
@@ -1234,7 +1234,7 @@ namespace pdstest.Controllers
                         path = Path.Combine(pathBuilt, fileName);
                         if (System.IO.File.Exists(path))
                         {
-                            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+                            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
 
                             return File(fileBytes, contentType, fileName);
                             //using (StreamReader sr = System.IO.File.OpenText(path))
