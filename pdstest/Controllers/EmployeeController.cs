@@ -1197,7 +1197,7 @@ namespace pdstest.Controllers
         public async Task<IActionResult> DownloadAttendance(APIInput input)
         {
             APIResult result = new APIResult();
-            string contentType = "application/vnd.ms-excel";
+            string contentType = "application/json";
             string fileName = "";
             try
             {
