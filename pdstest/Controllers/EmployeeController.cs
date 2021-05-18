@@ -1221,22 +1221,28 @@ namespace pdstest.Controllers
                         var path = Path.Combine(pathBuilt, fileName);
                         if (System.IO.File.Exists(path))
                         {
-                            using (StreamReader sr = System.IO.File.OpenText(path))
-                            {
-                                return File(sr.BaseStream, contentType, fileName);
-                            }
+                            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+
+                            return File(fileBytes,contentType, fileName);
+                            //using (StreamReader sr = System.IO.File.OpenText(path)) "application/force-download"
+                            //{
+                            //    return File(sr.BaseStream, contentType, fileName);
+                            //}
                         }
                         extension = ".xls";
                         fileName = stationCode + "-" + month + "-" + input.currentYear + extension;
                         path = Path.Combine(pathBuilt, fileName);
                         if (System.IO.File.Exists(path))
                         {
-                            using (StreamReader sr = System.IO.File.OpenText(path))
-                            {
-                                Stream str = null;
-                                await sr.BaseStream.CopyToAsync(str);
-                                return File(str, contentType, fileName);
-                            }
+                            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+
+                            return File(fileBytes, contentType, fileName);
+                            //using (StreamReader sr = System.IO.File.OpenText(path))
+                            //{
+                            //    Stream str = null;
+                            //    await sr.BaseStream.CopyToAsync(str);
+                            //    return File(str, contentType, fileName);
+                            //}
                         }
                         else
                         {
