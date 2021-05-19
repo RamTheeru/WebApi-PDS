@@ -1197,7 +1197,7 @@ namespace pdstest.Controllers
         public async Task<IActionResult> DownloadAttendance(APIInput input)
         {
             APIResult result = new APIResult();
-            string contentType = "application/json";
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             string fileName = "";
             try
             {
@@ -1234,6 +1234,7 @@ namespace pdstest.Controllers
                         path = Path.Combine(pathBuilt, fileName);
                         if (System.IO.File.Exists(path))
                         {
+
                             byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
 
                             return File(fileBytes, contentType, fileName);
