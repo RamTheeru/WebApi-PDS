@@ -1252,7 +1252,7 @@ namespace pdstest.Controllers
                             result.CommandType = "Download";
                             result.Id = 0;
                             result.EmployeeName = "";
-                            return StatusCode(StatusCodes.Status200OK, result);
+                            return StatusCode(StatusCodes.Status400BadRequest, result);
                         }
                     }
                     else
