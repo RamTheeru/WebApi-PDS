@@ -1217,8 +1217,13 @@ namespace pdstest.Controllers
                     {
                         var pathBuilt = configuration["attendancepath"];
                         var stationCode = station.StationCode;
+                        var stationPath = Path.Combine(pathBuilt, stationCode);
                         fileName = stationCode + "-" + month + "-" + input.currentYear + extension;
-                        var path = Path.Combine(pathBuilt, fileName);
+                        if (!Directory.Exists(stationPath))
+                        {
+                            Directory.CreateDirectory(stationPath);
+                        }
+                        var path = Path.Combine(stationPath, fileName);
                         if (System.IO.File.Exists(path))
                         {
                             byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
@@ -1359,17 +1364,23 @@ namespace pdstest.Controllers
                         if (validate != null)
                         {
                             var statCode = validate.StationCode;
+                            var pathBuilt = configuration["attendancepath"];//Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+                            var stationPath = Path.Combine(pathBuilt, statCode);
+                            if (!Directory.Exists(stationPath))
+                            {
+                                Directory.CreateDirectory(stationPath);
+                            }
                             var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
                             fileName = statCode + "-" + month + "-" + DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons.
 
-                            var pathBuilt = configuration["attendancepath"];//Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+                            
 
-                            if (!Directory.Exists(pathBuilt))
-                            {
-                                Directory.CreateDirectory(pathBuilt);
-                            }
+                            //if (!Directory.Exists(pathBuilt))
+                            //{
+                            //    Directory.CreateDirectory(pathBuilt);
+                            //}
 
-                            var path = Path.Combine(pathBuilt, fileName);
+                            var path = Path.Combine(stationPath, fileName);
 
                             using (var stream = new FileStream(path, FileMode.Create))
                             {
