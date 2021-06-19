@@ -37,6 +37,7 @@ namespace pdstest.Models
                 var token = context.HttpContext.Items["userToken"];
                 string tk = token != null ? token.ToString() : "";
                 string errmsg = msg != null ? msg.ToString() : "";
+                bool isCloud = context.HttpContext.GetCloudEnvironment();
                 result.userInfo = new UserType();
                 UserType usr = new UserType();
                 usr.User = user != null ? user.ToString() : "";
@@ -62,7 +63,7 @@ namespace pdstest.Models
                         msgage = msgage + string.Empty + m;
                     st.Append(msgage);
                     result = new APIResult();
-                    result = new MySQLDBOperations().DeleteSession(usr, tk, true);
+                    result = new MySQLDBOperations(isCloud).DeleteSession(usr, tk, true);
                     st.Append(" Action : ");
                     st.Append(result.Message);
                     result.Message = st.ToString();
@@ -74,7 +75,7 @@ namespace pdstest.Models
                 }
                 else if (usr.EmployeeId == 0 || usr.UserTypeId == 0 || string.IsNullOrEmpty(usr.User))
                 {
-                    result = new MySQLDBOperations().GetLoginUserSessionInfoByToken(tk);
+                    result = new MySQLDBOperations(isCloud).GetLoginUserSessionInfoByToken(tk, isCloud);
                     if (result.userInfo != null)
                     {
                         usr = result.userInfo;
@@ -89,7 +90,7 @@ namespace pdstest.Models
                 }
                 else if(usr.EmployeeId != 0 && usr.UserTypeId != 0 && !string.IsNullOrEmpty(usr.User))
                 { 
-                        result = new MySQLDBOperations().ValidateLoginUserSession(usr);
+                        result = new MySQLDBOperations(isCloud).ValidateLoginUserSession(usr, isCloud);
                         if (!result.userInfo.Valid)
                         {
                             result.Message = result.Message;

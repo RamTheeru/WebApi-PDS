@@ -19,6 +19,7 @@ using Wkhtmltopdf.NetCore.Interfaces;
 using Wkhtmltopdf;
 using Wkhtmltopdf.NetCore.Options;
 
+
 namespace pdstest.Controllers
 {
     [Route("api/[controller]")]
@@ -1215,7 +1216,16 @@ namespace pdstest.Controllers
                     var extension = ".xlsx";
                     if (station != null)
                     {
-                        var pathBuilt = configuration["attendancepath"];
+                        
+                        var pathBuilt = "";
+                        if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                        {
+                            pathBuilt = configuration["pattendancepath"];
+                        }
+                        else
+                        {
+                           pathBuilt =  configuration["attendancepath"];
+                        }                           
                         var stationCode = station.StationCode;
                         var stationPath = Path.Combine(pathBuilt, stationCode);
                         fileName = stationCode + "-" + month + "-" + input.currentYear + extension;

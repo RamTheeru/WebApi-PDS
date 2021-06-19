@@ -9,12 +9,14 @@ namespace pdstest.DAL
 {
     public class MySqlOps : IConnection
     {
-        private MySQLDBOperations _ops = new MySQLDBOperations();
+        private static bool isCloud = false;
+        public MySqlOps(bool iscloudConn)
+        {
+            isCloud = iscloudConn;
+        }
+        private MySQLDBOperations _ops = new MySQLDBOperations(isCloud);
 
-        //public MySqlOps(MySQLDBOperations ops)
-        //{
-        //    _ops = ops;
-        //}
+     
         public DataBaseResult CreateEmployee(Employee input,bool isEmployee=false)
         {
            return _ops.CreateEmployee(input,isEmployee);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace pdstest.Models
 {
@@ -73,7 +74,17 @@ namespace pdstest.Models
 
             return date.ToString("MMM");
         }
-
+        //function to get cloud or test env
+        public static bool GetCloudEnvironment(this HttpContext context)
+        {
+            bool isCloud = false;
+            var path = context.Request.Path.Value;
+            if (path.Contains("v2"))
+            {
+                isCloud = true;
+            }
+            return isCloud;
+        }
         // function to get the full month name 
        public static string getMonthFullName(this DateTime dt)
         {

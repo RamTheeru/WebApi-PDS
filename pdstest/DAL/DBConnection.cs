@@ -20,7 +20,7 @@ namespace pdstest.DAL
             Dictionary<string, string> sqllib = new Dictionary<string, string>();
             // sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=sa;password=12345;";                ////"Data Source=.;Initial Catalog=PDS;Integrated Security=True";
             sqllib["LocalDB"] = @"server=localhost;database=PDS;userid=root;password=12345;";
-            sqllib["AWSDB"] = @"server=localhost;database=PDS;userid=root;password=12345;";
+            sqllib["ProdDB"] = @"server=localhost;database=pdsmain;userid=root;password=12345;";
             sqllib["GetUserTypes"] = "select ConstantId, ConstantName,Category,ConstantValue from constants where IsActive = 1";
             sqllib["InsertEmpStoredProc"] = "usp_InsertEmployee";
             sqllib["InsertCDAEmpStoredProc"] = "usp_InsertCDAEmployee";
@@ -733,7 +733,7 @@ namespace pdstest.DAL
                 path = Directory.GetCurrentDirectory();
                 if (isCloud)
                 {
-                    env = "AWSDB";
+                    env = "ProdDB";
                 }
                 else {
                     env = "LocalDB";

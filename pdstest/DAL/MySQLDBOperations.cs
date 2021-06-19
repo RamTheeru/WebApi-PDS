@@ -14,9 +14,15 @@ namespace pdstest.DAL
 {
     public class MySQLDBOperations 
     {
-
-        public static string connectionString = DBConnection.GetDBConnection(false);
-        public static string connectionString2 = DBConnection.GetDBConnection(true);
+        public static bool isCloud = false;
+        public readonly string connectionString = "";
+      ///  private readonly string connectionString2 = DBConnection.GetDBConnection(isCloud);
+        public MySQLDBOperations(bool isCloudConn)
+        {
+            isCloud = isCloudConn;
+            connectionString = DBConnection.GetDBConnection(isCloud);
+        }
+    
 
         public DataBaseResult RegisterEmployee(RegisterEmployee input)
         {
@@ -4054,7 +4060,7 @@ namespace pdstest.DAL
         }
 
         #region BLL
-        public APIResult GetLoginUserSessionInfoByToken(string userToken)
+        public APIResult GetLoginUserSessionInfoByToken(string userToken,bool isCloud)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -4062,7 +4068,7 @@ namespace pdstest.DAL
             {
 
                 
-                dbr = new MySQLDBOperations().GetLoginUserInfoByToken(userToken);
+                dbr = new MySQLDBOperations(isCloud).GetLoginUserInfoByToken(userToken);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -4225,14 +4231,14 @@ namespace pdstest.DAL
             return result;
 
         }
-        public APIResult ValidateLoginUserSession(UserType usr)
+        public APIResult ValidateLoginUserSession(UserType usr,bool isCloud)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 result.userInfo = new UserType();
-                dbr =  new MySQLDBOperations().GetLoginSessionDetails(usr);
+                dbr =  new MySQLDBOperations(isCloud).GetLoginSessionDetails(usr);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -4999,7 +5005,7 @@ namespace pdstest.DAL
             {
                 dbr.CommandType = "Restore";
                 BasicDBOps dbops = new BasicDBOps();
-                dbr.IsExists = dbops.RestoreDB(connectionString2, file);
+                dbr.IsExists = dbops.RestoreDB(connectionString, file);
                 if(dbr.IsExists)
                 {
                     dbr.Message = "DataBase recovered Succesfully with this backup file. Please try login again after 10 mins!!!!";

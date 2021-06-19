@@ -32,12 +32,18 @@ namespace pdstest
         {
             Configuration = configuration;
         }
-
+        private static bool isCloud = false;
         public IConfiguration Configuration { get; }
+        private static HttpContext _httpContext => new HttpContextAccessor().HttpContext;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+            if (_httpContext != null)
+            {
+                isCloud = _httpContext.GetCloudEnvironment();
+            }
             services.AddCors();
             services.AddControllers();
             services.AddRazorPages();
@@ -63,7 +69,11 @@ namespace pdstest
                     };
                 }
                 );
-            services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
+            
+           
+            /// services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
+            services.AddScoped<IConnection>(s => new MySqlOps(isCloud));
+         
             services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
             services.AddDirectoryBrowser();
             
@@ -82,6 +92,8 @@ namespace pdstest
             app.UseHttpsRedirection();
             app.Use(async (context, next) =>
             {
+                isCloud = context.GetCloudEnvironment();
+                MySQLDBOperations.isCloud = isCloud;
                 await next();
                 //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
                 //{
