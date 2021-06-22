@@ -2162,7 +2162,7 @@ namespace pdstest.BLL
             string pathbackup = "";
             try
             {
-                if(isProduction)
+                if(!isProduction)
                     pathbackup = configuration["backuppath"];
                 else
                     pathbackup = configuration["pbackuppath"];
