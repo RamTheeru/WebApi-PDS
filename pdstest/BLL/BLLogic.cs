@@ -2154,14 +2154,18 @@ namespace pdstest.BLL
 
         }
 
-        public APIResult BackupList()
+        public APIResult BackupList(bool isProduction)
         {
             APIResult result = new APIResult();
             List<DbBackupInfo> backupInfos = new List<DbBackupInfo>();
             result.dbBackups = new List<DbBackupInfo>();
+            string pathbackup = "";
             try
             {
-                string pathbackup = configuration["backuppath"];
+                if(isProduction)
+                    pathbackup = configuration["backuppath"];
+                else
+                    pathbackup = configuration["pbackuppath"];
                 DirectoryInfo d = new DirectoryInfo(pathbackup);//Assuming Test is your Folder
                 FileInfo[] Files = d.GetFiles("*.sql"); //Getting Text files
                 foreach (FileInfo file in Files)
@@ -2243,13 +2247,14 @@ namespace pdstest.BLL
             }
             return result;
         }
-        public APIResult RestoreDatabase(string file)
+        public APIResult RestoreDatabase(string file,bool isProduction)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
-                dbr = ops.RestoreDB(file);
+                string connection = DBConnection.GetDBConnection(isProduction);
+                dbr = ops.RestoreDB(file,connection);
                 result.CommandType = dbr.CommandType;
                 result.Message = dbr.Message;
                 result.Status = dbr.Status;

@@ -30,10 +30,10 @@ namespace pdstest.Models
                 this.WriteToFile("=================================MYSQL BACKUP SERVICE STARTED==================================", true);
                 this.WriteToFile("Started taking backup.......", true);
                 bool isError = false;
-                MySQLDBOperations dbbackup = new MySQLDBOperations(false);
+                MySQLDBOperations dbbackup = new MySQLDBOperations();
                 this.GetMySqlBackup(isError, dbbackup, pathbackup,false);
                 pathbackup = configuration["pbackuppath"];
-            dbbackup = new MySQLDBOperations(true);
+            dbbackup = new MySQLDBOperations();
             this.GetMySqlBackup(isError, dbbackup, pathbackup,true);
             //// await Task.Delay((((1000 * 60) * 60 )* 24 )* 7);
             // TimeSpan span = new TimeSpan(7, 0, 0, 0);
@@ -50,8 +50,8 @@ namespace pdstest.Models
             {
                 try
                 {
-
-                    dbbackup.CreateBackup(fullpath);
+                    string connection = DBConnection.GetDBConnection(isProduction);
+                    dbbackup.CreateBackup(fullpath,connection);
                     isError = false;
                 }
                 catch (Exception e)
@@ -69,7 +69,8 @@ namespace pdstest.Models
                 string fullpath2 = Path.Combine(pathbackup, filename2);
                 try
                 {
-                    dbbackup.CreateBackup(fullpath2);
+                    string connection = DBConnection.GetDBConnection(isProduction);
+                    dbbackup.CreateBackup(fullpath2,connection);
                     isError = false;
                     this.WriteToFile("Backup generated suceesfully with filename :" + filename2, true, isProduction);
                 }
@@ -98,9 +99,9 @@ namespace pdstest.Models
 
             while (!token.IsCancellationRequested)
             {
-                MySQLDBOperations dbOps = new MySQLDBOperations(false);
+                MySQLDBOperations dbOps = new MySQLDBOperations();
                 this.GetClearSessions(dbOps,false);
-                dbOps = new MySQLDBOperations(true);
+                dbOps = new MySQLDBOperations();
                 this.GetClearSessions(dbOps,true);
                 //using (StreamWriter writer = new StreamWriter(fileName))
                 //{
@@ -134,7 +135,8 @@ namespace pdstest.Models
             try
             {
                 int checkCount = 0;
-                checkCount = dbOps.ClearInactiveSessions("c");
+                string connection = DBConnection.GetDBConnection(isProduction);
+                checkCount = dbOps.ClearInactiveSessions("c",connection);
 
                 if (checkCount > 0)
                 {
@@ -142,7 +144,7 @@ namespace pdstest.Models
                     msg = string.Format("Found {0} inactive sessions and if they dont signed out", checkCount);
                     this.WriteToFile(msg);
                     // await Task.Delay(1000 * 60 * 10);
-                    count = dbOps.ClearInactiveSessions("d");
+                    count = dbOps.ClearInactiveSessions("d",connection);
                     if (count == 0)
                     {
                         msg = string.Format("All sessions signed out before removing");

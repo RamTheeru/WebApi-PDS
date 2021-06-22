@@ -15,13 +15,13 @@ namespace pdstest.DAL
     public class MySQLDBOperations 
     {
         public static bool isCloud = false;
-        public readonly string connectionString = "";
+        public static string connectionString = "";
       ///  private readonly string connectionString2 = DBConnection.GetDBConnection(isCloud);
-        public MySQLDBOperations(bool isCloudConn)
-        {
-            isCloud = isCloudConn;
-            connectionString = DBConnection.GetDBConnection(isCloud);
-        }
+        //public MySQLDBOperations(bool isCloudConn)
+        //{
+        //    isCloud = isCloudConn;
+        //    connectionString = DBConnection.GetDBConnection(isCloud);
+        //}
     
 
         public DataBaseResult RegisterEmployee(RegisterEmployee input)
@@ -3666,7 +3666,7 @@ namespace pdstest.DAL
 
 
         }
-        public int ClearInactiveSessions(string action)
+        public int ClearInactiveSessions(string action,string connection)
         {
             int count = 0;
             string cmdText = "";
@@ -3675,7 +3675,7 @@ namespace pdstest.DAL
                 if (action == "c")
                 {
                     cmdText = DBConnection.ClearInactiveSessions();
-                    count = new BasicDBOps().GetTotalCountOfQuery(connectionString, cmdText);
+                    count = new BasicDBOps().GetTotalCountOfQuery(connection, cmdText);
                 }
                 else
                 {
@@ -3683,7 +3683,7 @@ namespace pdstest.DAL
                     dt = dt.GetIndianDateTimeNow();
                     string d = dt.DateTimetoString();
                     string query = string.Format("DELETE from UserSessions where '{0}'  not between StartDate and EndDate;", d);
-                    count = new BasicDBOps().ExceuteCommand(connectionString, query);
+                    count = new BasicDBOps().ExceuteCommand(connection, query);
                 }
 
             }
@@ -4060,7 +4060,7 @@ namespace pdstest.DAL
         }
 
         #region BLL
-        public APIResult GetLoginUserSessionInfoByToken(string userToken,bool isCloud)
+        public APIResult GetLoginUserSessionInfoByToken(string userToken)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -4068,7 +4068,7 @@ namespace pdstest.DAL
             {
 
                 
-                dbr = new MySQLDBOperations(isCloud).GetLoginUserInfoByToken(userToken);
+                dbr = new MySQLDBOperations().GetLoginUserInfoByToken(userToken);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -4231,14 +4231,14 @@ namespace pdstest.DAL
             return result;
 
         }
-        public APIResult ValidateLoginUserSession(UserType usr,bool isCloud)
+        public APIResult ValidateLoginUserSession(UserType usr)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 result.userInfo = new UserType();
-                dbr =  new MySQLDBOperations(isCloud).GetLoginSessionDetails(usr);
+                dbr =  new MySQLDBOperations().GetLoginSessionDetails(usr);
                 UserType user = new UserType();
                 int count = 0;
                 count = dbr.ds.Tables[0].Rows.Count;
@@ -4982,12 +4982,12 @@ namespace pdstest.DAL
             }
             return changes;
         }
-        public void CreateBackup(string file)
+        public void CreateBackup(string file,string connection)
         {
             try
             {
                 BasicDBOps dbops = new BasicDBOps();
-                dbops.TakeBackup(connectionString, file);
+                dbops.TakeBackup(connection, file);
             }
             catch (Exception e)
             {
@@ -4998,14 +4998,14 @@ namespace pdstest.DAL
                 //con.
             }
         }
-        public DataBaseResult RestoreDB(string file)
+        public DataBaseResult RestoreDB(string file, string connection)
         {
             DataBaseResult dbr = new DataBaseResult();
             try
             {
                 dbr.CommandType = "Restore";
                 BasicDBOps dbops = new BasicDBOps();
-                dbr.IsExists = dbops.RestoreDB(connectionString, file);
+                dbr.IsExists = dbops.RestoreDB(connection, file);
                 if(dbr.IsExists)
                 {
                     dbr.Message = "DataBase recovered Succesfully with this backup file. Please try login again after 10 mins!!!!";

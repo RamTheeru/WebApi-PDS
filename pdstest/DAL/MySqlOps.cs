@@ -9,12 +9,12 @@ namespace pdstest.DAL
 {
     public class MySqlOps : IConnection
     {
-        private static bool isCloud = false;
-        public MySqlOps(bool iscloudConn)
-        {
-            isCloud = iscloudConn;
-        }
-        private MySQLDBOperations _ops = new MySQLDBOperations(isCloud);
+        //private static bool isCloud = false;
+        //public MySqlOps(bool iscloudConn)
+        //{
+        //    isCloud = iscloudConn;
+        //}
+        private MySQLDBOperations _ops = new MySQLDBOperations();
 
      
         public DataBaseResult CreateEmployee(Employee input,bool isEmployee=false)
@@ -168,9 +168,9 @@ namespace pdstest.DAL
         {
            return  _ops.TraceError(log);
         }
-        public DataBaseResult RestoreDB(string file)
+        public DataBaseResult RestoreDB(string file,string connection)
         {
-            return _ops.RestoreDB(file);
+            return _ops.RestoreDB(file,connection);
         }
     }
 }

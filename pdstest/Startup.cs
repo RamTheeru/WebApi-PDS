@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 
 namespace pdstest
 {
@@ -34,16 +35,11 @@ namespace pdstest
         }
         private static bool isCloud = false;
         public IConfiguration Configuration { get; }
-        private static HttpContext _httpContext => new HttpContextAccessor().HttpContext;
+       // private static HttpContext _httpContext => new HttpContextAccessor().HttpContext;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpContextAccessor();
-            if (_httpContext != null)
-            {
-                isCloud = _httpContext.GetCloudEnvironment();
-            }
             services.AddCors();
             services.AddControllers();
             services.AddRazorPages();
@@ -71,8 +67,8 @@ namespace pdstest
                 );
             
            
-            /// services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
-            services.AddScoped<IConnection>(s => new MySqlOps(isCloud));
+            services.Add(new ServiceDescriptor(typeof(IConnection),typeof(MySqlOps),ServiceLifetime.Scoped));
+           // services.AddScoped<IConnection>(s => new MySqlOps(isCloud));
          
             services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
             services.AddDirectoryBrowser();
@@ -94,6 +90,7 @@ namespace pdstest
             {
                 isCloud = context.GetCloudEnvironment();
                 MySQLDBOperations.isCloud = isCloud;
+                MySQLDBOperations.connectionString = DBConnection.GetDBConnection(isCloud);
                 await next();
                 //if (context.Request.Host.Host.StartsWith("local") && context.Response.StatusCode == 404)
                 //{
@@ -162,8 +159,26 @@ namespace pdstest
             //    routes.MapRoute(name: "default",template:"",defaults:new { Controller });
             //});
             // custom jwt auth middleware
+            //app.Use(async (context, next) =>
+            //{
+            //    var jsonT = @"{""ReponseSource"":""Testing Environment""}";
+            //    var jsonP = @"{""ReponseSource"":""Production Environment""}";
+            //    var jObectT = JObject.Parse(jsonT);
+            //    var jObectP = JObject.Parse(jsonP);
+            //   // var res =  JObject.Parse(context.Response.Body.ToString());
 
-            //app.UseHttpsRedirection();
+            //    //if(MySQLDBOperations.isCloud)
+            //    //{
+            //    //    context.Response.Body.Write(jObectP,context.Response.Body.Length,)
+            //    //}
+            //    //else
+            //    //{
+
+            //    //}
+            //    await next();
+            //    var res2 = JObject.Parse(context.Response.Body.ToString());
+            //});
+                //app.UseHttpsRedirection();
             app.UseSwagger();
             app.UseSwaggerUI(sw => sw.SwaggerEndpoint("./v1/swagger.json", "API for PDS"));
             //app.UseMvc();

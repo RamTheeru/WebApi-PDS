@@ -1433,9 +1433,14 @@ namespace pdstest.Controllers
         public IActionResult BackupList()
         {
             APIResult result = new APIResult();
+            bool isProduction = false;
             try
             {
-                result = logic.BackupList();
+                if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                {
+                    isProduction = true;
+                }
+                result = logic.BackupList(isProduction);
 
             }
             catch (Exception e)
@@ -1456,6 +1461,7 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try
             {
+                bool isProdction = false;
                 if (string.IsNullOrEmpty(file))
                 {
                     result.Message = "Invalid Input!!!";
@@ -1468,7 +1474,11 @@ namespace pdstest.Controllers
                 {
                     if (!string.IsNullOrEmpty(file))
                         file = file.CleanString();
-                    result = logic.RestoreDatabase(file);
+                    if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                    {
+                        isProdction = true;
+                    }
+                    result = logic.RestoreDatabase(file,isProdction);
                 }
 
             }

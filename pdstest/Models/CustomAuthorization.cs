@@ -38,6 +38,8 @@ namespace pdstest.Models
                 string tk = token != null ? token.ToString() : "";
                 string errmsg = msg != null ? msg.ToString() : "";
                 bool isCloud = context.HttpContext.GetCloudEnvironment();
+                MySQLDBOperations.isCloud = isCloud;
+                MySQLDBOperations.connectionString = DBConnection.GetDBConnection(isCloud);
                 result.userInfo = new UserType();
                 UserType usr = new UserType();
                 usr.User = user != null ? user.ToString() : "";
@@ -63,7 +65,7 @@ namespace pdstest.Models
                         msgage = msgage + string.Empty + m;
                     st.Append(msgage);
                     result = new APIResult();
-                    result = new MySQLDBOperations(isCloud).DeleteSession(usr, tk, true);
+                    result = new MySQLDBOperations().DeleteSession(usr, tk, true);
                     st.Append(" Action : ");
                     st.Append(result.Message);
                     result.Message = st.ToString();
@@ -75,7 +77,7 @@ namespace pdstest.Models
                 }
                 else if (usr.EmployeeId == 0 || usr.UserTypeId == 0 || string.IsNullOrEmpty(usr.User))
                 {
-                    result = new MySQLDBOperations(isCloud).GetLoginUserSessionInfoByToken(tk, isCloud);
+                    result = new MySQLDBOperations().GetLoginUserSessionInfoByToken(tk);
                     if (result.userInfo != null)
                     {
                         usr = result.userInfo;
@@ -90,7 +92,7 @@ namespace pdstest.Models
                 }
                 else if(usr.EmployeeId != 0 && usr.UserTypeId != 0 && !string.IsNullOrEmpty(usr.User))
                 { 
-                        result = new MySQLDBOperations(isCloud).ValidateLoginUserSession(usr, isCloud);
+                        result = new MySQLDBOperations().ValidateLoginUserSession(usr);
                         if (!result.userInfo.Valid)
                         {
                             result.Message = result.Message;
