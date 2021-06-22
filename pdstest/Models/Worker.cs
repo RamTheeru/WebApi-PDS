@@ -23,12 +23,14 @@ namespace pdstest.Models
         }
         public  void SheduleBackUp(CancellationToken token)
         {
-          
+            this.WriteToFile("=================================MYSQL BACKUP SERVICE STARTED==================================", true, false);
+            this.WriteToFile("=================================MYSQL BACKUP SERVICE STARTED==================================", true, true);
+            this.WriteToFile("Started taking backup.......", true, false);
+            this.WriteToFile("Started taking backup.......", true, true);
             string pathbackup = configuration["backuppath"];
             //while (!token.IsCancellationRequested)
             //{
-                this.WriteToFile("=================================MYSQL BACKUP SERVICE STARTED==================================", true);
-                this.WriteToFile("Started taking backup.......", true);
+         
                 bool isError = false;
                 MySQLDBOperations dbbackup = new MySQLDBOperations();
                 this.GetMySqlBackup(isError, dbbackup, pathbackup,false);
@@ -95,8 +97,9 @@ namespace pdstest.Models
             //{
             //    File.Create(fileName).Dispose();
             //}
-           // FileInfo fi = new FileInfo(fileName);
-
+            // FileInfo fi = new FileInfo(fileName);
+            this.WriteToFile("================================CLEAR Inactive Sessions SERVICE STARTED==================================", false, false);
+            this.WriteToFile("================================CLEAR Inactive Sessions  SERVICE STARTED==================================", false, true);
             while (!token.IsCancellationRequested)
             {
                 MySQLDBOperations dbOps = new MySQLDBOperations();
@@ -142,13 +145,13 @@ namespace pdstest.Models
                 {
                     this.WriteToFile("==========================================================================================",false, isProduction);
                     msg = string.Format("Found {0} inactive sessions and if they dont signed out", checkCount);
-                    this.WriteToFile(msg);
+                    this.WriteToFile(msg, false, isProduction);
                     // await Task.Delay(1000 * 60 * 10);
                     count = dbOps.ClearInactiveSessions("d",connection);
                     if (count == 0)
                     {
                         msg = string.Format("All sessions signed out before removing");
-                        this.WriteToFile(msg);
+                        this.WriteToFile(msg, false, isProduction);
                         this.WriteToFile("==========================================================================================",false, isProduction);
                     }
 
@@ -157,7 +160,7 @@ namespace pdstest.Models
             catch (Exception e)
             {
                 msg = string.Format("Something went wrong while removing Sessions. Reason : {0}", e.Message);
-                this.WriteToFile(msg);
+                this.WriteToFile(msg, false, isProduction);
                 count = 0;
                 this.WriteToFile("==========================================================================================",false, isProduction);
             }
@@ -165,7 +168,7 @@ namespace pdstest.Models
             if (count > 0)
             {
                 msg = string.Format("Cleared {0} inactive sessions", count);
-                this.WriteToFile(msg);
+                this.WriteToFile(msg, false, isProduction);
                 this.WriteToFile("==========================================================================================",false, isProduction);
             }
         }
