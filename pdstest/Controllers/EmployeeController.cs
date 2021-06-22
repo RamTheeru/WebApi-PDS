@@ -276,9 +276,10 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try 
             {
-                
+                result.Host = HttpContext.Request.Host.Host;
+                result.Path = HttpContext.Request.Path.Value;
                 result = logic.GetConstants();
-
+                result.Context = HttpContext;
             }
             catch (Exception e)
             {

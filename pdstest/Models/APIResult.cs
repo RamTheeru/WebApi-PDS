@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace pdstest.Models
 {
@@ -33,6 +34,9 @@ namespace pdstest.Models
         public int Id { get; set; }
         public List<RequestDetail> requests { get; set; }
         public List<DbBackupInfo> dbBackups { get; set; }
+        public string Host { get; set; }
+        public string Path { get; set; }
+        public HttpContext Context { get; set; }
 
     }
 }
