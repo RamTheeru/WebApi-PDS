@@ -78,8 +78,8 @@ namespace pdstest.Models
         public static bool GetCloudEnvironment(this HttpContext context)
         {
             bool isCloud = false;
-            var path = context.Request.Path.Value;
-            if (path.Contains("v2"))
+            var path = context.Request.Host.Host;
+            if (path.ToLower().Contains("v2"))
             {
                 isCloud = true;
             }
