@@ -1218,16 +1218,17 @@ namespace pdstest.Controllers
                     var extension = ".xlsx";
                     if (station != null)
                     {
-                        
+
                         var pathBuilt = "";
-                        if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                        HttpContext.GetCloudEnvironment(out pathBuilt);
+                        if (pathBuilt.Contains("v2") == true)
                         {
                             pathBuilt = configuration["pattendancepath"];
                         }
                         else
                         {
-                           pathBuilt =  configuration["attendancepath"];
-                        }                           
+                            pathBuilt = configuration["attendancepath"];
+                        }
                         var stationCode = station.StationCode;
                         var stationPath = Path.Combine(pathBuilt, stationCode);
                         fileName = stationCode + "-" + month + "-" + input.currentYear + extension;
@@ -1376,7 +1377,17 @@ namespace pdstest.Controllers
                         if (validate != null)
                         {
                             var statCode = validate.StationCode;
-                            var pathBuilt = configuration["attendancepath"];//Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+                            var pathBuilt = "";
+                            HttpContext.GetCloudEnvironment(out pathBuilt);
+                            if (pathBuilt.Contains("v2") == true)
+                            {
+                                pathBuilt = configuration["pattendancepath"];
+                            }
+                            else
+                            {
+                                pathBuilt = configuration["attendancepath"];
+                            }
+                           // var pathBuilt = configuration["attendancepath"];//Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
                             var stationPath = Path.Combine(pathBuilt, statCode);
                             if (!Directory.Exists(stationPath))
                             {
@@ -1438,7 +1449,9 @@ namespace pdstest.Controllers
             bool isProduction = false;
             try
             {
-                if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                var pathBuilt = "";
+                HttpContext.GetCloudEnvironment(out pathBuilt);
+                if (pathBuilt.Contains("v2") == true)
                 {
                     isProduction = true;
                 }
@@ -1476,7 +1489,9 @@ namespace pdstest.Controllers
                 {
                     if (!string.IsNullOrEmpty(file))
                         file = file.CleanString();
-                    if (HttpContext.Request.Path.Value?.Contains("v2") == true)
+                    var pathBuilt = "";
+                    HttpContext.GetCloudEnvironment(out pathBuilt);
+                    if (pathBuilt.Contains("v2") == true)
                     {
                         isProdction = true;
                     }

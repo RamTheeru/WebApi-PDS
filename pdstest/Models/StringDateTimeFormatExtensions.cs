@@ -80,9 +80,9 @@ namespace pdstest.Models
         {
             bool isCloud = false;
             var path = UriHelper.GetDisplayUrl(context.Request);
-            fullpath = path;
+            fullpath = string.IsNullOrEmpty(path) ? context.Request.Host.Host : path;
            // var path = context.Request.Host.Host;
-            if (path.ToLower().Contains("v2"))
+            if (fullpath.ToLower().Contains("v2"))
             {
                 isCloud = true;
             }
