@@ -37,7 +37,8 @@ namespace pdstest.Models
                 var token = context.HttpContext.Items["userToken"];
                 string tk = token != null ? token.ToString() : "";
                 string errmsg = msg != null ? msg.ToString() : "";
-                bool isCloud = context.HttpContext.GetCloudEnvironment();
+                var p = "";
+                bool isCloud = context.HttpContext.GetCloudEnvironment(out p);
                 MySQLDBOperations.isCloud = isCloud;
                 MySQLDBOperations.connectionString = DBConnection.GetDBConnection(isCloud);
                 result.userInfo = new UserType();

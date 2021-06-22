@@ -88,7 +88,8 @@ namespace pdstest
             app.UseHttpsRedirection();
             app.Use(async (context, next) =>
             {
-                isCloud = context.GetCloudEnvironment();
+                var p = "";
+                isCloud = context.GetCloudEnvironment(out p);
                 MySQLDBOperations.isCloud = isCloud;
                 MySQLDBOperations.connectionString = DBConnection.GetDBConnection(isCloud);
                 await next();

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace pdstest.Models
 {
@@ -75,10 +76,12 @@ namespace pdstest.Models
             return date.ToString("MMM");
         }
         //function to get cloud or test env
-        public static bool GetCloudEnvironment(this HttpContext context)
+        public static bool GetCloudEnvironment(this HttpContext context,out string fullpath)
         {
             bool isCloud = false;
-            var path = context.Request.Host.Host;
+            var path = UriHelper.GetDisplayUrl(context.Request);
+            fullpath = path;
+           // var path = context.Request.Host.Host;
             if (path.ToLower().Contains("v2"))
             {
                 isCloud = true;
