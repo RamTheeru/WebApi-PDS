@@ -1441,90 +1441,90 @@ namespace pdstest.Controllers
             return t;
         }
         #endregion
-        #region CDAEmployeeExcelFileTODB
-        [HttpPost("uploadcdaexcel", Name = "uploadcdaexcel")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
-        {
-            APIResult result = new APIResult();
-            try
-            {
-                result.CommandType = "file upload";
-                if (CheckIfExcelFile(file))
-                {
-                    Tuple<bool, string> t = await ReadFile(file);
-                    bool isSuccess = t.Item1;
+        //#region CDAEmployeeExcelFileTODB
+        //[HttpPost("uploadcdaexcel", Name = "uploadcdaexcel")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        //public  Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
+        //{
+        //    APIResult result = new APIResult();
+        //    try
+        //    {
+        //        result.CommandType = "file upload";
+        //        if (CheckIfExcelFile(file))
+        //        {
+        //            Tuple<bool, string> t =  ReadFile(file);
+        //            bool isSuccess = t.Item1;
 
-                    if (isSuccess)
-                    {
-                        result.Status = true;
+        //            if (isSuccess)
+        //            {
+        //                result.Status = true;
 
-                    }
-                    else
-                    {
-                        result.Status = false;
+        //            }
+        //            else
+        //            {
+        //                result.Status = false;
 
-                    }
-                    result.Message = t.Item2;
-                    return Ok(result);
-                }
-                else
-                {
-                    result.Status = false;
-                    result.Message = "Invalid file extension";
-                    return StatusCode(StatusCodes.Status400BadRequest, result);
-                }
-            }
-            catch (Exception e)
-            {
-                result.Message = e.Message;
-                result.Status = false;
-                result.Id = 0;
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
-            }
+        //            }
+        //            result.Message = t.Item2;
+        //            return Ok(result);
+        //        }
+        //        else
+        //        {
+        //            result.Status = false;
+        //            result.Message = "Invalid file extension";
+        //            return StatusCode(StatusCodes.Status400BadRequest, result);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Message = e.Message;
+        //        result.Status = false;
+        //        result.Id = 0;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, result);
+        //    }
 
-        }
-        private async Task<Tuple<bool, string>> ReadFile(IFormFile file)
-        {
-            Tuple<bool, string> t;
-            bool isSaveSuccess = false;
-            string fileName;
-            try
-            {
-                fileName = file.FileName;
-                // For .net core, the next line requires the NuGet package, 
-                // System.Text.Encoding.CodePages
-                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
-                {
-                    using (var reader = ExcelReaderFactory.CreateReader(stream))
-                    {
-                        t = Tuple.Create(true, "");
-                        while (reader.Read()) //Each row of the file
-                        {
-                            //users.Add(new UserModel
-                            //{
-                            //    Name = reader.GetValue(0).ToString(),
-                            //    Email = reader.GetValue(1).ToString(),
-                            //    Phone = reader.GetValue(2).ToString()
-                            //});
+        //}
+        //private  void ReadFile(IFormFile file)
+        //{
+        //    Tuple<bool, string> t;
+        //    bool isSaveSuccess = false;
+        //    string fileName;
+        //    try
+        //    {
+        //        fileName = file.FileName;
+        //        // For .net core, the next line requires the NuGet package, 
+        //        // System.Text.Encoding.CodePages
+        //        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+        //        using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
+        //        {
+        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
+        //            {
+        //                t = Tuple.Create(true, "");
+        //                while (reader.Read()) //Each row of the file
+        //                {
+        //                    //users.Add(new UserModel
+        //                    //{
+        //                    //    Name = reader.GetValue(0).ToString(),
+        //                    //    Email = reader.GetValue(1).ToString(),
+        //                    //    Phone = reader.GetValue(2).ToString()
+        //                    //});
 
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                isSaveSuccess = false;
-                t = Tuple.Create(isSaveSuccess, e.Message);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        isSaveSuccess = false;
+        //        t = Tuple.Create(isSaveSuccess, e.Message);
 
-            }
+        //    }
 
-            return t;
-        }
+        //  //  return t;
+        //}
 
-        #endregion
+        //#endregion
         [HttpGet("Backups")]
         [CustomAuthorization]
         public IActionResult BackupList()
