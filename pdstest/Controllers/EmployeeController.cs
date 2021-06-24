@@ -1442,7 +1442,7 @@ namespace pdstest.Controllers
         }
         #endregion
         #region CDAEmployeeExcelFileTODB
-        [HttpPost("upload", Name = "upload")]
+        [HttpPost("uploadcdaexcel", Name = "uploadcdaexcel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
