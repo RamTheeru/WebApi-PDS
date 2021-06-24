@@ -1349,12 +1349,13 @@ namespace pdstest.Controllers
             }
 
         }
+        [NonAction]
         private bool CheckIfExcelFile(IFormFile file)
         {
             var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
             return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
         }
-
+        [NonAction]
         private async Task<Tuple<bool, string>> WriteFile(IFormFile file)
         {
             Tuple<bool, string> t;
