@@ -181,7 +181,9 @@ namespace pdstest
             //});
                 //app.UseHttpsRedirection();
             app.UseSwagger();
-            app.UseSwaggerUI(sw => sw.SwaggerEndpoint("./v1/swagger.json", "API for PDS"));
+            app.UseSwaggerUI(sw => { sw.SwaggerEndpoint("./v1/swagger.json", "API for PDS");
+                sw.RoutePrefix = string.Empty;
+            });
             //app.UseMvc();
            
    
