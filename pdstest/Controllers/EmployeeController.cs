@@ -18,7 +18,7 @@ using Wkhtmltopdf.NetCore;
 using Wkhtmltopdf.NetCore.Interfaces;
 using Wkhtmltopdf;
 using Wkhtmltopdf.NetCore.Options;
-
+using ExcelDataReader;
 
 namespace pdstest.Controllers
 {
@@ -1205,9 +1205,9 @@ namespace pdstest.Controllers
             try
             {
                 if (input.currentYear == 0 || input.currentYear == 2)
-                    input.currentYear = DateTime.Now.Year;
+                    input.currentYear = DateTime.Now.GetIndianDateTimeNow().Year;
                 else if (input.currentYear == 1)
-                    input.currentYear = DateTime.Now.AddYears(-1).Year;
+                    input.currentYear = DateTime.Now.GetIndianDateTimeNow().AddYears(-1).Year;
                 if (input.stationId > 0 && input.currentmonth > 0)
                 {
                     result = logic.GetConstants();
@@ -1362,7 +1362,7 @@ namespace pdstest.Controllers
             string fileName;
             try
             {
-                var month = DateTime.Now.getMonthAbbreviatedName();
+                var month = DateTime.Now.GetIndianDateTimeNow().getMonthAbbreviatedName();
                 string[] fileprefix = file.FileName.Split('.');
                 if (fileprefix[0].Contains("-"))
                 {
@@ -1440,6 +1440,90 @@ namespace pdstest.Controllers
 
             return t;
         }
+        #endregion
+        #region CDAEmployeeExcelFileTODB
+        [HttpPost("upload", Name = "upload")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
+        {
+            APIResult result = new APIResult();
+            try
+            {
+                result.CommandType = "file upload";
+                if (CheckIfExcelFile(file))
+                {
+                    Tuple<bool, string> t = await ReadFile(file);
+                    bool isSuccess = t.Item1;
+
+                    if (isSuccess)
+                    {
+                        result.Status = true;
+
+                    }
+                    else
+                    {
+                        result.Status = false;
+
+                    }
+                    result.Message = t.Item2;
+                    return Ok(result);
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "Invalid file extension";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.Id = 0;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+        }
+        private async Task<Tuple<bool, string>> ReadFile(IFormFile file)
+        {
+            Tuple<bool, string> t;
+            bool isSaveSuccess = false;
+            string fileName;
+            try
+            {
+                fileName = file.FileName;
+                // For .net core, the next line requires the NuGet package, 
+                // System.Text.Encoding.CodePages
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        t = Tuple.Create(true, "");
+                        while (reader.Read()) //Each row of the file
+                        {
+                            //users.Add(new UserModel
+                            //{
+                            //    Name = reader.GetValue(0).ToString(),
+                            //    Email = reader.GetValue(1).ToString(),
+                            //    Phone = reader.GetValue(2).ToString()
+                            //});
+
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                isSaveSuccess = false;
+                t = Tuple.Create(isSaveSuccess, e.Message);
+
+            }
+
+            return t;
+        }
+
         #endregion
         [HttpGet("Backups")]
         [CustomAuthorization]

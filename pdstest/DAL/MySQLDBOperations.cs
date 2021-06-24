@@ -917,6 +917,11 @@ namespace pdstest.DAL
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
+                        
+                        param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
 
                         MySqlParameter output = new MySqlParameter();
                         output.ParameterName = "@EmpId";
@@ -1048,6 +1053,11 @@ namespace pdstest.DAL
                         cmd.Parameters.Add(param);
 
                         param = new MySqlParameter("@PID", input.Pid);
+                        param.Direction = ParameterDirection.Input;
+                        param.MySqlDbType = MySqlDbType.Int32;
+                        cmd.Parameters.Add(param);
+
+                        param = new MySqlParameter("@UsrTypeId", input.UserTypeId);
                         param.Direction = ParameterDirection.Input;
                         param.MySqlDbType = MySqlDbType.Int32;
                         cmd.Parameters.Add(param);
