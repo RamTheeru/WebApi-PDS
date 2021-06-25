@@ -18,7 +18,7 @@ using Wkhtmltopdf.NetCore;
 using Wkhtmltopdf.NetCore.Interfaces;
 using Wkhtmltopdf;
 using Wkhtmltopdf.NetCore.Options;
-using ExcelDataReader;
+
 
 namespace pdstest.Controllers
 {
@@ -276,11 +276,15 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             try 
             {
+                //string getPath = AppDomain.CurrentDomain.BaseDirectory;//
+                //string th = System.IO.Directory.GetCurrentDirectory();
                 var p = "";
                 HttpContext.GetCloudEnvironment(out p);
-               
+                //string path = Path.Combine(configuration["testpath"], "CDAEMPLOYEESAMPLE.xlsx");
+                //UploadStatus u = new UploadStatus();
+                //  u =  logic.ReadExcelFile(path,true);
                result = logic.GetConstants();
-                result.Path = p;
+                result.Path = System.IO.Directory.GetCurrentDirectory();
             }
             catch (Exception e)
             {
@@ -1395,7 +1399,7 @@ namespace pdstest.Controllers
                                 Directory.CreateDirectory(stationPath);
                             }
                             var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-                            fileName = statCode + "-" + month + "-" + DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons.
+                            fileName = statCode + "-" + month + "-" + DateTime.Now.GetIndianDateTimeNow().Year + extension; //Create a new Name for the file due to security reasons.
 
                             
 
@@ -1412,120 +1416,176 @@ namespace pdstest.Controllers
                             }
 
                             isSaveSuccess = true;
-                            t = Tuple.Create(isSaveSuccess, "file uploaded successfully");
+                            t = System.Tuple.Create(isSaveSuccess, "file uploaded successfully");
                         }
                         else
                         {
                             isSaveSuccess = false;
-                            t = Tuple.Create(isSaveSuccess, "StationCode mentioned in FileName is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
+                            t = System.Tuple.Create(isSaveSuccess, "StationCode mentioned in FileName is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                         }
                     }
                     else
                     {
                         isSaveSuccess = false;
-                        t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
+                        t = System.Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                     }
                 }
                 else
                 {
                     isSaveSuccess = false;
-                    t = Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
+                    t = System.Tuple.Create(isSaveSuccess, "file naming is not in correct format.Please check and upload again.Format should be in (StationCode-MonthName.xlsx)");
                 }
             }
             catch (Exception e)
             {
                 isSaveSuccess = false;
-                t = Tuple.Create(isSaveSuccess, e.Message);
+                t = System.Tuple.Create(isSaveSuccess, e.Message);
 
             }
 
             return t;
         }
         #endregion
-        //#region CDAEmployeeExcelFileTODB
-        //[HttpPost("uploadcdaexcel", Name = "uploadcdaexcel")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        //public  Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
-        //{
-        //    APIResult result = new APIResult();
-        //    try
-        //    {
-        //        result.CommandType = "file upload";
-        //        if (CheckIfExcelFile(file))
-        //        {
-        //            Tuple<bool, string> t =  ReadFile(file);
-        //            bool isSuccess = t.Item1;
+        #region CDAEmployeeExcelFileTODB
+        [HttpPost("uploadcdaexcel", Name = "uploadcdaexcel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadCDAEmpExcelFile(IFormFile file)
+        {
+            APIResult result = new APIResult();
+            result.uploadStatus = new UploadStatus();
+            result.uploadStatus.headers = new List<string>();
+            try
+            {
+                var month = DateTime.Now.GetIndianDateTimeNow().getMonthAbbreviatedName();
+                result.CommandType = "file upload";
+                if (CheckIfExcelFile(file))
+                {
+                    string fileName  = file.FileName;
 
-        //            if (isSuccess)
-        //            {
-        //                result.Status = true;
+                    string getPath = System.IO.Directory.GetCurrentDirectory();//AppDomain.CurrentDomain.BaseDirectory;//System.IO.Directory.GetCurrentDirectory();
+                    var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+                    fileName = fileName + "-" + month + "-" + DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons
+                    var path = Path.Combine(getPath, "ExcelFile",fileName);
+                    var dpath = Path.Combine(getPath, "ExcelFile");
+                    if (!Directory.Exists(dpath))
+                    {
+                        Directory.CreateDirectory(dpath);
+                    }
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    if (System.IO.File.Exists(path))
+                    {
+                       result.uploadStatus = logic.ReadExcelFile(path,true);
+                        if (result.uploadStatus.uploadStatus)
+                        {
+                            List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
+                            columns = logic.GetColumnsForExcel();
+                            if (result.uploadStatus.headers.Count > 0 && columns.Count > 0)
+                            {
+                                List<string> cols = (from c in columns
+                                                         //where c.Item2 == true
+                                                     select c.Item1).ToList<string>();
+                                bool headerColumnComparision = false;
+                                headerColumnComparision = logic.ListComparer(result.uploadStatus.headers, cols);
+                                if (headerColumnComparision)
+                                {
+                                    result.uploadStatus.employees = new List<PDSEmployee>();
+                                    result.uploadStatus = logic.ReadExcelFile(path);
+                                    if(result.uploadStatus.employees.Count> 0)
+                                    {
+                                            List<PDSEmployee> emps = new List<PDSEmployee>();
+                                            emps = result.uploadStatus.employees;
+                                            result = new APIResult();
+                                        result.uploadStatus = new UploadStatus();
+                                        result.uploadStatus.stats = new List<EmpUploadStatus>();
+                                       UploadStatus upld = new UploadStatus();
+                                        upld.stats = new List<EmpUploadStatus>();
+                                            foreach(var item in emps)
+                                            {
+                                               EmpUploadStatus es = new EmpUploadStatus();
+                                            try
+                                            {
+                                                result = logic.CreateEmployee(item, false);
+                                            }
+                                            catch(Exception e)
+                                            {
+                                                result.Status = false;
+                                                result.Message = e.Message;
 
-        //            }
-        //            else
-        //            {
-        //                result.Status = false;
+                                            }
+                                                es.status = result.Status;
+                                                es.Message = result.Message;
+                                                es.EmpCode = item.EmpCode;
+                                                upld.stats.Add(es);
+                                            }
+                                        result.uploadStatus.stats = upld.stats;
+                                        result.uploadStatus = upld;
 
-        //            }
-        //            result.Message = t.Item2;
-        //            return Ok(result);
-        //        }
-        //        else
-        //        {
-        //            result.Status = false;
-        //            result.Message = "Invalid file extension";
-        //            return StatusCode(StatusCodes.Status400BadRequest, result);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result.Message = e.Message;
-        //        result.Status = false;
-        //        result.Id = 0;
-        //        return StatusCode(StatusCodes.Status500InternalServerError, result);
-        //    }
+                                    }
+                                    else
+                                    {
+                                        result.Status = false;
+                                        result.Message = "Error occurred while Processing File, unable to get info from file to columns";
+                                        return StatusCode(StatusCodes.Status400BadRequest, result);
+                                    }
+                                }
+                                else
+                                {
+                                    result.Status = false;
+                                    result.Message = "Headers mentioned in the excel file were not matched with columns, please verify and upload again";
+                                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                                }
+                            }
+                            else
+                            {
+                                result.Status = false;
+                                result.Message = "Error occurred while Processing File, unable to get headers or Columns";
+                                return StatusCode(StatusCodes.Status400BadRequest, result);
+                            }
+                        }
+                        else
+                        {
+                            result.Status = false;
+                            result.Message = "Error occurred while Processing File, unable to get headers or Columns";
+                            return StatusCode(StatusCodes.Status400BadRequest, result);
+                        }
+                    }
+                    //else
+                    //{
+                    //    result.Status = false;
+                    //    result.Message = "file already uploaded";
+                    //    return StatusCode(StatusCodes.Status400BadRequest, result);
+                    //}
+                    return Ok(result);
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = "Invalid file extension";
+                    return StatusCode(StatusCodes.Status400BadRequest, result);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.Id = 0;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
 
-        //}
-        //private  void ReadFile(IFormFile file)
-        //{
-        //    Tuple<bool, string> t;
-        //    bool isSaveSuccess = false;
-        //    string fileName;
-        //    try
-        //    {
-        //        fileName = file.FileName;
-        //        // For .net core, the next line requires the NuGet package, 
-        //        // System.Text.Encoding.CodePages
-        //        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-        //        using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
-        //        {
-        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
-        //            {
-        //                t = Tuple.Create(true, "");
-        //                while (reader.Read()) //Each row of the file
-        //                {
-        //                    //users.Add(new UserModel
-        //                    //{
-        //                    //    Name = reader.GetValue(0).ToString(),
-        //                    //    Email = reader.GetValue(1).ToString(),
-        //                    //    Phone = reader.GetValue(2).ToString()
-        //                    //});
+        }
 
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        isSaveSuccess = false;
-        //        t = Tuple.Create(isSaveSuccess, e.Message);
 
-        //    }
+     
 
-        //  //  return t;
-        //}
-
-        //#endregion
+        #endregion
         [HttpGet("Backups")]
         [CustomAuthorization]
         public IActionResult BackupList()

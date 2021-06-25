@@ -12,9 +12,9 @@ namespace pdstest.Models
         public bool IsLwfApplicable { get; set; }
         public bool IsPfOption { get; set; }
         public string PfFundName { get; set; }
-        public string PfMembershipNumber { get; set; }
+      
         public string PfDOJFund { get; set; }
-        public string UAN { get; set; }
+        
         public bool IsEsicApplicable { get; set; }
         public string ESICFundId { get; set; }
         public string ESICMemberShipNumber { get; set; }

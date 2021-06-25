@@ -310,6 +310,22 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetColumnsForExcelfile()
+        {
+            string text = "";
+            try
+            {
+                text = string.Format("Select * from EmpExcelTemplate where  IsActive = 1;");
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
         public static string GetLoginSessionInfo(UserType info)
         {
             string text = "";

@@ -37,6 +37,7 @@ namespace pdstest.Models
         public string Host { get; set; }
         public string Path { get; set; }
         public HttpContext Context { get; set; }
+        public UploadStatus uploadStatus { get; set; } 
 
     }
 }

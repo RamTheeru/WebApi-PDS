@@ -9,7 +9,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ExcelDataReader;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Reflection;
 
 namespace pdstest.BLL
 {
@@ -35,6 +38,8 @@ namespace pdstest.BLL
                 result.Usertypes = new List<UserType>();
                 result.stations = new List<Station>();
                 result.professions = new List<Profession>();
+                result.uploadStatus = new UploadStatus();
+                result.uploadStatus.headers = new List<string>();
                 dbr = ops.GetConstants();
                 List<DropDown> dds = new List<DropDown>();
                 int count = 0;
@@ -121,9 +126,12 @@ namespace pdstest.BLL
                     result.CommandType = dbr.CommandType;
 
                 }
+                List<Tuple<string, bool>> cols = new List<Tuple<string, bool>>();
+                cols = this.GetColumnsForExcel();
+                result.uploadStatus.headers = (from c in cols
+                                           //where c.Item2 == true
+                                       select c.Item1).ToList<string>();
 
-
-            
             }
             catch(Exception e)
             {
@@ -336,7 +344,7 @@ namespace pdstest.BLL
                             ledg.StationId = this.HandleStringtoInt(sId);                           
                             if(ledg.StationId > 0)
                             {
-                                Tuple<string, string> st = Tuple.Create("", "");
+                                Tuple<string, string> st = System.Tuple.Create("", "");
                                 st = ops.GetStationNameByStationId(ledg.StationId);
                                 ledg.StationName = st.Item1;
                             }
@@ -488,7 +496,7 @@ namespace pdstest.BLL
                                 dd.StationId = emp.StationId;
                                 dd.EmployeeCode = emp.EmpCode;
                                 dd = this.GetCDADeliveryDetailsbyMonth(dd.EmployeeId, dd.StationId, dd.CurrentMonth);
-                                Tuple<string, string> sta = Tuple.Create("", "");
+                                Tuple<string, string> sta = System.Tuple.Create("", "");
                                 sta = ops.GetStationNameByStationId(emp.StationId);
                                 result.EmployeeName=sta.Item2 + this.GetMonth(input.currentmonth) + "-" + dd.CreateDt.Year.ToString();
                                 emp.delivery = dd;
@@ -1080,7 +1088,7 @@ namespace pdstest.BLL
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
-            Tuple<bool, string> verify = Tuple.Create(false, "");
+            Tuple<bool, string> verify = System.Tuple.Create(false, "");
            // bool verify = false;
             try
             {
@@ -1734,7 +1742,7 @@ namespace pdstest.BLL
                         emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
                         emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
                         emp.Phone = dbr.ds.Tables[0].Rows[i]["Phone"].ToString();
-                        Tuple<string, string> sta = Tuple.Create("", "");
+                        Tuple<string, string> sta = System.Tuple.Create("", "");
                         sta = ops.GetStationNameByStationId(emp.StationId);
                         emp.StationCode = sta.Item2;
                         dbr.ds = new System.Data.DataSet();
@@ -2267,6 +2275,160 @@ namespace pdstest.BLL
                 throw e;
             }
             return result;
+        }
+        public UploadStatus ReadExcelFile(string path, bool getHeaders = false)
+        {
+            UploadStatus status = new UploadStatus();
+            try
+            {
+                status.headers = new List<string>();
+                //Lets open the existing excel file and read through its content . Open the excel using openxml sdk
+                using (SpreadsheetDocument doc = SpreadsheetDocument.Open(path, false))
+                {
+                    //create the object for workbook part  
+                    WorkbookPart workbookPart = doc.WorkbookPart;
+                    Sheets thesheetcollection = workbookPart.Workbook.GetFirstChild<Sheets>();
+                    int i = 0;
+                    //using for each loop to get the sheet from the sheetcollection  
+                    foreach (Sheet thesheet in thesheetcollection)
+                    {
+                        if (i > 0)
+                            break;
+                        i = 1;
+                        //statement to get the worksheet object by using the sheet id  
+                        Worksheet theWorksheet = ((WorksheetPart)workbookPart.GetPartById(thesheet.Id)).Worksheet;
+                        SheetData thesheetdata = (SheetData)theWorksheet.GetFirstChild<SheetData>();
+                        status.employees = new List<PDSEmployee>();
+                        foreach (Row thecurrentrow in thesheetdata)
+                        {
+                            PDSEmployee emp = new PDSEmployee();
+                            foreach (Cell thecurrentcell in thecurrentrow)
+                            {
+                                //statement to take the integer value  
+                                string currentcellvalue = string.Empty;
+                                if (thecurrentcell.DataType != null)
+                                {
+                                    if (thecurrentcell.DataType == CellValues.SharedString)
+                                    {
+                                        int id;
+                                        if (Int32.TryParse(thecurrentcell.InnerText, out id))
+                                        {
+                                            SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+                                            if (item.Text != null)
+                                            {
+                                                currentcellvalue = item.Text.Text;
+                                                //code to take the string value  
+                                                //excelResult.Append(item.Text.Text + " ");
+                                            }
+                                            else if (item.InnerText != null)
+                                            {
+                                                currentcellvalue = item.InnerText;
+                                            }
+                                            else if (item.InnerXml != null)
+                                            {
+                                                currentcellvalue = item.InnerXml;
+                                            }
+                                        }
+                                    }
+                                    if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no"))
+                                        continue;
+                                    status.headers.Add(currentcellvalue);
+                                }
+                                else
+                                {
+                                    if (!getHeaders)
+                                    {
+                                       
+                                        APIResult result = new APIResult();
+                                        result.uploadStatus = new UploadStatus();
+                                        result.uploadStatus.headers = new List<string>();
+                                        result = this.GetConstants();
+                                        if (result.uploadStatus.headers.Count > 0)
+                                        {
+                                            foreach (var item in result.uploadStatus.headers)
+                                            {
+                                                Type type = emp.GetType();
+                                                PropertyInfo[] props = type.GetProperties();
+                                                foreach (var prop in props)
+                                                {
+                                                    if (item == prop.Name.Trim())
+                                                        prop.SetValue(emp,thecurrentcell.InnerText);
+                                                }
+                                            }
+                                            
+                                        }
+                                        else
+                                        {
+                                            status.uploadStatus = false;
+                                            status.ErrorMessage = "unable to get columns";
+                                        }
+                                    }
+                                    //excelResult.Append(Convert.ToInt16(thecurrentcell.InnerText) + " ");
+                                }
+                                
+                            }
+                            if(!getHeaders && status.uploadStatus)
+                                status.employees.Add(emp);
+                            if (getHeaders)
+                                break;
+                            // excelResult.AppendLine();
+                        }
+                        //excelResult.Append("");
+                    }
+                }
+                status.uploadStatus = true;
+            }
+            catch (Exception e)
+            {
+                status.ErrorMessage = e.Message;
+                status.uploadStatus = false;
+            }
+            return status;
+        }
+        public List<Tuple<string, bool>> GetColumnsForExcel()
+        {
+            List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
+            DataBaseResult dbr = new DataBaseResult();
+            try
+            {
+                dbr = ops.GetHeadersforExcel();
+                int count = 0;
+                if (dbr.ds.Tables.Count > 0)
+                {
+                    count = dbr.ds.Tables[0].Rows.Count;
+                    if (count > 0)
+                    {
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            Tuple<string, bool> column = System.Tuple.Create("", false);
+                            string col = dbr.ds.Tables[0].Rows[i]["ColumnName"].ToString();
+                            bool mandatory = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["isMandatory"].ToString());
+                            column = System.Tuple.Create(col, mandatory);
+                            columns.Add(column);
+                        }
+                    }
+                    else
+                    {
+                        columns = new List<Tuple<string, bool>>();
+                    }
+                }
+                else
+                {
+                    columns = new List<Tuple<string, bool>>();
+                }
+            }
+            catch 
+            {
+                columns = new List<Tuple<string, bool>>();
+            }
+            return columns;
+        }
+        public bool ListComparer(List<string> list1,List<string> list2)
+        {
+            var firstNotSecond = list1.Except(list2).ToList();
+            var secondNotFirst = list2.Except(list1).ToList();
+            return !firstNotSecond.Any() && !secondNotFirst.Any();
         }
     }
 }

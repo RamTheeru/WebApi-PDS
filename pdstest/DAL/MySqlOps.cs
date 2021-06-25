@@ -164,6 +164,10 @@ namespace pdstest.DAL
         {
             return _ops.GetAllEmpsDeliveryDetailsforPDF(stationId, currentMonth);
         }
+        public DataBaseResult GetHeadersforExcel()
+        {
+            return _ops.GetHeadersforExcel();
+        }
         public int TraceError(ErrorLogTrack log)
         {
            return  _ops.TraceError(log);
