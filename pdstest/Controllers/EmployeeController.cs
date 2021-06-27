@@ -1570,7 +1570,7 @@ namespace pdstest.Controllers
                                     result.uploadStatus.uploadStatus = false;
                                     result.uploadStatus.missedcolumns = missedones;
                                     result.Status = false;
-                                    result.Message = "Headers mentioned in the excel file were not matched with columns, please verify and upload again";
+                                    result.Message = "Headers mentioned in the excel file were not matched with columns, please verify missed column(s) content in UploadStatus and upload again";
                                     result.uploadStatus.ErrorMessage = result.Message;
                                     return StatusCode(StatusCodes.Status400BadRequest, result);
                                 }
