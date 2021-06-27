@@ -12,7 +12,7 @@ namespace pdstest.Models
         public bool uploadStatus { get; set; }
         public List<PDSEmployee> employees { get; set; }
 
-
+        public List<string> columns { get; set; }
         public List<string> headers { get; set; }
 
         public List<EmpUploadStatus> stats { get; set; }

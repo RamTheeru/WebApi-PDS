@@ -1498,7 +1498,7 @@ namespace pdstest.Controllers
                                 {
                                     result.uploadStatus.employees = new List<PDSEmployee>();
                                     result.uploadStatus = logic.ReadExcelFile(path);
-                                    if(result.uploadStatus.employees.Count> 0)
+                                    if(result.uploadStatus.employees.Count> 0  && result.uploadStatus.uploadStatus)
                                     {
                                             List<PDSEmployee> emps = new List<PDSEmployee>();
                                             emps = result.uploadStatus.employees;
@@ -1546,14 +1546,14 @@ namespace pdstest.Controllers
                             else
                             {
                                 result.Status = false;
-                                result.Message = "Error occurred while Processing File, unable to get headers or Columns";
+                                result.Message = "Error occurred while Processing File, unable to get Columns";
                                 return StatusCode(StatusCodes.Status400BadRequest, result);
                             }
                         }
                         else
                         {
                             result.Status = false;
-                            result.Message = "Error occurred while Processing File, unable to get headers or Columns";
+                            result.Message = "Error occurred while Processing File, unable to get headers from file";
                             return StatusCode(StatusCodes.Status400BadRequest, result);
                         }
                     }

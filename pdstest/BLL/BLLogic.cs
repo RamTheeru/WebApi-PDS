@@ -39,7 +39,7 @@ namespace pdstest.BLL
                 result.stations = new List<Station>();
                 result.professions = new List<Profession>();
                 result.uploadStatus = new UploadStatus();
-                result.uploadStatus.headers = new List<string>();
+                result.uploadStatus.columns = new List<string>();
                 dbr = ops.GetConstants();
                 List<DropDown> dds = new List<DropDown>();
                 int count = 0;
@@ -128,7 +128,7 @@ namespace pdstest.BLL
                 }
                 List<Tuple<string, bool>> cols = new List<Tuple<string, bool>>();
                 cols = this.GetColumnsForExcel();
-                result.uploadStatus.headers = (from c in cols
+                result.uploadStatus.columns = (from c in cols
                                            //where c.Item2 == true
                                        select c.Item1).ToList<string>();
 
@@ -2343,9 +2343,9 @@ namespace pdstest.BLL
                                         result.uploadStatus = new UploadStatus();
                                         result.uploadStatus.headers = new List<string>();
                                         result = this.GetConstants();
-                                        if (result.uploadStatus.headers.Count > 0)
+                                        if (result.uploadStatus.columns.Count > 0)
                                         {
-                                            foreach (var item in result.uploadStatus.headers)
+                                            foreach (var item in result.uploadStatus.columns)
                                             {
                                                 Type type = emp.GetType();
                                                 PropertyInfo[] props = type.GetProperties();
@@ -2403,7 +2403,7 @@ namespace pdstest.BLL
                         {
                             Tuple<string, bool> column = System.Tuple.Create("", false);
                             string col = dbr.ds.Tables[0].Rows[i]["ColumnName"].ToString();
-                            bool mandatory = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["isMandatory"].ToString());
+                            bool mandatory = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["isMandatory"]);
                             column = System.Tuple.Create(col, mandatory);
                             columns.Add(column);
                         }
@@ -2418,8 +2418,9 @@ namespace pdstest.BLL
                     columns = new List<Tuple<string, bool>>();
                 }
             }
-            catch 
+            catch(Exception e)
             {
+                string ms = e.Message;
                 columns = new List<Tuple<string, bool>>();
             }
             return columns;
