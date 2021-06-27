@@ -448,7 +448,7 @@ namespace pdstest.BLL
                             emp.EmpAge = dbr.ds.Tables[0].Rows[i]["Age"].ToString();
                             emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
                             string mstat = dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString();
-                            emp.MaritalStatus = mstat=="1";
+                            emp.MaritalStatus = mstat=="1" ;
                             // emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
                             emp.Place = dbr.ds.Tables[0].Rows[i]["Place"].ToString();
                             emp.AadharNumber = dbr.ds.Tables[0].Rows[i]["AadharNumber"].ToString();
@@ -2330,9 +2330,9 @@ namespace pdstest.BLL
                                             }
                                         }
                                     }
-                                    if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no"))
+                                    if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no") || currentcellvalue.ToLower().EndsWith("no"))
                                         continue;
-                                    status.headers.Add(currentcellvalue);
+                                    status.headers.Add(currentcellvalue.ToLower().Trim());
                                 }
                                 else
                                 {
@@ -2351,11 +2351,19 @@ namespace pdstest.BLL
                                                 PropertyInfo[] props = type.GetProperties();
                                                 foreach (var prop in props)
                                                 {
-                                                    if (item == prop.Name.Trim())
-                                                        prop.SetValue(emp,thecurrentcell.InnerText);
+                                                    try
+                                                    {
+                                                        if (item == prop.Name.ToLower().Trim())
+                                                            prop.SetValue(emp, thecurrentcell.InnerText);
+                                                    }
+                                                    catch(Exception e)
+                                                    {
+                                                        string msg = e.Message;
+                                                        throw;
+                                                    }
                                                 }
                                             }
-                                            
+                                            status.uploadStatus = true;
                                         }
                                         else
                                         {
@@ -2404,7 +2412,7 @@ namespace pdstest.BLL
                             Tuple<string, bool> column = System.Tuple.Create("", false);
                             string col = dbr.ds.Tables[0].Rows[i]["ColumnName"].ToString();
                             bool mandatory = Convert.ToBoolean(dbr.ds.Tables[0].Rows[i]["isMandatory"]);
-                            column = System.Tuple.Create(col, mandatory);
+                            column = System.Tuple.Create(col.ToLower().Trim(), mandatory);
                             columns.Add(column);
                         }
                     }
@@ -2425,11 +2433,12 @@ namespace pdstest.BLL
             }
             return columns;
         }
-        public bool ListComparer(List<string> list1,List<string> list2)
+        public bool ListComparer(List<string> list1,List<string> list2,out List<string> result)
         {
             var firstNotSecond = list1.Except(list2).ToList();
             var secondNotFirst = list2.Except(list1).ToList();
-            return !firstNotSecond.Any() && !secondNotFirst.Any();
+            result = firstNotSecond;
+            return !firstNotSecond.Any() && !secondNotFirst.Any() && list1.Count == list2.Count;
         }
     }
 }

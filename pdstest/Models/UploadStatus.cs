@@ -11,7 +11,7 @@ namespace pdstest.Models
         public string ErrorMessage { get; set; }
         public bool uploadStatus { get; set; }
         public List<PDSEmployee> employees { get; set; }
-
+        public List<string> missedcolumns { get; set; }
         public List<string> columns { get; set; }
         public List<string> headers { get; set; }
 

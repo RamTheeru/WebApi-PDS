@@ -29,6 +29,7 @@ namespace pdstest.Models
         public string EmpAge { get; set; }
         public string BloodGroup { get; set; }
         public string Gender { get; set; }
+        public string IsMarrired { get; set; }
         public bool MaritalStatus { get; set; }
 
         public string Phone { get; set; }

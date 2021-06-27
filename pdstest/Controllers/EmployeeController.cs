@@ -278,13 +278,24 @@ namespace pdstest.Controllers
             {
                 //string getPath = AppDomain.CurrentDomain.BaseDirectory;//
                 //string th = System.IO.Directory.GetCurrentDirectory();
-                var p = "";
-                HttpContext.GetCloudEnvironment(out p);
-                //string path = Path.Combine(configuration["testpath"], "CDAEMPLOYEESAMPLE.xlsx");
+                //var p = "";
+                //HttpContext.GetCloudEnvironment(out p);
+                //string path = Path.Combine(configuration["testpath"], "CopyCDAEMPLOYEESAMPLE.xlsx");
                 //UploadStatus u = new UploadStatus();
-                //  u =  logic.ReadExcelFile(path,true);
-               result = logic.GetConstants();
-                result.Path = System.IO.Directory.GetCurrentDirectory();
+                //u.columns = new List<string>();
+                //u.headers = new List<string>();
+                //List<string> missed = new List<string>();
+                //u = logic.ReadExcelFile(path, true);
+                //List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
+                //columns = logic.GetColumnsForExcel();
+                //u.columns = columns.Select(x => x.Item1).ToList<string>();
+                //bool valid = logic.ListComparer(u.columns, u.headers, out missed);
+                //u = logic.ReadExcelFile(path);
+
+                //u.missedcolumns = missed;
+                //result.uploadStatus = u;
+                //result.Path = System.IO.Directory.GetCurrentDirectory();
+                result = logic.GetConstants();
             }
             catch (Exception e)
             {
@@ -1455,19 +1466,22 @@ namespace pdstest.Controllers
             APIResult result = new APIResult();
             result.uploadStatus = new UploadStatus();
             result.uploadStatus.headers = new List<string>();
+            result.uploadStatus.missedcolumns = new List<string>();
             try
             {
                 var month = DateTime.Now.GetIndianDateTimeNow().getMonthAbbreviatedName();
-                result.CommandType = "file upload";
+                result.CommandType = "CDA file upload";
                 if (CheckIfExcelFile(file))
                 {
-                    string fileName  = file.FileName;
+                    string[] f = file.FileName.Split(".");
+
+                    string fileName  = f[0];
 
                     string getPath = System.IO.Directory.GetCurrentDirectory();//AppDomain.CurrentDomain.BaseDirectory;//System.IO.Directory.GetCurrentDirectory();
                     var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
                     fileName = fileName + "-" + month + "-" + DateTime.Now.Year + extension; //Create a new Name for the file due to security reasons
-                    var path = Path.Combine(getPath, "ExcelFile",fileName);
-                    var dpath = Path.Combine(getPath, "ExcelFile");
+                    var path = Path.Combine(getPath, "CDAExcelFile",fileName);
+                    var dpath = Path.Combine(getPath, "CDAExcelFile");
                     if (!Directory.Exists(dpath))
                     {
                         Directory.CreateDirectory(dpath);
@@ -1483,17 +1497,18 @@ namespace pdstest.Controllers
                     if (System.IO.File.Exists(path))
                     {
                        result.uploadStatus = logic.ReadExcelFile(path,true);
-                        if (result.uploadStatus.uploadStatus)
+                        if (result.uploadStatus.uploadStatus && result.uploadStatus.headers.Count> 0 )
                         {
                             List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
                             columns = logic.GetColumnsForExcel();
-                            if (result.uploadStatus.headers.Count > 0 && columns.Count > 0)
+                            if (columns.Count > 0)
                             {
                                 List<string> cols = (from c in columns
                                                          //where c.Item2 == true
                                                      select c.Item1).ToList<string>();
+                                List<string> missedones = new List<string>();
                                 bool headerColumnComparision = false;
-                                headerColumnComparision = logic.ListComparer(result.uploadStatus.headers, cols);
+                                headerColumnComparision = logic.ListComparer(result.uploadStatus.headers, cols,out missedones);
                                 if (headerColumnComparision)
                                 {
                                     result.uploadStatus.employees = new List<PDSEmployee>();
@@ -1527,33 +1542,54 @@ namespace pdstest.Controllers
                                             }
                                         result.uploadStatus.stats = upld.stats;
                                         result.uploadStatus = upld;
+                                        result.uploadStatus.uploadStatus = result.uploadStatus.stats.Any(x => x.status == false);
+                                        result.Status = result.uploadStatus.uploadStatus;
+                                        if(result.uploadStatus.stats.Any(x => x.status == false))
+                                        {
+                                            result.Message = "Some records not uploaded completely, Please check Upload Status";
+                                            result.uploadStatus.ErrorMessage = result.Message;
+                                        }
+                                        else
+                                        {
+                                            result.Message = "All records in file uploaded to database Successfully";
+                                            result.uploadStatus.SuccessMessage = result.Message;
+                                        }
 
                                     }
                                     else
                                     {
                                         result.Status = false;
+                                        result.uploadStatus.uploadStatus = false;
                                         result.Message = "Error occurred while Processing File, unable to get info from file to columns";
+                                        result.uploadStatus.ErrorMessage = result.Message;
                                         return StatusCode(StatusCodes.Status400BadRequest, result);
                                     }
                                 }
                                 else
                                 {
+                                    result.uploadStatus.uploadStatus = false;
+                                    result.uploadStatus.missedcolumns = missedones;
                                     result.Status = false;
                                     result.Message = "Headers mentioned in the excel file were not matched with columns, please verify and upload again";
+                                    result.uploadStatus.ErrorMessage = result.Message;
                                     return StatusCode(StatusCodes.Status400BadRequest, result);
                                 }
                             }
                             else
                             {
+                                result.uploadStatus.uploadStatus = false;
                                 result.Status = false;
                                 result.Message = "Error occurred while Processing File, unable to get Columns";
+                                result.uploadStatus.ErrorMessage = result.Message;
                                 return StatusCode(StatusCodes.Status400BadRequest, result);
                             }
                         }
                         else
                         {
+                            result.uploadStatus.uploadStatus = false;
                             result.Status = false;
                             result.Message = "Error occurred while Processing File, unable to get headers from file";
+                            result.uploadStatus.ErrorMessage = result.Message;
                             return StatusCode(StatusCodes.Status400BadRequest, result);
                         }
                     }
@@ -1567,16 +1603,20 @@ namespace pdstest.Controllers
                 }
                 else
                 {
+                    result.uploadStatus.uploadStatus = false;
                     result.Status = false;
                     result.Message = "Invalid file extension";
+                    result.uploadStatus.ErrorMessage = result.Message;
                     return StatusCode(StatusCodes.Status400BadRequest, result);
                 }
             }
             catch (Exception e)
             {
                 result.Message = e.Message;
+                result.uploadStatus.uploadStatus = false;
                 result.Status = false;
                 result.Id = 0;
+                result.uploadStatus.ErrorMessage = result.Message;
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
 
