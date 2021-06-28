@@ -2354,7 +2354,31 @@ namespace pdstest.BLL
                                                     try
                                                     {
                                                         if (item == prop.Name.ToLower().Trim())
-                                                            prop.SetValue(emp, thecurrentcell.InnerText);
+                                                        {
+                                                            if (prop.PropertyType == typeof(string))
+                                                            {                                                                
+                                                                prop.SetValue(emp, thecurrentcell.InnerText??"");
+                                                            }
+                                                            else if (prop.PropertyType == typeof(int))
+                                                            {
+                                                                int val = 0;
+                                                                bool success = int.TryParse(thecurrentcell.InnerText, out val);
+                                                                if (success == true)
+                                                                    prop.SetValue(emp, val);
+                                                                else
+                                                                    prop.SetValue(emp, 0);
+                                                            }
+                                                            else if (prop.PropertyType == typeof(bool))
+                                                            {
+                                                                bool val = false;
+                                                                bool success = bool.TryParse(thecurrentcell.InnerText, out val);
+                                                                if (success == true)
+                                                                    prop.SetValue(emp, val);
+                                                                else
+                                                                    prop.SetValue(emp, false);
+                                                            }
+                                                        }
+                                                            
                                                     }
                                                     catch(Exception e)
                                                     {
