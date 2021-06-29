@@ -40,7 +40,7 @@ namespace pdstest.DAL
         }
         public void DoWork(CancellationToken stoppingToken)
         {
-            _worker.SheduleBackUp(stoppingToken);
+           // _worker.SheduleBackUp(stoppingToken);
         }
 
         //protected override async Task ExecuteAsync(CancellationToken stoppingToken)

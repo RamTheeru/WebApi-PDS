@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace pdstest.Models
         public List<string> missedcolumns { get; set; }
         public List<string> columns { get; set; }
         public List<string> headers { get; set; }
+
+        public DataSet ds { get; set; }
 
         public List<EmpUploadStatus> stats { get; set; }
 

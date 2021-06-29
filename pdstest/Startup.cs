@@ -72,7 +72,7 @@ namespace pdstest
          
             services.AddSwaggerGen(s => s.SwaggerDoc("v1",new OpenApiInfo() {Title="PDS-API",Version="v1" }));
             services.AddDirectoryBrowser();
-            
+            services.AddMvcCore().AddDataAnnotations();
             // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

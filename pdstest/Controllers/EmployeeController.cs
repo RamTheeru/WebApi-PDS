@@ -282,8 +282,25 @@ namespace pdstest.Controllers
                 //HttpContext.GetCloudEnvironment(out p);
                 //string path = Path.Combine(configuration["testpath"], "CopyCDAEMPLOYEESAMPLE.xlsx");
                 //UploadStatus u = new UploadStatus();
-                //u.columns = new List<string>();
-                //u.headers = new List<string>();
+                //List<string> headers = new List<string>();
+                //u = logic.ReadExceltoDataSet(path, headers, true);
+                //u = logic.ReadExceltoDataSet(path, u.headers);
+                ////u.columns = new List<string>();
+                ////u.headers = new List<string>();
+                //u.employees = new List<PDSEmployee>();
+                //u.employees = logic.GetPDSEmployeesFromDataset(u.ds);
+                //foreach(var e in u.employees)
+                //{
+                //    //ModelBinderAttribute.
+                //    e.EmpCode = null;
+                //    PDSEmployee pds = new PDSEmployee();
+                //    pds = e;
+                //    if(ModelState.IsValid)
+                //    {
+                //        string v = "";
+                //    }
+                //}
+                //u.stats = new List<EmpUploadStatus>();
                 //List<string> missed = new List<string>();
                 //u = logic.ReadExcelFile(path, true);
                 //List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
@@ -291,8 +308,18 @@ namespace pdstest.Controllers
                 //u.columns = columns.Select(x => x.Item1).ToList<string>();
                 //bool valid = logic.ListComparer(u.columns, u.headers, out missed);
                 //u = logic.ReadExcelFile(path);
+                //foreach (var i in u.employees)
+                //{
+                //    i.EmpCode = null;
 
+                //    if(ModelState.IsValid)
+                //    {
+                //        EmpUploadStatus emst = new EmpUploadStatus();
+                //        // emst.Message = ModelState.
+                //    }
+                // }
                 //u.missedcolumns = missed;
+
                 //result.uploadStatus = u;
                 //result.Path = System.IO.Directory.GetCurrentDirectory();
                 result = logic.GetConstants();
@@ -1496,7 +1523,8 @@ namespace pdstest.Controllers
                     }
                     if (System.IO.File.Exists(path))
                     {
-                       result.uploadStatus = logic.ReadExcelFile(path,true);
+                        List<string> colums = new List<string>();
+                        result.uploadStatus = logic.ReadExceltoDataSet(path,colums,true);//logic.ReadExcelFile(path,true);
                         if (result.uploadStatus.uploadStatus && result.uploadStatus.headers.Count> 0 )
                         {
                             List<Tuple<string, bool>> columns = new List<Tuple<string, bool>>();
@@ -1512,47 +1540,70 @@ namespace pdstest.Controllers
                                 if (headerColumnComparision)
                                 {
                                     result.uploadStatus.employees = new List<PDSEmployee>();
-                                    result.uploadStatus = logic.ReadExcelFile(path);
-                                    if(result.uploadStatus.employees.Count> 0  && result.uploadStatus.uploadStatus)
+                                    result.uploadStatus = logic.ReadExceltoDataSet(path, result.uploadStatus.headers);//logic.ReadExcelFile(path);
+                                    if (result.uploadStatus.uploadStatus)
                                     {
+                                        if (result.uploadStatus.ds.Tables.Count > 0)
+                                        {
                                             List<PDSEmployee> emps = new List<PDSEmployee>();
-                                            emps = result.uploadStatus.employees;
-                                            result = new APIResult();
-                                        result.uploadStatus = new UploadStatus();
-                                        result.uploadStatus.stats = new List<EmpUploadStatus>();
-                                       UploadStatus upld = new UploadStatus();
-                                        upld.stats = new List<EmpUploadStatus>();
-                                            foreach(var item in emps)
+                                            emps = logic.GetPDSEmployeesFromDataset(result.uploadStatus.ds);
+                                            //emps = result.uploadStatus.employees;
+                                            if (emps.Count > 0)
                                             {
-                                               EmpUploadStatus es = new EmpUploadStatus();
-                                            try
-                                            {
-                                                result = logic.CreateEmployee(item, false);
+                                                result = new APIResult();
+                                                result.uploadStatus = new UploadStatus();
+                                                result.uploadStatus.stats = new List<EmpUploadStatus>();
+                                                UploadStatus upld = new UploadStatus();
+                                                upld.stats = new List<EmpUploadStatus>();
+                                                foreach (var item in emps)
+                                                {
+                                                    EmpUploadStatus es = new EmpUploadStatus();
+                                                    try
+                                                    {
+                                                        result = logic.CreateEmployee(item, false);
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        result.Status = false;
+                                                        result.Message = e.Message;
+
+                                                    }
+                                                    es.status = result.Status;
+                                                    es.Message = result.Message;
+                                                    es.EmpCode = item.EmpCode;
+                                                    upld.stats.Add(es);
+                                                }
+                                                result.uploadStatus.stats = upld.stats;
+                                                result.uploadStatus = upld;
+                                                result.uploadStatus.uploadStatus = result.uploadStatus.stats.Any(x => x.status == false);
+                                                result.Status = result.uploadStatus.uploadStatus;
+                                                if (result.uploadStatus.stats.Any(x => x.status == false))
+                                                {
+                                                    result.Message = "Some records not uploaded completely, Please check Upload Status";
+                                                    result.uploadStatus.ErrorMessage = result.Message;
+                                                }
+                                                else
+                                                {
+                                                    result.Message = "All records in file uploaded to database Successfully";
+                                                    result.uploadStatus.SuccessMessage = result.Message;
+                                                }
                                             }
-                                            catch(Exception e)
+                                            else
                                             {
                                                 result.Status = false;
-                                                result.Message = e.Message;
-
+                                                result.uploadStatus.uploadStatus = false;
+                                                result.Message = "Error occurred while Processing File, records got processed to dataset, but unable to get into ModelDB";
+                                                result.uploadStatus.ErrorMessage = result.Message;
+                                                return StatusCode(StatusCodes.Status400BadRequest, result);
                                             }
-                                                es.status = result.Status;
-                                                es.Message = result.Message;
-                                                es.EmpCode = item.EmpCode;
-                                                upld.stats.Add(es);
-                                            }
-                                        result.uploadStatus.stats = upld.stats;
-                                        result.uploadStatus = upld;
-                                        result.uploadStatus.uploadStatus = result.uploadStatus.stats.Any(x => x.status == false);
-                                        result.Status = result.uploadStatus.uploadStatus;
-                                        if(result.uploadStatus.stats.Any(x => x.status == false))
-                                        {
-                                            result.Message = "Some records not uploaded completely, Please check Upload Status";
-                                            result.uploadStatus.ErrorMessage = result.Message;
                                         }
                                         else
                                         {
-                                            result.Message = "All records in file uploaded to database Successfully";
-                                            result.uploadStatus.SuccessMessage = result.Message;
+                                            result.Status = false;
+                                            result.uploadStatus.uploadStatus = false;
+                                            result.Message = "Error occurred while Processing File, unable to get info from file to dataset";
+                                            result.uploadStatus.ErrorMessage = result.Message;
+                                            return StatusCode(StatusCodes.Status400BadRequest, result);
                                         }
 
                                     }

@@ -2276,12 +2276,16 @@ namespace pdstest.BLL
             }
             return result;
         }
-        public UploadStatus ReadExcelFile(string path, bool getHeaders = false)
+        public UploadStatus ReadExcelFileToDataSet(string path)
         {
             UploadStatus status = new UploadStatus();
+            List<string> columnNames = new List<string>();
+            status.ds = new System.Data.DataSet();
             try
             {
-                status.headers = new List<string>();
+                System.Data.DataTable dt = new System.Data.DataTable();
+                dt.Clear();
+               // dt.Columns.Add("UserType");
                 //Lets open the existing excel file and read through its content . Open the excel using openxml sdk
                 using (SpreadsheetDocument doc = SpreadsheetDocument.Open(path, false))
                 {
@@ -2301,6 +2305,7 @@ namespace pdstest.BLL
                         status.employees = new List<PDSEmployee>();
                         foreach (Row thecurrentrow in thesheetdata)
                         {
+                            System.Data.DataRow dr = dt.NewRow();
                             PDSEmployee emp = new PDSEmployee();
                             foreach (Cell thecurrentcell in thecurrentrow)
                             {
@@ -2330,8 +2335,282 @@ namespace pdstest.BLL
                                             }
                                         }
                                     }
+                                    if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no"))
+                                        continue;
+                                    dt.Columns.Add(currentcellvalue.ToLower().Trim());
+                                }
+                                else
+                                {
+                                    if(columnNames.Count == 0)
+                                        columnNames = dt.Columns.Cast<System.Data.DataColumn>().Select(x => x.ColumnName).ToList<string>();                                   
+                                    foreach(var item in columnNames)
+                                    {
+                                        try
+                                        {
+                                            dr[item] = thecurrentcell.InnerText;
+                                            columnNames.Remove(item);
+                                            break;
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            string msg = e.Message;
+                                            throw;
+                                        }
+                                    }
+                                    if (columnNames.Count == 0)
+                                        break;
+                                    //dr["UserType"] = usrType;
+                                    //excelResult.Append(Convert.ToInt16(thecurrentcell.InnerText) + " ");
+                                }
+
+                            }
+                           
+                            // excelResult.AppendLine();
+                        }
+                        status.ds.Tables.Add(dt);
+                        //excelResult.Append("");
+                    }
+                }
+                status.uploadStatus = true;
+            }
+            catch (Exception e)
+            {
+                status.ErrorMessage = e.Message;
+                status.uploadStatus = false;
+            }
+            return status;
+        }
+        public UploadStatus ReadExceltoDataSet(string path, List<string> headers,bool getHeaders=false)      
+        {
+            UploadStatus u = new UploadStatus();
+            u.headers = new List<string>();
+            u.ds = new System.Data.DataSet();
+            try
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        System.Data.DataTable dt = new System.Data.DataTable();
+                        dt.Clear();
+                        List<string> columnNames = new List<string>();
+                        int i = 0;
+                        int j = 0;
+                        do
+                        {
+                            while (reader.Read() && (i==0 || !getHeaders)) //Each ROW
+                            {
+                                i = 1;
+                                System.Data.DataRow dr = dt.NewRow();
+
+                                for (int column = 0; column < reader.FieldCount; column++)
+                                {
+                                    try
+                                    {
+                                        if (getHeaders)
+                                        {
+                                            object msg = reader.GetValue(column);
+                                            Type celltype = msg.GetType();
+                                            string currentcellvalue = msg.ToString();
+                                            if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no"))
+                                                continue;
+                                            u.headers.Add(currentcellvalue);
+                                        }
+                                        else
+                                        {
+                                           
+                                            if (headers.Count > 0)
+                                            {
+                                                foreach(var item in headers)
+                                                {
+                                                    dt.Columns.Add(item);
+                                                }
+                                                headers.Clear();
+                                                 break;
+                                            }
+                                            else
+                                            {
+                                               
+                                                if (j == 0)
+                                                {
+                                                    j = 1;
+                                                    continue;
+                                                }
+                                                if(columnNames.Count == 0)
+                                                    columnNames = dt.Columns.Cast<System.Data.DataColumn>().Select(x => x.ColumnName).ToList<string>();
+                                                object msg = reader.GetValue(column);
+                                                Type celltype = msg.GetType();
+
+                                                foreach (var item in columnNames)
+                                                {
+                                                    if (celltype.FullName.ToLower().Contains("string"))
+                                                    {
+                                                        string currentcellvalue = msg.ToString();
+                                                        dr[item] = currentcellvalue;
+                                                        columnNames.Remove(item);
+                                                        break;
+                                                    }
+                                                    else if (celltype.FullName.ToLower().Contains("int"))
+                                                    {
+                                                        int val = 0;
+                                                        bool success = int.TryParse(msg.ToString(), out val);
+                                                        if (success)
+                                                            dr[item] = val;
+                                                        else
+                                                            dr[item] = 0;
+                                                        columnNames.Remove(item);
+                                                        break;
+
+                                                    }
+                                                    else if (celltype.FullName.ToLower().Contains("date"))
+                                                    {
+                                                        DateTime val = new DateTime();
+                                                        bool success = DateTime.TryParse(msg.ToString(), out val);
+                                                        if (success)
+                                                            dr[item] = val;
+                                                        else
+                                                            dr[item] = 0;
+                                                        columnNames.Remove(item);
+                                                        break;
+
+                                                    }
+                                                    else if (celltype.FullName.ToLower().Contains("double"))
+                                                    {
+                                                        double val = 0;
+                                                        bool success = double.TryParse(msg.ToString(), out val);
+                                                        if (success)
+                                                            dr[item] = val;
+                                                        else
+                                                            dr[item] = 0;
+                                                        columnNames.Remove(item);
+                                                        break;
+
+                                                    }
+                                                    else if (celltype.FullName.ToLower().Contains("bool"))
+                                                    {
+                                                        bool val = false;
+                                                        bool success = bool.TryParse(msg.ToString(), out val);
+                                                        if (success)
+                                                            dr[item] = val;
+                                                        else
+                                                            dr[item] = false;
+                                                        columnNames.Remove(item);
+                                                        break;
+
+                                                    }
+                                                    else
+                                                    {
+                                                        dr[item] = null;
+                                                        columnNames.Remove(item);
+                                                        break;
+                                                    }
+                                                        
+                                                    
+                                                }
+                                                if (columnNames.Count == 0)
+                                                {
+                                                    dt.Rows.Add(dr);
+                                                    break;
+                                                }
+                                            }
+
+                                        }
+                                     }
+                                    catch(Exception e)
+                                    {
+                                        string m = e.Message;
+                                        throw;
+                                    }
+                                }
+                                if (getHeaders)
+                                {
+                                    u.uploadStatus = true;
+                                    break;
+                                }
+
+                            }
+                            if (!getHeaders)
+                            {
+                                u.ds.Tables.Add(dt);
+                                u.uploadStatus = true;
+                                break;
+                            }
+                        } while (reader.NextResult() && i==0); //Move to NEXT SHEET
+                        
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                u.uploadStatus = false;
+                string msg = e.Message;
+                u.ds = new System.Data.DataSet();
+            }
+            return u;
+        }
+        public UploadStatus ReadExcelFile(string path, bool getHeaders = false)
+        {
+            UploadStatus status = new UploadStatus();
+            APIResult result = new APIResult();
+            result.uploadStatus = new UploadStatus();
+            result.uploadStatus.headers = new List<string>();
+            try
+            {
+                status.headers = new List<string>();
+                result = this.GetConstants();
+                //Lets open the existing excel file and read through its content . Open the excel using openxml sdk
+                using (SpreadsheetDocument doc = SpreadsheetDocument.Open(path, false))
+                {
+                    //create the object for workbook part  
+                    WorkbookPart workbookPart = doc.WorkbookPart;
+                    Sheets thesheetcollection = workbookPart.Workbook.GetFirstChild<Sheets>();
+                    int i = 0;
+                    //using for each loop to get the sheet from the sheetcollection  
+                    foreach (Sheet thesheet in thesheetcollection)
+                    {
+                        if (i > 0)
+                            break;
+                        i = 1;
+                        //statement to get the worksheet object by using the sheet id  
+                        Worksheet theWorksheet = ((WorksheetPart)workbookPart.GetPartById(thesheet.Id)).Worksheet;
+                        SheetData thesheetdata = (SheetData)theWorksheet.GetFirstChild<SheetData>();
+                        status.employees = new List<PDSEmployee>();
+                        foreach (Row thecurrentrow in thesheetdata)
+                        {
+                            PDSEmployee emp = new PDSEmployee();
+                            foreach (Cell thecurrentcell in thecurrentrow)
+                            {
+                                bool valueset = false;
+                                //statement to take the integer value  
+                                string currentcellvalue = string.Empty;
+                                if (thecurrentcell.DataType != null)
+                                {
+                                    if (thecurrentcell.DataType == CellValues.SharedString)
+                                    {
+                                        int id;
+                                        if (Int32.TryParse(thecurrentcell.InnerText, out id))
+                                        {
+                                            SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+                                            if (item.Text != null)
+                                            {
+                                                currentcellvalue = item.Text.Text;
+                                                //code to take the string value  
+                                                //excelResult.Append(item.Text.Text + " ");
+                                            }
+                                            else if (item.InnerText != null)
+                                            {
+                                                currentcellvalue = item.InnerText;
+                                            }
+                                            else if (item.InnerXml != null)
+                                            {
+                                                currentcellvalue = item.InnerXml;
+                                            }
+                                        }
+                                    }
                                     if (currentcellvalue.ToLower().Contains("sno") || currentcellvalue.ToLower().Contains("s.no") || currentcellvalue.ToLower().EndsWith("no"))
                                         continue;
+
                                     status.headers.Add(currentcellvalue.ToLower().Trim());
                                 }
                                 else
@@ -2339,14 +2618,11 @@ namespace pdstest.BLL
                                     if (!getHeaders)
                                     {
                                        
-                                        APIResult result = new APIResult();
-                                        result.uploadStatus = new UploadStatus();
-                                        result.uploadStatus.headers = new List<string>();
-                                        result = this.GetConstants();
                                         if (result.uploadStatus.columns.Count > 0)
                                         {
                                             foreach (var item in result.uploadStatus.columns)
                                             {
+                                                valueset = false;
                                                 Type type = emp.GetType();
                                                 PropertyInfo[] props = type.GetProperties();
                                                 foreach (var prop in props)
@@ -2358,6 +2634,8 @@ namespace pdstest.BLL
                                                             if (prop.PropertyType == typeof(string))
                                                             {                                                                
                                                                 prop.SetValue(emp, thecurrentcell.InnerText??"");
+                                                                valueset = true;
+                                                                break;
                                                             }
                                                             else if (prop.PropertyType == typeof(int))
                                                             {
@@ -2367,6 +2645,8 @@ namespace pdstest.BLL
                                                                     prop.SetValue(emp, val);
                                                                 else
                                                                     prop.SetValue(emp, 0);
+                                                                valueset = true;
+                                                                break;
                                                             }
                                                             else if (prop.PropertyType == typeof(bool))
                                                             {
@@ -2376,15 +2656,24 @@ namespace pdstest.BLL
                                                                     prop.SetValue(emp, val);
                                                                 else
                                                                     prop.SetValue(emp, false);
+                                                                valueset = true;
+                                                                break;
                                                             }
+
                                                         }
                                                             
                                                     }
                                                     catch(Exception e)
                                                     {
+                                                        valueset = false;
                                                         string msg = e.Message;
                                                         throw;
                                                     }
+                                                }
+                                                if (valueset) 
+                                                {
+                                                   // result.uploadStatus.columns.Remove(item);
+                                                    break; 
                                                 }
                                             }
                                             status.uploadStatus = true;
@@ -2399,10 +2688,11 @@ namespace pdstest.BLL
                                 }
                                 
                             }
-                            if(!getHeaders && status.uploadStatus)
-                                status.employees.Add(emp);
                             if (getHeaders)
                                 break;
+                            if (!getHeaders && status.uploadStatus)
+                                status.employees.Add(emp);
+
                             // excelResult.AppendLine();
                         }
                         //excelResult.Append("");
@@ -2456,6 +2746,118 @@ namespace pdstest.BLL
                 columns = new List<Tuple<string, bool>>();
             }
             return columns;
+        }
+        public  List<PDSEmployee> GetPDSEmployeesFromDataset(System.Data.DataSet ds)
+        {
+            List<PDSEmployee> employees = new List<PDSEmployee>();
+            try
+            {
+                if(ds.Tables.Count>0)
+                {
+                    if(ds.Tables[0].Rows.Count>0)
+                    {
+                        try
+                        {
+                            List<string> columnNames = ds.Tables[0].Columns.Cast<System.Data.DataColumn>().Select(x => x.ColumnName).ToList<string>();
+                            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                            {
+                                PDSEmployee emp = new PDSEmployee();
+                                Type type = emp.GetType();
+                                PropertyInfo[] props = type.GetProperties();
+                                //bool valueSet = false;
+                                foreach (var prop in props)
+                                {
+                                    foreach(var item in columnNames)
+                                    {
+                                        try
+                                        {
+                                            if (item.ToLower().Trim() == prop.Name.ToLower().Trim())
+                                            {
+                                                var valu = ds.Tables[0].Rows[i][item].ToString();
+                                                if (prop.PropertyType == typeof(string))
+                                                {
+                                                    prop.SetValue(emp, valu ?? "");
+                                                    //valueSet = true;
+                                                    columnNames.Remove(item);
+                                                    break;
+                                                }
+                                                else if (prop.PropertyType == typeof(int))
+                                                {
+                                                    int val = 0;
+                                                    bool success = int.TryParse(valu, out val);
+                                                    if (success == true)
+                                                        prop.SetValue(emp, val);
+                                                    else
+                                                        prop.SetValue(emp, 0);
+                                                    // valueSet = true;
+                                                    columnNames.Remove(item);
+                                                    break;
+                                                }
+                                                else if (prop.PropertyType == typeof(bool))
+                                                {
+                                                    bool val = false;
+                                                    bool success = bool.TryParse(valu, out val);
+                                                    if (success == true)
+                                                        prop.SetValue(emp, val);
+                                                    else
+                                                        prop.SetValue(emp, false);
+                                                    // valueSet = true;
+                                                    columnNames.Remove(item);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            string msg = e.Message;
+                                            throw;
+                                        }
+                                    }
+                                    if (columnNames.Count == 0)
+                                        break;
+                                    //if (valueSet)
+                                    //    break;
+                                }
+                                employees.Add(emp);
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            string msg = e.Message;
+                            throw;
+                        }
+
+                    }
+                    else
+                    {
+                        employees = new List<PDSEmployee>();
+                    }
+                }
+                else
+                {
+                    employees = new List<PDSEmployee>();
+                }
+
+            }
+            catch (Exception e)
+            {
+                employees = new List<PDSEmployee>();
+            }
+            return employees;
+        }
+        public bool ValidateEmpModel(PDSEmployee emp)
+        {
+            bool valid = false;
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                valid = false;
+            }
+            return valid;
         }
         public bool ListComparer(List<string> list1,List<string> list2,out List<string> result)
         {

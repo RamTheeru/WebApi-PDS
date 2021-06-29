@@ -18,7 +18,7 @@ namespace pdstest.Models
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
 
-            await _worker.DoWork(stoppingToken);
+           // await _worker.DoWork(stoppingToken);
         }
     }
 }
