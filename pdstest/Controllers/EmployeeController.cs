@@ -350,7 +350,8 @@ namespace pdstest.Controllers
                 //u.missedcolumns = missed;
 
                 //result.uploadStatus = u;
-                //result.Path = System.IO.Directory.GetCurrentDirectory();
+                //result.Path = System.IO.Directory.GetCurrentDirectory(); 
+                
                 result = logic.GetConstants();
             }
             catch (Exception e)

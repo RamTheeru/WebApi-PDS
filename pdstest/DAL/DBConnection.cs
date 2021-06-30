@@ -51,6 +51,27 @@ namespace pdstest.DAL
             }
             return text;
         }
+        public static string GetParametersFromStoreProc(string procName)
+        {
+            string text = "";
+
+            try
+            {
+                //var builder = new ConfigurationBuilder().SetBasePath(path).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                text = string.Format("SELECT PARAMETER_MODE, PARAMETER_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH " +
+                                     " FROM information_schema.parameters WHERE SPECIFIC_NAME = '{0}';", procName);
+
+            }
+            catch (Exception e)
+            {
+                string msg = e.Message;
+                text = "";
+
+            }
+            return text;
+        }
+
+
         public static List<Dictionary<string, string>> GetAdminDetails()
         {
             List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
