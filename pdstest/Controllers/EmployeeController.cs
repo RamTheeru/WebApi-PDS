@@ -267,7 +267,36 @@ namespace pdstest.Controllers
             }
             return tkn;
         }
+        [HttpGet("Headers")]
 
+        public IActionResult GetHeaders()
+        {
+            APIResult result = new APIResult();
+            result.headers = new List<HeaderDescription>();
+            try
+            {
+                List<Tuple<string, bool>> tuples = new List<Tuple<string, bool>>();
+                tuples = logic.GetColumnsForExcel();
+                foreach(var item in tuples)
+                {
+                    HeaderDescription head = new HeaderDescription();
+                    head.ColumnName = item.Item1;
+                    head.IsMandatory = item.Item2;
+                    result.headers.Add(head);
+                }
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = false;
+                result.CommandType = "Select";
+                result.headers = new List<HeaderDescription>();
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            //return new CustomResult(result);
+            return Ok(result);
+
+        }
 
         [HttpGet("Constants")]
 
@@ -860,7 +889,7 @@ namespace pdstest.Controllers
         }
         [HttpPost]
         [Route("CreateEmployee")]
-        public IActionResult CreateEmployee(Employee obj)
+        public IActionResult CreateEmployee(PDSEmployee obj)
         {
             APIResult result = new APIResult();
             try
@@ -900,7 +929,7 @@ namespace pdstest.Controllers
         [HttpPost]
         [Route("CreateDAEmployee")]
         [CustomAuthorization]
-        public IActionResult CreateDAEmployee(Employee obj)
+        public IActionResult CreateDAEmployee(PDSEmployee obj)
         {
             APIResult result = new APIResult();
             try

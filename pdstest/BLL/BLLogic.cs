@@ -1952,7 +1952,7 @@ namespace pdstest.BLL
         }
 
         #endregion
-        public APIResult CreateEmployee(Employee input,bool isEmployee=false)
+        public APIResult CreateEmployee(PDSEmployee input,bool isEmployee=false)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
@@ -1962,47 +1962,58 @@ namespace pdstest.BLL
                 string empage = input.EmpAge;
                 bool success = int.TryParse(empage, out age);
                 input.Age = (success == true) ? age : 0;
-                dbr.ds = new System.Data.DataSet();
-                if (isEmployee)
+                Tuple<string, bool> vald = System.Tuple.Create("", false);
+                vald = this.ValidateEmpModel(input);
+                bool isValid = vald.Item2;
+                if (isValid)
                 {
-                    dbr = ops.CheckEmpCodeExists(input.EmpCode, true);
-                    if (!dbr.IsExists)
+                    dbr.ds = new System.Data.DataSet();
+                    if (isEmployee)
                     {
-                        dbr = new DataBaseResult();
-                        dbr.ds = new System.Data.DataSet();
-                        dbr = ops.CreateEmployee(input, isEmployee);
-                        result.EmployeeName = dbr.EmployeeName;
-                        result.Id = dbr.Id;
-                    }
-                    result.Message = dbr.Message;
-                    result.Status = dbr.Status;
-                    result.CommandType = "INSERT";
-
-                }
-                else
-                {
-                    dbr = ops.CheckEmpCodeExists(input.EmpCode, false);
-                    if (!dbr.IsExists)
-                    {
-                        dbr = new DataBaseResult();
-                        dbr.ds = new System.Data.DataSet();
-                        dbr = ops.CreateCDAEmployee(input);
-                        result.Id = dbr.Id;
-                        result.EmployeeName = dbr.EmployeeName;
+                        dbr = ops.CheckEmpCodeExists(input.EmpCode, true);
+                        if (!dbr.IsExists)
+                        {
+                            dbr = new DataBaseResult();
+                            dbr.ds = new System.Data.DataSet();
+                            dbr = ops.CreateEmployee(input, isEmployee);
+                            result.EmployeeName = dbr.EmployeeName;
+                            result.Id = dbr.Id;
+                        }
                         result.Message = dbr.Message;
                         result.Status = dbr.Status;
-                        
+                       // result.CommandType = "INSERT";
+
                     }
                     else
                     {
-                        result.Message = dbr.Message;
-                        result.Status = false;
+                        dbr = ops.CheckEmpCodeExists(input.EmpCode, false);
+                        if (!dbr.IsExists)
+                        {
+                            dbr = new DataBaseResult();
+                            dbr.ds = new System.Data.DataSet();
+                            dbr = ops.CreateCDAEmployee(input);
+                            result.Id = dbr.Id;
+                            result.EmployeeName = dbr.EmployeeName;
+                            result.Message = dbr.Message;
+                            result.Status = dbr.Status;
+
+                        }
+                        else
+                        {
+                            result.Message = dbr.Message;
+                            result.Status = false;
+                        }
+                       
                     }
-                    result.CommandType = "INSERT";
-
                 }
+                else
+                {
+                    result.Message = vald.Item1;
+                    result.Status = false;
+                }
+                result.CommandType = "INSERT";
 
-            
+
             }
             catch (Exception e)
             {
@@ -2846,16 +2857,72 @@ namespace pdstest.BLL
             }
             return employees;
         }
-        public bool ValidateEmpModel(PDSEmployee emp)
+        public Tuple<string,bool> ValidateEmpModel(PDSEmployee emp)
         {
-            bool valid = false;
+            Tuple<string, bool> valid = System.Tuple.Create("", false) ;
+            string ErrMsg =  "";
+            List<HeaderDescription> headers = new List<HeaderDescription>();
             try
             {
+                List<Tuple<string, bool>> tuples = new List<Tuple<string, bool>>();
+                tuples = this.GetColumnsForExcel();
+                foreach (var item in tuples)
+                {
+                    HeaderDescription head = new HeaderDescription();
+                    head.ColumnName = item.Item1;
+                    head.IsMandatory = item.Item2;
+                    headers.Add(head);
+                }
+                Type type = emp.GetType();
+                PropertyInfo[] props = type.GetProperties();
+                var mandateHeaders = headers.Where(x => x.IsMandatory == true).ToList<HeaderDescription>();
+                foreach (var prop in props)
+                {
+                    foreach (var item in mandateHeaders)
+                    {
+                        if (item.ColumnName.ToLower().Trim() == prop.Name.ToLower().Trim())
+                        {
+                            ErrMsg = string.Format("Invalid Input!!! {0} Field is required", prop.Name);
+                            var val = prop.GetValue(emp);
+                            if (prop.PropertyType == typeof(string))
+                            {                                
+                                string v = val.ToString();
+                                if (string.IsNullOrEmpty(v))
+                                    throw new Exception(ErrMsg);
+                                else
+                                    valid = System.Tuple.Create("", true);
+                            }
+                            else if (prop.PropertyType == typeof(int))
+                            {
+                                int v = 0;
+                                bool success = int.TryParse(val.ToString(), out v);
+                                if (!success)
+                                    throw new Exception(ErrMsg);
+                                else if (v == 0)
+                                    throw new Exception(ErrMsg);
+                                else
+                                    valid = System.Tuple.Create("", true);
 
+                            }
+                            else if (prop.PropertyType == typeof(bool))
+                            {
+                                bool v = false;
+                                bool success = bool.TryParse(val.ToString(), out v);
+                                if (!success)
+                                    throw new Exception(ErrMsg);
+                                else
+                                    valid = System.Tuple.Create("", true);
+
+                            }
+
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
-                valid = false;
+                //string msg = e.Message;
+                valid = System.Tuple.Create(e.Message, false); ;
             }
             return valid;
         }
