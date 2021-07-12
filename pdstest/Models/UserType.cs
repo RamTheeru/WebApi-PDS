@@ -15,6 +15,7 @@ namespace pdstest.Models
         public bool Valid { get; set; }
         public int StationId { get; set; }
         public string Screen { get; set; }
+        public string EmpCode { get; set; }
         public DateTime StartDate { get; set; }
         public string SessionStartDate { get; set; }
         public DateTime EndDate { get; set; }

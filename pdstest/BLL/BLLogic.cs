@@ -779,6 +779,8 @@ namespace pdstest.BLL
                             int userTypeid = 0;
                             int employeeid = 0;
                             int stationid = 0;
+                            string eCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
+                            user.EmpCode = eCode;
                             string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
                             bool succ = int.TryParse(empId, out employeeid);
                             string usertype = dbr.ds.Tables[0].Rows[i]["UserType"].ToString();
@@ -860,6 +862,8 @@ namespace pdstest.BLL
                         int userTypeid = 0;
                         int employeeid = 0;
                         int stationid = 0;
+                        string eCode = dbr.ds.Tables[0].Rows[i]["EmpCode"].ToString();
+                        user.EmpCode = eCode;
                         string empId = dbr.ds.Tables[0].Rows[i]["EmployeeId"].ToString();
                         bool succ = int.TryParse(empId, out employeeid);
                         string usertype = dbr.ds.Tables[0].Rows[i]["UserTypeId"].ToString();

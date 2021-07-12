@@ -288,11 +288,12 @@ namespace pdstest.DAL
                             conn.Open();
                             cmd.ExecuteNonQuery();
 
-                            List<MySqlParameter> outs = parameters.Where(x => x.Direction == ParameterDirection.Output).ToList<MySqlParameter>();
+                            //  List<MySqlParameter> outs = parameters.Where(x => x.Direction == ParameterDirection.Output).ToList<MySqlParameter>();
 
-                            string registerId = outs[0].Value.ToString();
-
-                            string empName = outs[2].Value.ToString();
+                            //string registerId = parameters.FirstOrDefault(x => x.Direction == ParameterDirection.Output && x.ParameterName == "OutRegisterId")?.Value.ToString();///outs[0].Value.ToString();
+                            string registerId = cmd.Parameters["@OutRegisterId"].Value.ToString();
+                            string empName = cmd.Parameters["@EmpName"].Value.ToString();
+                            //string empName = parameters.FirstOrDefault(x => x.Direction == ParameterDirection.Output && x.ParameterName == "EmpName")?.Value.ToString();//outs[2].Value.ToString();
                             conn.Close();
                             dbr.Id = string.IsNullOrEmpty(registerId) ? 0 : Convert.ToInt32(registerId);
                             if (dbr.Id > 0)
