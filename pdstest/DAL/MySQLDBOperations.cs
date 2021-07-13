@@ -137,7 +137,7 @@ namespace pdstest.DAL
 
                                     if (item.ParamDirection.ToLower().Trim() == "in")
                                     {
-                                        locparam.Value = val.ToString();
+                                        locparam.Value = val?.ToString();
                                         locparam.Direction = ParameterDirection.Input;
 
 
@@ -178,7 +178,7 @@ namespace pdstest.DAL
                                     }
                                 }
                                 else
-                                    throw new Exception("Something went wrong!!! unable to get Parameters for " + procName);
+                                    throw new Exception("Something went wrong!!! unable to get Parameters for " + procName +" due to mismatch of parameter with name :"+ item.ParamName);
                                 parameters.Add(locparam);
 
                             }

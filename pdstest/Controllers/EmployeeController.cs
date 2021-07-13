@@ -815,7 +815,7 @@ namespace pdstest.Controllers
 
         [HttpPost]
         [Route("RegisterEmployee")]
-        public IActionResult RegisterEmployee(RegisterEmployee obj)
+        public IActionResult RegisterEmployee(PDSEmployee obj)
         {
             APIResult result = new APIResult();
             try
@@ -825,6 +825,14 @@ namespace pdstest.Controllers
                     obj.IsRegister = true;
                     obj.IsActive = false;
                     obj.Age = string.IsNullOrEmpty(obj.EmpAge) ? 0 : Convert.ToInt32(obj.EmpAge);
+                    if (!string.IsNullOrEmpty(obj.PANNumber))
+                        obj.PANStatus = "Yes";
+                    else
+                        obj.PANStatus = "No";
+                    if (obj.MaritalStatus)
+                        obj.IsMarrired = "Yes";
+                    else
+                        obj.IsMarrired = "No";
                     result = logic.RegisterEmployee(obj);
 
                 }
@@ -899,6 +907,10 @@ namespace pdstest.Controllers
                 if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0||obj.Pid>0)
                 {
                     obj.IsRegister = false;
+                    if (obj.MaritalStatus)
+                        obj.IsMarrired = "Yes";
+                    else
+                        obj.IsMarrired = "No";
                     result = logic.CreateEmployee(obj,true);
 
                 }
@@ -939,6 +951,10 @@ namespace pdstest.Controllers
                 if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0)
                 {
                     obj.IsRegister = false;
+                    if (obj.MaritalStatus)
+                        obj.IsMarrired = "Yes";
+                    else
+                        obj.IsMarrired = "No";
                     result = logic.CreateEmployee(obj,false);
 
                 }
@@ -1591,6 +1607,15 @@ namespace pdstest.Controllers
                                                     EmpUploadStatus es = new EmpUploadStatus();
                                                     try
                                                     {
+                                                        if (!string.IsNullOrEmpty(item.IsMarrired) && !item.IsMarrired.ToLower().Contains("na"))
+                                                        {
+                                                            if (item.IsMarrired.ToLower().Contains("no") || item.IsMarrired.ToLower().Contains("un"))
+                                                                item.MaritalStatus = false;
+                                                            else
+                                                                item.MaritalStatus = true;
+                                                        }
+                                                        else
+                                                            item.MaritalStatus = false;
                                                         result = logic.CreateEmployee(item, false);
                                                     }
                                                     catch (Exception e)

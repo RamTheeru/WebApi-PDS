@@ -11,6 +11,8 @@ namespace pdstest.Models
     {
 
         public int RegisterId { get; set; }
+        public int OutRegisterId { get; set; }
+        public string EmpName { get; set; }
         public int EmployeeId { get; set; }
         public string EmpCode { get; set; }
         public int Pid { get; set; }

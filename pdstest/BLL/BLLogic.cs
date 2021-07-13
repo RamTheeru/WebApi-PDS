@@ -449,12 +449,17 @@ namespace pdstest.BLL
                             emp.BloodGroup = dbr.ds.Tables[0].Rows[i]["BloodGroup"].ToString();
                             string mstat = dbr.ds.Tables[0].Rows[i]["MaritalStatus"].ToString();
                             emp.MaritalStatus = mstat=="1" ;
+                            emp.IsMarrired = dbr.ds.Tables[0].Rows[i]["IsMarrired"].ToString();
+                            emp.PANStatus = dbr.ds.Tables[0].Rows[i]["PANStatus"].ToString();
                             // emp.Designation = dbr.ds.Tables[0].Rows[i]["Designation"].ToString();
                             emp.Place = dbr.ds.Tables[0].Rows[i]["Place"].ToString();
                             emp.AadharNumber = dbr.ds.Tables[0].Rows[i]["AadharNumber"].ToString();
                             emp.PANNumber = dbr.ds.Tables[0].Rows[i]["PAN"].ToString();
-                            emp.Address1 = dbr.ds.Tables[0].Rows[i]["Address1"].ToString();
-                            emp.Address2 = dbr.ds.Tables[0].Rows[i]["Address2"].ToString();
+                            emp.Address1 = dbr.ds.Tables[0].Rows[i]["HouseNo"].ToString();
+                            emp.Address1 = emp.Address1 +", "+ dbr.ds.Tables[0].Rows[i]["StreetName"].ToString();
+                            emp.District = dbr.ds.Tables[0].Rows[i]["District"].ToString();
+                            emp.EmployeeNameasperBank = dbr.ds.Tables[0].Rows[i]["EmployeeNameasperBank"].ToString();
+                            emp.Address2 = dbr.ds.Tables[0].Rows[i]["VillageorTown"].ToString();
                             emp.EmployeeType = dbr.ds.Tables[0].Rows[i]["EmployeeType"].ToString();
                             emp.BankAccountNumber = dbr.ds.Tables[0].Rows[i]["BankAccountNumber"].ToString();
                             emp.BranchName = dbr.ds.Tables[0].Rows[i]["BranchName"].ToString();
@@ -1966,6 +1971,10 @@ namespace pdstest.BLL
                 string empage = input.EmpAge;
                 bool success = int.TryParse(empage, out age);
                 input.Age = (success == true) ? age : 0;
+                if (!string.IsNullOrEmpty(input.PANNumber))
+                    input.PANStatus = "Yes";
+                else
+                    input.PANStatus = "No";
                 Tuple<string, bool> vald = System.Tuple.Create("", false);
                 vald = this.ValidateEmpModel(input);
                 bool isValid = vald.Item2;
@@ -2145,21 +2154,32 @@ namespace pdstest.BLL
             }
             return result;
         }
-        public APIResult RegisterEmployee(RegisterEmployee input)
+        public APIResult RegisterEmployee(PDSEmployee input)
         {
             APIResult result = new APIResult();
             DataBaseResult dbr = new DataBaseResult();
             try
             {
-               // input.Password = input.Phone.Substring(0, 4)+input.DOB.Substring((input.DOB.Length - 4), 4);
-                input.Password = input.Phone.Substring(0, 4) + input.DOB.Substring(0, 4);
-                dbr.ds = new System.Data.DataSet();
-                dbr = ops.RegisterEmployee(input);
-                result.Message = dbr.Message;
-                result.Status = dbr.Status;
-                result.Id = dbr.Id;
-                result.EmployeeName = dbr.EmployeeName;
-                result.CommandType = dbr.CommandType;
+                Tuple<string, bool> vald = System.Tuple.Create("", false);
+                vald = this.ValidateEmpModel(input);
+                bool isValid = vald.Item2;
+                if (isValid)
+                {
+                    // input.Password = input.Phone.Substring(0, 4)+input.DOB.Substring((input.DOB.Length - 4), 4);
+                    input.Password = input.Phone.Substring(0, 4) + input.DOB.Substring(0, 4);
+                    dbr.ds = new System.Data.DataSet();
+                    dbr = ops.RegisterEmployee(input);
+                    result.Message = dbr.Message;
+                    result.Status = dbr.Status;
+                    result.Id = dbr.Id;
+                    result.EmployeeName = dbr.EmployeeName;
+                    result.CommandType = dbr.CommandType;
+                }
+                else
+                {
+                    result.Message = vald.Item1;
+                    result.Status = false;
+                }
 
             }
             catch (Exception e)
@@ -2173,6 +2193,7 @@ namespace pdstest.BLL
 
 
             }
+            result.CommandType = "INSERT";
             return result;
 
         }
