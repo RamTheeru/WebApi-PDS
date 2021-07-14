@@ -763,7 +763,7 @@ namespace pdstest.DAL
         //    return dbr;
         //}
 
-        public DataBaseResult CreateEmployee(Employee input, bool isemployee = false)
+        public DataBaseResult CreateEmployee(PDSEmployee input, bool isemployee = false)
         {
             string insertQuery = "";
             DataBaseResult dbr = new DataBaseResult();

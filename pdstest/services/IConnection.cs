@@ -10,8 +10,8 @@ namespace pdstest.services
     public interface IConnection
     {
         DataBaseResult RegisterEmployee(RegisterEmployee input);
-        DataBaseResult CreateEmployee(Employee input,bool isEmployee=false);
-        DataBaseResult CreateCDAEmployee(Employee input);
+        DataBaseResult CreateEmployee(PDSEmployee input,bool isEmployee=false);
+        DataBaseResult CreateCDAEmployee(PDSEmployee input);
         DataBaseResult CreateMainEmployee(PDSEmployee input);
         DataBaseResult GetConstants();
         DataBaseResult GetRegisteredUsers(int stationId);

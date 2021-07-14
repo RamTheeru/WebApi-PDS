@@ -17,11 +17,11 @@ namespace pdstest.DAL
         private MySQLDBOperations _ops = new MySQLDBOperations();
 
      
-        public DataBaseResult CreateEmployee(Employee input,bool isEmployee=false)
+        public DataBaseResult CreateEmployee(PDSEmployee input,bool isEmployee=false)
         {
            return _ops.CreateEmployee(input,isEmployee);
         }
-        public DataBaseResult CreateCDAEmployee(Employee input)
+        public DataBaseResult CreateCDAEmployee(PDSEmployee input)
         {
             return _ops.CreateCDAEmployee(input);
         }
