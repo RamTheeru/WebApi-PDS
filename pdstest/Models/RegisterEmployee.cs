@@ -11,15 +11,21 @@ namespace pdstest.Models
     {
 
         public int RegisterId { get; set; }
+
+        //outputs
         public int OutRegisterId { get; set; }
         public string EmpName { get; set; }
+        public string EmpId { get; set; }
+
+
         public int EmployeeId { get; set; }
         public string EmpCode { get; set; }
+        public string CDACode { get; set; }
         public int Pid { get; set; }
         public string Email { get; set; }
         public string Professionname { get; set; }
         public int StationId { get; set; }
-        public string EmpID { get; set; }
+       
         public bool IsRegister { get; set; }
         public string FirstName { get; set; }
         public string UserName { get; set; }
@@ -112,6 +118,6 @@ namespace pdstest.Models
         public string RefContactNumber { get; set; }
         public bool IsPhysicallyHandicapped { get; set; }
         public string PhysicallyHandicapStatus { get; set; }
-
+        public string AddedBY { get; set; }
     }
 }
