@@ -822,6 +822,8 @@ namespace pdstest.Controllers
             {
                 if (!(string.IsNullOrEmpty(obj.FirstName)) && !(string.IsNullOrEmpty(obj.Phone)) && !(string.IsNullOrEmpty(obj.UserName))  && !(string.IsNullOrEmpty(obj.Email)))
                 {
+                    if (!string.IsNullOrEmpty(obj.Gaurd_firstname))
+                        obj.FatherName = obj.Gaurd_firstname;
                     obj.IsRegister = true;
                     obj.IsActive = false;
                     obj.Age = string.IsNullOrEmpty(obj.EmpAge) ? 0 : Convert.ToInt32(obj.EmpAge);
@@ -869,6 +871,8 @@ namespace pdstest.Controllers
             {
                 if (!(string.IsNullOrEmpty(obj.FirstName)) || !(string.IsNullOrEmpty(obj.EmpCode)) || obj.StationId > 0 || obj.Pid > 0)
                 {
+                    if (!string.IsNullOrEmpty(obj.Gaurd_firstname))
+                        obj.FatherName = obj.Gaurd_firstname;
                     result = logic.CreateMainEmployee(obj);
 
                 }
@@ -906,6 +910,8 @@ namespace pdstest.Controllers
             {
                 if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0||obj.Pid>0)
                 {
+                    if (!string.IsNullOrEmpty(obj.Gaurd_firstname))
+                        obj.FatherName = obj.Gaurd_firstname;
                     obj.IsRegister = false;
                     if (obj.MaritalStatus)
                         obj.IsMarrired = "Yes";
@@ -950,6 +956,8 @@ namespace pdstest.Controllers
             {
                 if (!(string.IsNullOrEmpty(obj.FirstName))||obj.StationId>0)
                 {
+                    if (!string.IsNullOrEmpty(obj.Gaurd_firstname))
+                        obj.FatherName = obj.Gaurd_firstname;
                     obj.IsRegister = false;
                     if (obj.MaritalStatus)
                         obj.IsMarrired = "Yes";

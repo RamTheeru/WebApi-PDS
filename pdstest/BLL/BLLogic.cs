@@ -2882,7 +2882,7 @@ namespace pdstest.BLL
             }
             return employees;
         }
-        public Tuple<string,bool> ValidateEmpModel(PDSEmployee emp)
+        public Tuple<string,bool> ValidateEmpModel(PDSEmployee emp,bool isRegister=false)
         {
             Tuple<string, bool> valid = System.Tuple.Create("", false) ;
             string ErrMsg =  "";
@@ -2907,11 +2907,13 @@ namespace pdstest.BLL
                     {
                         if (item.ColumnName.ToLower().Trim() == prop.Name.ToLower().Trim())
                         {
+                            if ((prop.Name.ToLower().Trim() == "empcode" || prop.Name.ToLower().Trim().StartsWith("ref")) && isRegister)
+                                continue;
                             ErrMsg = string.Format("Invalid Input!!! {0} Field is required", prop.Name);
                             var val = prop.GetValue(emp);
                             if (prop.PropertyType == typeof(string))
                             {                                
-                                string v = val.ToString();
+                                string v = val?.ToString();
                                 if (string.IsNullOrEmpty(v))
                                     throw new Exception(ErrMsg);
                                 else
