@@ -347,7 +347,7 @@ namespace pdstest.DAL
         //    }
         //    return dbr;
         //}
-        public DataBaseResult RegisterEmployee(RegisterEmployee input)
+        public DataBaseResult RegisterEmployee(PDSEmployee input)
         {
             string insertQuery = "";
             DataBaseResult dbr = new DataBaseResult();
