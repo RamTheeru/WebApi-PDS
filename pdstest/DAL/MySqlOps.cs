@@ -47,7 +47,7 @@ namespace pdstest.DAL
             return _ops.GetRegisteredUsers(stationId);
         }
 
-        public DataBaseResult RegisterEmployee(RegisterEmployee input)
+        public DataBaseResult RegisterEmployee(PDSEmployee input)
         {
             return _ops.RegisterEmployee(input);
         }

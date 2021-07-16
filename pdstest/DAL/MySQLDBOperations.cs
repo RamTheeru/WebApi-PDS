@@ -387,7 +387,7 @@ namespace pdstest.DAL
                             cmd.Connection = conn;
 
                              List<MySqlParameter> parameters = new List<MySqlParameter>();
-                            parameters = this.GetParametersforStoredProc<RegisterEmployee>(insertQuery, input);
+                            parameters = this.GetParametersforStoredProc<PDSEmployee>(insertQuery, input);
                             foreach(var par in parameters)
                                 cmd.Parameters.Add(par);
 
