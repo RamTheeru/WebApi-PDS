@@ -2907,7 +2907,7 @@ namespace pdstest.BLL
                     {
                         if (item.ColumnName.ToLower().Trim() == prop.Name.ToLower().Trim())
                         {
-                            if ((prop.Name.ToLower().Trim() == "empcode" || prop.Name.ToLower().Trim().StartsWith("ref")) && isRegister)
+                            if ((prop.Name.ToLower().Trim() == "empcode" || prop.Name.ToLower().Trim().StartsWith("desig") || prop.Name.ToLower().Trim().StartsWith("ref")) && isRegister)
                                 continue;
                             ErrMsg = string.Format("Invalid Input!!! {0} Field is required", prop.Name);
                             var val = prop.GetValue(emp);
